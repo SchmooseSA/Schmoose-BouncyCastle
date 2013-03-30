@@ -1,0 +1,30 @@
+using Org.BouncyCastle.Math;
+
+namespace Org.BouncyCastle.Asn1.X509
+{
+    /**
+     * The CRLNumber object.
+     * <pre>
+     * CRLNumber::= Integer(0..MAX)
+     * </pre>
+     */
+    public class CrlNumber
+        : DerInteger
+    {
+        public CrlNumber(
+            IBigInteger number)
+			: base(number)
+        {
+        }
+
+        public IBigInteger Number
+		{
+			get { return PositiveValue; }
+		}
+
+		public override string ToString()
+		{
+			return "CRLNumber: " + Number;
+		}
+	}
+}
