@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 #if SILVERLIGHT
-using System.Collections.Generic;
 #else
 using System.Collections;
 #endif
