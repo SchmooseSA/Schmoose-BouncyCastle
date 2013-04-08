@@ -39,6 +39,17 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             }
         }
 
+        public PgpPublicKeyEncryptedData FindPublicKeyEncryptedData(long keyId)
+        {
+            foreach (var pgpEncryptedData in _list)
+            {
+                var pgpPublicKeyEncryptedData = pgpEncryptedData as PgpPublicKeyEncryptedData;
+                if (pgpPublicKeyEncryptedData != null && pgpPublicKeyEncryptedData.KeyId == keyId)
+                    return pgpPublicKeyEncryptedData;
+            }
+            return null;
+        }
+
         public PgpEncryptedData this[int index]
         {
             get { return _list[index]; }
