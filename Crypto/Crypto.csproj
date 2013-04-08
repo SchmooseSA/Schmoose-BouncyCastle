@@ -1143,9 +1143,9 @@
     <Compile Include="x509\X509V3CertificateGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Interfaces\Interfaces.csproj">
+    <ProjectReference Include="..\Interfaces\Interfaces.IceCream.csproj">
       <Project>{2fd27502-3833-4816-8fc2-5857b3e90777}</Project>
-      <Name>Interfaces</Name>
+      <Name>Interfaces.IceCream</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

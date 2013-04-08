@@ -9,36 +9,36 @@ namespace Org.BouncyCastle.Bcpg
 	public class PublicKeyEncSessionPacket
 		: ContainedPacket //, PublicKeyAlgorithmTag
 	{
-		private int version;
-		private long keyId;
-		private PublicKeyAlgorithmTag algorithm;
-        private IBigInteger[] data;
+		private readonly int _version;
+		private readonly long _keyId;
+		private readonly PublicKeyAlgorithmTag _algorithm;
+        private readonly IBigInteger[] _data;
 
 		internal PublicKeyEncSessionPacket(
 			BcpgInputStream bcpgIn)
 		{
-			version = bcpgIn.ReadByte();
+			_version = bcpgIn.ReadByte();
 
-			keyId |= (long)bcpgIn.ReadByte() << 56;
-			keyId |= (long)bcpgIn.ReadByte() << 48;
-			keyId |= (long)bcpgIn.ReadByte() << 40;
-			keyId |= (long)bcpgIn.ReadByte() << 32;
-			keyId |= (long)bcpgIn.ReadByte() << 24;
-			keyId |= (long)bcpgIn.ReadByte() << 16;
-			keyId |= (long)bcpgIn.ReadByte() << 8;
-			keyId |= (uint)bcpgIn.ReadByte();
+			_keyId |= (long)bcpgIn.ReadByte() << 56;
+			_keyId |= (long)bcpgIn.ReadByte() << 48;
+			_keyId |= (long)bcpgIn.ReadByte() << 40;
+			_keyId |= (long)bcpgIn.ReadByte() << 32;
+			_keyId |= (long)bcpgIn.ReadByte() << 24;
+			_keyId |= (long)bcpgIn.ReadByte() << 16;
+			_keyId |= (long)bcpgIn.ReadByte() << 8;
+			_keyId |= (uint)bcpgIn.ReadByte();
 
-			algorithm = (PublicKeyAlgorithmTag) bcpgIn.ReadByte();
+			_algorithm = (PublicKeyAlgorithmTag) bcpgIn.ReadByte();
 
-			switch ((PublicKeyAlgorithmTag) algorithm)
+			switch (_algorithm)
 			{
 				case PublicKeyAlgorithmTag.RsaEncrypt:
 				case PublicKeyAlgorithmTag.RsaGeneral:
-                    data = new IBigInteger[] { new MPInteger(bcpgIn).Value };
+                    _data = new[] { new MPInteger(bcpgIn).Value };
 					break;
 				case PublicKeyAlgorithmTag.ElGamalEncrypt:
 				case PublicKeyAlgorithmTag.ElGamalGeneral:
-                    data = new IBigInteger[]
+                    _data = new[]
 					{
 						new MPInteger(bcpgIn).Value,
 						new MPInteger(bcpgIn).Value
@@ -54,49 +54,49 @@ namespace Org.BouncyCastle.Bcpg
 			PublicKeyAlgorithmTag	algorithm,
 			BigInteger[]			data)
 		{
-			this.version = 3;
-			this.keyId = keyId;
-			this.algorithm = algorithm;
-            this.data = (IBigInteger[])data.Clone();
+			this._version = 3;
+			this._keyId = keyId;
+			this._algorithm = algorithm;
+            this._data = (IBigInteger[])data.Clone();
 		}
 
 		public int Version
 		{
-			get { return version; }
+			get { return _version; }
 		}
 
 		public long KeyId
 		{
-			get { return keyId; }
+			get { return _keyId; }
 		}
 
 		public PublicKeyAlgorithmTag Algorithm
 		{
-			get { return algorithm; }
+			get { return _algorithm; }
 		}
 
         public IBigInteger[] GetEncSessionKey()
 		{
-            return (IBigInteger[])data.Clone();
+            return (IBigInteger[])_data.Clone();
 		}
 
 		public override void Encode(
 			IBcpgOutputStream bcpgOut)
 		{
-		    using (MemoryStream bOut = new MemoryStream())
+		    using (var bOut = new MemoryStream())
 		    {
-		        using (BcpgOutputStream pOut = new BcpgOutputStream(bOut))
+		        using (var pOut = new BcpgOutputStream(bOut))
 		        {
 
-		            pOut.WriteByte((byte) version);
+		            pOut.WriteByte((byte) _version);
 
-		            pOut.WriteLong(keyId);
+		            pOut.WriteLong(_keyId);
 
-		            pOut.WriteByte((byte) algorithm);
+		            pOut.WriteByte((byte) _algorithm);
 
-		            for (int i = 0; i != data.Length; i++)
+		            for (var i = 0; i != _data.Length; i++)
 		            {
-		                MPInteger.Encode(pOut, data[i]);
+		                MPInteger.Encode(pOut, _data[i]);
 		            }
 
 		            bcpgOut.WritePacket(PacketTag.PublicKeyEncryptedSession, bOut.ToArray(), true);

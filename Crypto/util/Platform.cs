@@ -1,9 +1,6 @@
 using System;
-using System.IO;
-using System.Text;
-
-#if SILVERLIGHT
 using System.Collections.Generic;
+#if SILVERLIGHT
 #else
 using System.Collections;
 #endif
@@ -145,8 +142,8 @@ namespace Org.BouncyCastle.Utilities
         }
         internal static System.Collections.IList CreateArrayList(System.Collections.IEnumerable collection)
         {
-            ArrayList result = new ArrayList();
-            foreach (object o in collection)
+            var result = new ArrayList();
+            foreach (var o in collection)
             {
                 result.Add(o);
             }
@@ -165,6 +162,19 @@ namespace Org.BouncyCastle.Utilities
             return new Hashtable(dictionary);
         }
 #endif
+
+        internal static IList<T> CreateArrayList<T>()
+        {
+            return new List<T>();
+        }
+        internal static IList<T> CreateArrayList<T>(int capacity)
+        {
+            return new List<T>(capacity);
+        }
+        internal static IList<T> CreateArrayList<T>(IEnumerable<T> collection)
+        {
+            return new List<T>(collection);
+        }        
 
         internal static readonly string NewLine = GetNewLine();
 	}

@@ -1180,9 +1180,9 @@
       <Project>{d8418f0b-1125-406a-8306-0265410c6613}</Project>
       <Name>Crypto</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Interfaces\Interfaces.csproj">
+    <ProjectReference Include="..\Interfaces\Interfaces.IceCream.csproj">
       <Project>{2fd27502-3833-4816-8fc2-5857b3e90777}</Project>
-      <Name>Interfaces</Name>
+      <Name>Interfaces.IceCream</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
