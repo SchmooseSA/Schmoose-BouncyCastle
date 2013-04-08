@@ -200,11 +200,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
 		public byte[] GetEncoded()
         {
-            MemoryStream bOut = new MemoryStream();
-
-			Encode(bOut);
-
-			return bOut.ToArray();
+		    using (var bOut = new MemoryStream())
+		    {
+		        Encode(bOut);
+		        return bOut.ToArray();
+		    }
         }
 
 		public void Encode(

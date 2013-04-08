@@ -6,174 +6,194 @@ using Org.BouncyCastle.Security;
 
 namespace Org.BouncyCastle.Bcpg.OpenPgp
 {
-	/// <remarks>A one pass signature object.</remarks>
+    /// <remarks>A one pass signature object.</remarks>
     public class PgpOnePassSignature
     {
-        private OnePassSignaturePacket sigPack;
-        private int signatureType;
-		private ISigner sig;
-		private byte lastb;
+        private readonly OnePassSignaturePacket _sigPack;
+        private readonly int _signatureType;
+        private ISigner _sig;
+        private byte _lastb;
 
-		internal PgpOnePassSignature(
+        internal PgpOnePassSignature(
             BcpgInputStream bcpgInput)
-            : this((OnePassSignaturePacket) bcpgInput.ReadPacket())
+            : this((OnePassSignaturePacket)bcpgInput.ReadPacket())
         {
         }
 
-		internal PgpOnePassSignature(
+        internal PgpOnePassSignature(
             OnePassSignaturePacket sigPack)
         {
-            this.sigPack = sigPack;
-            this.signatureType = sigPack.SignatureType;
+            _sigPack = sigPack;
+            _signatureType = sigPack.SignatureType;
         }
 
-		/// <summary>Initialise the signature object for verification.</summary>
-        public void InitVerify(
-            IPgpPublicKey pubKey)
+        /// <summary>Initialise the signature object for verification.</summary>
+        public void InitVerify(IPgpPublicKey pubKey)
         {
-			lastb = 0;
+            _lastb = 0;
 
-			try
-			{
-				sig = SignerUtilities.GetSigner(
-					PgpUtilities.GetSignatureName(sigPack.KeyAlgorithm, sigPack.HashAlgorithm));
-			}
-			catch (Exception e)
-			{
-				throw new PgpException("can't set up signature object.",  e);
-			}
-
-			try
+            try
             {
-                sig.Init(false, pubKey.GetKey());
+                _sig = SignerUtilities.GetSigner(PgpUtilities.GetSignatureName(_sigPack.KeyAlgorithm, _sigPack.HashAlgorithm));
             }
-			catch (InvalidKeyException e)
+            catch (Exception e)
+            {
+                throw new PgpException("can't set up signature object.", e);
+            }
+
+            try
+            {
+                _sig.Init(false, pubKey.GetKey());
+            }
+            catch (InvalidKeyException e)
             {
                 throw new PgpException("invalid key.", e);
             }
         }
 
-		public void Update(
+        public void Update(
             byte b)
         {
-			if (signatureType == PgpSignature.CanonicalTextDocument)
-			{
-				doCanonicalUpdateByte(b);
-			}
-			else
-			{
-				sig.Update(b);
-			}
+            if (_signatureType == PgpSignature.CanonicalTextDocument)
+            {
+                DoCanonicalUpdateByte(b);
+            }
+            else
+            {
+                _sig.Update(b);
+            }
         }
 
-		private void doCanonicalUpdateByte(
-			byte b)
-		{
-			if (b == '\r')
-			{
-				doUpdateCRLF();
-			}
-			else if (b == '\n')
-			{
-				if (lastb != '\r')
-				{
-					doUpdateCRLF();
-				}
-			}
-			else
-			{
-				sig.Update(b);
-			}
-
-			lastb = b;
-		}
-
-		private void doUpdateCRLF()
-		{
-			sig.Update((byte)'\r');
-			sig.Update((byte)'\n');
-		}
-
-		public void Update(
-            byte[] bytes)
+        private void DoCanonicalUpdateByte(byte b)
         {
-            if (signatureType == PgpSignature.CanonicalTextDocument)
+            switch (b)
             {
-                for (int i = 0; i != bytes.Length; i++)
+                case (byte)'\r':
+                    DoUpdateCrlf();
+                    break;
+                case (byte)'\n':
+                    if (_lastb != '\r')
+                    {
+                        DoUpdateCrlf();
+                    }
+                    break;
+                default:
+                    _sig.Update(b);
+                    break;
+            }
+
+            _lastb = b;
+        }
+
+        private void DoUpdateCrlf()
+        {
+            _sig.Update((byte)'\r');
+            _sig.Update((byte)'\n');
+        }
+
+        public void Update(byte[] bytes)
+        {
+            if (_signatureType == PgpSignature.CanonicalTextDocument)
+            {
+                for (var i = 0; i != bytes.Length; i++)
                 {
-                    doCanonicalUpdateByte(bytes[i]);
+                    DoCanonicalUpdateByte(bytes[i]);
                 }
             }
             else
             {
-                sig.BlockUpdate(bytes, 0, bytes.Length);
+                _sig.BlockUpdate(bytes, 0, bytes.Length);
             }
         }
 
-        public void Update(
-            byte[]  bytes,
-            int     off,
-            int     length)
+        public void Update(byte[] bytes, int off, int length)
         {
-            if (signatureType == PgpSignature.CanonicalTextDocument)
+            if (_signatureType == PgpSignature.CanonicalTextDocument)
             {
-                int finish = off + length;
+                var finish = off + length;
 
-                for (int i = off; i != finish; i++)
+                for (var i = off; i != finish; i++)
                 {
-                    doCanonicalUpdateByte(bytes[i]);
+                    DoCanonicalUpdateByte(bytes[i]);
                 }
             }
             else
             {
-                sig.BlockUpdate(bytes, off, length);
+                _sig.BlockUpdate(bytes, off, length);
             }
         }
 
-		/// <summary>Verify the calculated signature against the passed in PgpSignature.</summary>
-        public bool Verify(
-            PgpSignature pgpSig)
+        /// <summary>
+        /// Verify the calculated signature against the passed in PgpSignature.
+        /// </summary>
+        /// <param name="pgpSig">The PGP sig.</param>
+        /// <returns></returns>
+        public bool Verify(PgpSignature pgpSig)
         {
-            byte[] trailer = pgpSig.GetSignatureTrailer();
+            var trailer = pgpSig.GetSignatureTrailer();
 
-			sig.BlockUpdate(trailer, 0, trailer.Length);
+            _sig.BlockUpdate(trailer, 0, trailer.Length);
 
-			return sig.VerifySignature(pgpSig.GetSignature());
+            return _sig.VerifySignature(pgpSig.GetSignature());
         }
 
+        /// <summary>
+        /// Gets the key id.
+        /// </summary>
+        /// <value>
+        /// The key id.
+        /// </value>
         public long KeyId
         {
-			get { return sigPack.KeyId; }
+            get { return _sigPack.KeyId; }
         }
 
-		public int SignatureType
+        /// <summary>
+        /// Gets the type of the signature.
+        /// </summary>
+        /// <value>
+        /// The type of the signature.
+        /// </value>
+        public int SignatureType
         {
-            get { return sigPack.SignatureType; }
+            get { return _sigPack.SignatureType; }
         }
 
-		public HashAlgorithmTag HashAlgorithm
-		{
-			get { return sigPack.HashAlgorithm; }
-		}
-
-		public PublicKeyAlgorithmTag KeyAlgorithm
-		{
-			get { return sigPack.KeyAlgorithm; }
-		}
-
-		public byte[] GetEncoded()
+        /// <summary>
+        /// Gets the hash algorithm.
+        /// </summary>
+        /// <value>
+        /// The hash algorithm.
+        /// </value>
+        public HashAlgorithmTag HashAlgorithm
         {
-            MemoryStream bOut = new MemoryStream();
-
-            Encode(bOut);
-
-            return bOut.ToArray();
+            get { return _sigPack.HashAlgorithm; }
         }
 
-		public void Encode(
-            Stream outStr)
+        /// <summary>
+        /// Gets the key algorithm.
+        /// </summary>
+        /// <value>
+        /// The key algorithm.
+        /// </value>
+        public PublicKeyAlgorithmTag KeyAlgorithm
         {
-            BcpgOutputStream.Wrap(outStr).WritePacket(sigPack);
+            get { return _sigPack.KeyAlgorithm; }
+        }
+
+        public byte[] GetEncoded()
+        {
+            using (var bOut = new MemoryStream())
+            {
+                Encode(bOut);
+                return bOut.ToArray();
+            }
+        }
+
+        public void Encode(Stream outStr)
+        {
+            var wrap = BcpgOutputStream.Wrap(outStr);
+            wrap.WritePacket(_sigPack);            
         }
     }
 }

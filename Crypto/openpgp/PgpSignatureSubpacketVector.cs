@@ -1,107 +1,82 @@
 using System;
-using System.Collections;
-
+using System.Collections.Generic;
+using System.Linq;
 using Org.BouncyCastle.Bcpg.Sig;
-using Org.BouncyCastle.Utilities;
 
 namespace Org.BouncyCastle.Bcpg.OpenPgp
 {
-	/// <remarks>Container for a list of signature subpackets.</remarks>
+    /// <remarks>Container for a list of signature subpackets.</remarks>
     public class PgpSignatureSubpacketVector
     {
-        private readonly SignatureSubpacket[] packets;
+        private readonly SignatureSubpacket[] _packets;
 
-		internal PgpSignatureSubpacketVector(
-            SignatureSubpacket[] packets)
+        internal PgpSignatureSubpacketVector(SignatureSubpacket[] packets)
         {
-            this.packets = packets;
+            _packets = packets;
         }
 
-		public SignatureSubpacket GetSubpacket(
-            SignatureSubpacketTag type)
+        public SignatureSubpacket GetSubpacket(SignatureSubpacketTag type)
         {
-            for (int i = 0; i != packets.Length; i++)
+            for (var i = 0; i != _packets.Length; i++)
             {
-                if (packets[i].SubpacketType == type)
+                if (_packets[i].SubpacketType == type)
                 {
-                    return packets[i];
+                    return _packets[i];
                 }
             }
 
-			return null;
+            return null;
         }
 
-		/**
-		 * Return true if a particular subpacket type exists.
-		 *
-		 * @param type type to look for.
-		 * @return true if present, false otherwise.
-		 */
-		public bool HasSubpacket(
-			SignatureSubpacketTag type)
-		{
-			return GetSubpacket(type) != null;
-		}
+        /**
+         * Return true if a particular subpacket type exists.
+         *
+         * @param type type to look for.
+         * @return true if present, false otherwise.
+         */
+        public bool HasSubpacket(SignatureSubpacketTag type)
+        {
+            return GetSubpacket(type) != null;
+        }
 
-		/**
-		 * Return all signature subpackets of the passed in type.
-		 * @param type subpacket type code
-		 * @return an array of zero or more matching subpackets.
-		 */
-		public SignatureSubpacket[] GetSubpackets(
-			SignatureSubpacketTag type)
-		{
-            int count = 0;
-            for (int i = 0; i < packets.Length; ++i)
-            {
-                if (packets[i].SubpacketType == type)
-                {
-                    ++count;
-                }
-            }
-
-            SignatureSubpacket[] result = new SignatureSubpacket[count];
-
-            int pos = 0;
-            for (int i = 0; i < packets.Length; ++i)
-            {
-                if (packets[i].SubpacketType == type)
-                {
-                    result[pos++] = packets[i];
-                }
-            }
-
-            return result;
+        /**
+         * Return all signature subpackets of the passed in type.
+         * @param type subpacket type code
+         * @return an array of zero or more matching subpackets.
+         */
+        public SignatureSubpacket[] GetSubpackets(SignatureSubpacketTag type)
+        {
+            return _packets.Where(t => t.SubpacketType == type).ToArray();
         }
 
         public NotationData[] GetNotationDataOccurences()
-		{
-			SignatureSubpacket[] notations = GetSubpackets(SignatureSubpacketTag.NotationData);
-			NotationData[] vals = new NotationData[notations.Length];
-
-			for (int i = 0; i < notations.Length; i++)
-			{
-				vals[i] = (NotationData) notations[i];
-			}
-
-			return vals;
-		}
-
-		public long GetIssuerKeyId()
         {
-            SignatureSubpacket p = GetSubpacket(SignatureSubpacketTag.IssuerKeyId);
+            var notations = GetSubpackets(SignatureSubpacketTag.NotationData);
+            var vals = new NotationData[notations.Length];
 
-            return p == null ? 0 : ((IssuerKeyId) p).KeyId;
+            for (var i = 0; i < notations.Length; i++)
+            {
+                vals[i] = (NotationData)notations[i];
+            }
+
+            return vals;
         }
 
-		public bool HasSignatureCreationTime()
-		{
-			return GetSubpacket(SignatureSubpacketTag.CreationTime) != null;
-		}
-
-		public DateTime GetSignatureCreationTime()
+        public long GetIssuerKeyId()
         {
-            SignatureSubpacket p = GetSubpacket(SignatureSubpacketTag.CreationTime);
+            var p = GetSubpacket(SignatureSubpacketTag.IssuerKeyId);
+
+            return p == null ? 0 : ((IssuerKeyId)p).KeyId;
+        }
+
+        public bool HasSignatureCreationTime()
+        {
+            return GetSubpacket(SignatureSubpacketTag.CreationTime) != null;
+        }
+
+        public DateTime GetSignatureCreationTime()
+        {
+            var p = GetSubpacket(SignatureSubpacketTag.CreationTime);
 
             if (p == null)
             {
@@ -111,119 +86,96 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             return ((SignatureCreationTime)p).GetTime();
         }
 
-		/// <summary>
-		/// Return the number of seconds a signature is valid for after its creation date.
-		/// A value of zero means the signature never expires.
-		/// </summary>
-		/// <returns>Seconds a signature is valid for.</returns>
+        /// <summary>
+        /// Return the number of seconds a signature is valid for after its creation date.
+        /// A value of zero means the signature never expires.
+        /// </summary>
+        /// <returns>Seconds a signature is valid for.</returns>
         public long GetSignatureExpirationTime()
         {
-            SignatureSubpacket p = GetSubpacket(SignatureSubpacketTag.ExpireTime);
+            var p = GetSubpacket(SignatureSubpacketTag.ExpireTime);
 
-			return p == null ? 0 : ((SignatureExpirationTime) p).Time;
+            return p == null ? 0 : ((SignatureExpirationTime)p).Time;
         }
 
-		/// <summary>
-		/// Return the number of seconds a key is valid for after its creation date.
-		/// A value of zero means the key never expires.
-		/// </summary>
-		/// <returns>Seconds a signature is valid for.</returns>
+        /// <summary>
+        /// Return the number of seconds a key is valid for after its creation date.
+        /// A value of zero means the key never expires.
+        /// </summary>
+        /// <returns>Seconds a signature is valid for.</returns>
         public long GetKeyExpirationTime()
         {
-            SignatureSubpacket p = GetSubpacket(SignatureSubpacketTag.KeyExpireTime);
-
-			return p == null ? 0 : ((KeyExpirationTime) p).Time;
+            var p = GetSubpacket(SignatureSubpacketTag.KeyExpireTime);
+            return p == null ? 0 : ((KeyExpirationTime)p).Time;
         }
 
-		public int[] GetPreferredHashAlgorithms()
+        public int[] GetPreferredHashAlgorithms()
         {
-            SignatureSubpacket p = GetSubpacket(SignatureSubpacketTag.PreferredHashAlgorithms);
-
-			return p == null ? null : ((PreferredAlgorithms) p).GetPreferences();
+            var p = GetSubpacket(SignatureSubpacketTag.PreferredHashAlgorithms);
+            return p == null ? null : ((PreferredAlgorithms)p).GetPreferences();
         }
 
-		public int[] GetPreferredSymmetricAlgorithms()
+        public int[] GetPreferredSymmetricAlgorithms()
         {
-            SignatureSubpacket p = GetSubpacket(SignatureSubpacketTag.PreferredSymmetricAlgorithms);
-
-            return p == null ? null : ((PreferredAlgorithms) p).GetPreferences();
+            var p = GetSubpacket(SignatureSubpacketTag.PreferredSymmetricAlgorithms);
+            return p == null ? null : ((PreferredAlgorithms)p).GetPreferences();
         }
 
-		public int[] GetPreferredCompressionAlgorithms()
+        public int[] GetPreferredCompressionAlgorithms()
         {
-            SignatureSubpacket p = GetSubpacket(SignatureSubpacketTag.PreferredCompressionAlgorithms);
-
-            return p == null ? null : ((PreferredAlgorithms) p).GetPreferences();
+            var p = GetSubpacket(SignatureSubpacketTag.PreferredCompressionAlgorithms);
+            return p == null ? null : ((PreferredAlgorithms)p).GetPreferences();
         }
 
-		public int GetKeyFlags()
+        public int GetKeyFlags()
         {
-            SignatureSubpacket p = GetSubpacket(SignatureSubpacketTag.KeyFlags);
-
-            return p == null ? 0 : ((KeyFlags) p).Flags;
+            var p = GetSubpacket(SignatureSubpacketTag.KeyFlags);
+            return p == null ? 0 : ((KeyFlags)p).Flags;
         }
 
-		public string GetSignerUserId()
+        public string GetSignerUserId()
         {
-            SignatureSubpacket p = GetSubpacket(SignatureSubpacketTag.SignerUserId);
+            var p = GetSubpacket(SignatureSubpacketTag.SignerUserId);
 
-			return p == null ? null : ((SignerUserId) p).GetId();
+            return p == null ? null : ((SignerUserId)p).GetId();
         }
 
-		public bool IsPrimaryUserId()
-		{
-			PrimaryUserId primaryId = (PrimaryUserId)
-				this.GetSubpacket(SignatureSubpacketTag.PrimaryUserId);
-
-			if (primaryId != null)
-			{
-				return primaryId.IsPrimaryUserId();
-			}
-
-			return false;
-		}
-
-		public SignatureSubpacketTag[] GetCriticalTags()
+        public bool IsPrimaryUserId()
         {
-            int count = 0;
-            for (int i = 0; i != packets.Length; i++)
+            var primaryId = (PrimaryUserId)this.GetSubpacket(SignatureSubpacketTag.PrimaryUserId);
+
+            return primaryId != null && primaryId.IsPrimaryUserId();
+        }
+
+        public SignatureSubpacketTag[] GetCriticalTags()
+        {
+            var list = new List<SignatureSubpacketTag>();
+            for (var i = 0; i != _packets.Length; i++)
             {
-                if (packets[i].IsCritical())
+                if (_packets[i].IsCritical())
                 {
-                    count++;
+                    list.Add(_packets[i].SubpacketType);
                 }
             }
 
-			SignatureSubpacketTag[] list = new SignatureSubpacketTag[count];
-
-			count = 0;
-
-			for (int i = 0; i != packets.Length; i++)
-            {
-                if (packets[i].IsCritical())
-                {
-                    list[count++] = packets[i].SubpacketType;
-                }
-            }
-
-			return list;
+            return list.ToArray();
         }
 
-		[Obsolete("Use 'Count' property instead")]
-		public int Size
-		{
-			get { return packets.Length; }
-		}
-
-		/// <summary>Return the number of packets this vector contains.</summary>
-		public int Count
-		{
-			get { return packets.Length; }
-		}
-
-		internal SignatureSubpacket[] ToSubpacketArray()
+        [Obsolete("Use 'Count' property instead")]
+        public int Size
         {
-            return packets;
+            get { return _packets.Length; }
+        }
+
+        /// <summary>Return the number of packets this vector contains.</summary>
+        public int Count
+        {
+            get { return _packets.Length; }
+        }
+
+        internal SignatureSubpacket[] ToSubpacketArray()
+        {
+            return _packets;
         }
     }
 }

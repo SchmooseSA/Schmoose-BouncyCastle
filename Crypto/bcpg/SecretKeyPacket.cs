@@ -1,170 +1,188 @@
-using System;
 using System.IO;
 
 using Org.BouncyCastle.Utilities;
 
 namespace Org.BouncyCastle.Bcpg
 {
-	/// <remarks>Basic packet for a PGP secret key.</remarks>
-    public class SecretKeyPacket
-        : ContainedPacket //, PublicKeyAlgorithmTag
+    /// <remarks>Basic packet for a PGP secret key.</remarks>
+    public class SecretKeyPacket : ContainedPacket //, PublicKeyAlgorithmTag
     {
-		public const int UsageNone = 0x00;
-		public const int UsageChecksum = 0xff;
-		public const int UsageSha1 = 0xfe;
+        public const int UsageNone = 0x00;
+        public const int UsageChecksum = 0xff;
+        public const int UsageSha1 = 0xfe;
 
-		private PublicKeyPacket pubKeyPacket;
-        private readonly byte[] secKeyData;
-		private int s2kUsage;
-		private SymmetricKeyAlgorithmTag encAlgorithm;
-        private S2k s2k;
-        private byte[] iv;
+        private readonly byte[] _secKeyData;
+        private readonly byte[] _iv;
 
-		internal SecretKeyPacket(
-            BcpgInputStream bcpgIn)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SecretKeyPacket"/> class.
+        /// </summary>
+        /// <param name="bcpgIn">The BCPG in.</param>
+        internal SecretKeyPacket(BcpgInputStream bcpgIn)
         {
-			if (this is SecretSubkeyPacket)
-			{
-				pubKeyPacket = new PublicSubkeyPacket(bcpgIn);
-			}
-			else
-			{
-				pubKeyPacket = new PublicKeyPacket(bcpgIn);
-			}
-
-			s2kUsage = bcpgIn.ReadByte();
-
-			if (s2kUsage == UsageChecksum || s2kUsage == UsageSha1)
+            if (this is SecretSubkeyPacket)
             {
-                encAlgorithm = (SymmetricKeyAlgorithmTag) bcpgIn.ReadByte();
-                s2k = new S2k(bcpgIn);
+                this.PublicKeyPacket = new PublicSubkeyPacket(bcpgIn);
             }
             else
             {
-                encAlgorithm = (SymmetricKeyAlgorithmTag) s2kUsage;
-			}
+                this.PublicKeyPacket = new PublicKeyPacket(bcpgIn);
+            }
 
-			if (!(s2k != null && s2k.Type == S2k.GnuDummyS2K && s2k.ProtectionMode == 0x01))
+            this.S2KUsage = bcpgIn.ReadByte();
+
+            if (this.S2KUsage == UsageChecksum || this.S2KUsage == UsageSha1)
             {
-				if (s2kUsage != 0)
-				{
-                    if (((int) encAlgorithm) < 7)
-                    {
-                        iv = new byte[8];
-                    }
-                    else
-                    {
-                        iv = new byte[16];
-                    }
-                    bcpgIn.ReadFully(iv);
+                this.EncAlgorithm = (SymmetricKeyAlgorithmTag)bcpgIn.ReadByte();
+                this.S2K = new S2k(bcpgIn);
+            }
+            else
+            {
+                this.EncAlgorithm = (SymmetricKeyAlgorithmTag)this.S2KUsage;
+            }
+
+            if (!(this.S2K != null && this.S2K.Type == S2k.GnuDummyS2K && this.S2K.ProtectionMode == 0x01))
+            {
+                if (this.S2KUsage != 0)
+                {
+                    _iv = ((int)EncAlgorithm) < 7 ? new byte[8] : new byte[16];
+                    bcpgIn.ReadFully(_iv);
                 }
             }
 
-			secKeyData = bcpgIn.ReadAll();
+            _secKeyData = bcpgIn.ReadAll();
         }
 
-		public SecretKeyPacket(
-            PublicKeyPacket				pubKeyPacket,
-            SymmetricKeyAlgorithmTag	encAlgorithm,
-            S2k							s2k,
-            byte[]						iv,
-            byte[]						secKeyData)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SecretKeyPacket"/> class.
+        /// </summary>
+        /// <param name="pubKeyPacket">The pub key packet.</param>
+        /// <param name="encAlgorithm">The enc algorithm.</param>
+        /// <param name="s2K">The s2 K.</param>
+        /// <param name="iv">The iv.</param>
+        /// <param name="secKeyData">The sec key data.</param>
+        public SecretKeyPacket(PublicKeyPacket pubKeyPacket, SymmetricKeyAlgorithmTag encAlgorithm, S2k s2K, byte[] iv, byte[] secKeyData)
         {
-            this.pubKeyPacket = pubKeyPacket;
-            this.encAlgorithm = encAlgorithm;
+            this.PublicKeyPacket = pubKeyPacket;
+            this.EncAlgorithm = encAlgorithm;
 
-			if (encAlgorithm != SymmetricKeyAlgorithmTag.Null)
-			{
-				this.s2kUsage = UsageChecksum;
-			}
-			else
-			{
-				this.s2kUsage = UsageNone;
-			}
+            this.S2KUsage = encAlgorithm != SymmetricKeyAlgorithmTag.Null ? UsageChecksum : UsageNone;
 
-			this.s2k = s2k;
-			this.iv = Arrays.Clone(iv);
-			this.secKeyData = secKeyData;
+            this.S2K = s2K;
+            _iv = Arrays.Clone(iv);
+            _secKeyData = secKeyData;
         }
 
-		public SecretKeyPacket(
-			PublicKeyPacket				pubKeyPacket,
-			SymmetricKeyAlgorithmTag	encAlgorithm,
-			int							s2kUsage,
-			S2k							s2k,
-			byte[]						iv,
-			byte[]						secKeyData)
-		{
-			this.pubKeyPacket = pubKeyPacket;
-			this.encAlgorithm = encAlgorithm;
-			this.s2kUsage = s2kUsage;
-			this.s2k = s2k;
-			this.iv = Arrays.Clone(iv);
-			this.secKeyData = secKeyData;
-		}
-
-		public SymmetricKeyAlgorithmTag EncAlgorithm
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SecretKeyPacket"/> class.
+        /// </summary>
+        /// <param name="pubKeyPacket">The pub key packet.</param>
+        /// <param name="encAlgorithm">The enc algorithm.</param>
+        /// <param name="s2KUsage">The s2 K usage.</param>
+        /// <param name="s2K">The s2 K.</param>
+        /// <param name="iv">The iv.</param>
+        /// <param name="secKeyData">The sec key data.</param>
+        public SecretKeyPacket(PublicKeyPacket pubKeyPacket, SymmetricKeyAlgorithmTag encAlgorithm, int s2KUsage, S2k s2K, byte[] iv, byte[] secKeyData)
         {
-			get { return encAlgorithm; }
+            this.PublicKeyPacket = pubKeyPacket;
+            this.EncAlgorithm = encAlgorithm;
+            this.S2KUsage = s2KUsage;
+            this.S2K = s2K;
+            _iv = Arrays.Clone(iv);
+            _secKeyData = secKeyData;
         }
 
-		public int S2kUsage
-		{
-			get { return s2kUsage; }
-		}
+        /// <summary>
+        /// Gets the enc algorithm.
+        /// </summary>
+        /// <value>
+        /// The enc algorithm.
+        /// </value>
+        public SymmetricKeyAlgorithmTag EncAlgorithm { get; private set; }
 
-		public byte[] GetIV()
+        /// <summary>
+        /// Gets the s2 K usage.
+        /// </summary>
+        /// <value>
+        /// The s2 K usage.
+        /// </value>
+        public int S2KUsage { get; private set; }
+
+        /// <summary>
+        /// Gets the IV.
+        /// </summary>
+        /// <returns></returns>
+        public byte[] GetIV()
         {
-            return Arrays.Clone(iv);
+            return Arrays.Clone(_iv);
         }
 
-		public S2k S2k
+        /// <summary>
+        /// Gets the s2 K.
+        /// </summary>
+        /// <value>
+        /// The s2 K.
+        /// </value>
+        public S2k S2K { get; private set; }
+
+        /// <summary>
+        /// Gets the public key packet.
+        /// </summary>
+        /// <value>
+        /// The public key packet.
+        /// </value>
+        public PublicKeyPacket PublicKeyPacket { get; private set; }
+
+        /// <summary>
+        /// Gets the secret key data.
+        /// </summary>
+        /// <returns></returns>
+        public byte[] GetSecretKeyData()
         {
-			get { return s2k; }
+            return _secKeyData;
         }
 
-		public PublicKeyPacket PublicKeyPacket
+        /// <summary>
+        /// Gets the encoded contents.
+        /// </summary>
+        /// <returns></returns>
+        public byte[] GetEncodedContents()
         {
-			get { return pubKeyPacket; }
-        }
-
-		public byte[] GetSecretKeyData()
-        {
-            return secKeyData;
-        }
-
-		public byte[] GetEncodedContents()
-        {
-            MemoryStream bOut = new MemoryStream();
-            BcpgOutputStream pOut = new BcpgOutputStream(bOut);
-
-            pOut.Write(pubKeyPacket.GetEncodedContents());
-
-			pOut.WriteByte((byte) s2kUsage);
-
-			if (s2kUsage == UsageChecksum || s2kUsage == UsageSha1)
+            using (var bOut = new MemoryStream())
             {
-                pOut.WriteByte((byte) encAlgorithm);
-                pOut.WriteObject(s2k);
-            }
+                using (var pOut = new BcpgOutputStream(bOut))
+                {
+                    pOut.Write(PublicKeyPacket.GetEncodedContents());
+                    pOut.WriteByte((byte) this.S2KUsage);
 
-			if (iv != null)
-            {
-                pOut.Write(iv);
-            }
+                    if (this.S2KUsage == UsageChecksum || this.S2KUsage == UsageSha1)
+                    {
+                        pOut.WriteByte((byte)this.EncAlgorithm);
+                        pOut.WriteObject(this.S2K);
+                    }
 
-            if (secKeyData != null && secKeyData.Length > 0)
-            {
-                pOut.Write(secKeyData);
-            }
+                    if (_iv != null)
+                    {
+                        pOut.Write(_iv);
+                    }
 
-            return bOut.ToArray();
+                    if (_secKeyData != null && _secKeyData.Length > 0)
+                    {
+                        pOut.Write(_secKeyData);
+                    }
+
+                    return bOut.ToArray();
+                }
+            }
         }
 
-        public override void Encode(
-            IBcpgOutputStream bcpgOut)
+        /// <summary>
+        /// Encodes this instance to the given stream.
+        /// </summary>
+        /// <param name="bcpgOut">The BCPG out.</param>
+        public override void Encode(IBcpgOutputStream bcpgOut)
         {
-            bcpgOut.WritePacket(PacketTag.SecretKey, GetEncodedContents(), true);
+            bcpgOut.WritePacket(PacketTag.SecretKey, this.GetEncodedContents(), true);
         }
     }
 }

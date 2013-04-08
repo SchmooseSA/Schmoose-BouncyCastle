@@ -4,42 +4,55 @@ using Org.BouncyCastle.Math;
 
 namespace Org.BouncyCastle.Bcpg
 {
-	/// <remarks>Base class for an ElGamal secret key.</remarks>
-	public class ElGamalSecretBcpgKey
-		: BcpgObject, IBcpgKey
+    /// <summary>
+    /// Base class for an ElGamal secret key.
+    /// </summary>
+    public class ElGamalSecretBcpgKey : BcpgObject, IBcpgKey
 	{
-		internal MPInteger x;
+		private readonly MPInteger _x;
 
-		/**
-		* @param in
-		*/
-		public ElGamalSecretBcpgKey(
-			BcpgInputStream bcpgIn)
+		/// <summary>
+        /// Initializes a new instance of the <see cref="ElGamalSecretBcpgKey"/> class.
+        /// </summary>
+        /// <param name="bcpgIn">The BCPG in.</param>
+		public ElGamalSecretBcpgKey(BcpgInputStream bcpgIn)
 		{
-			this.x = new MPInteger(bcpgIn);
+            _x = new MPInteger(bcpgIn);
 		}
 
-		/**
-		* @param x
-		*/
-		public ElGamalSecretBcpgKey(
-            IBigInteger x)
+		/// <summary>
+        /// Initializes a new instance of the <see cref="ElGamalSecretBcpgKey"/> class.
+        /// </summary>
+        /// <param name="x">The x.</param>
+		public ElGamalSecretBcpgKey(IBigInteger x)
 		{
-			this.x = new MPInteger(x);
+            _x = new MPInteger(x);
 		}
 
-		/// <summary>The format, as a string, always "PGP".</summary>
+        /// <summary>
+        /// The format, as a string, always "PGP".
+        /// </summary>
+        /// <returns>"RAW" or "PGP".</returns>
 		public string Format
 		{
 			get { return "PGP"; }
 		}
 
+        /// <summary>
+        /// Gets the X.
+        /// </summary>
+        /// <value>
+        /// The X.
+        /// </value>
         public IBigInteger X
 		{
-			get { return x.Value; }
+            get { return _x.Value; }
 		}
 
-		/// <summary>Return the standard PGP encoding of the key.</summary>
+        /// <summary>
+        /// Return the standard PGP encoding of the key.
+        /// </summary>
+        /// <returns></returns>
 		public override byte[] GetEncoded()
 		{
 			try
@@ -52,10 +65,9 @@ namespace Org.BouncyCastle.Bcpg
 			}
 		}
 
-		public override void Encode(
-			IBcpgOutputStream bcpgOut)
+		public override void Encode(IBcpgOutputStream bcpgOut)
 		{
-			bcpgOut.WriteObject(x);
+            bcpgOut.WriteObject(_x);
 		}
 	}
 }

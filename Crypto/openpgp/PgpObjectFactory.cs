@@ -22,7 +22,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         public PgpObjectFactory(
             Stream inputStream)
         {
-            this._bcpgIn = BcpgInputStream.Wrap(inputStream);
+            _bcpgIn = BcpgInputStream.Wrap(inputStream);
         }
 
         public PgpObjectFactory(
@@ -35,7 +35,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <exception cref="IOException">On a parse error</exception>
         public PgpObject NextPgpObject()
         {
-            PacketTag tag = _bcpgIn.NextPacketTag();
+            var tag = _bcpgIn.NextPacketTag();
 
             if ((int)tag == -1) return null;
 

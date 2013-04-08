@@ -155,8 +155,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 pgpSecretKey = (PgpSecretKey) enumerator.Current;
 
                 PgpPublicKey k = new PgpPublicKey((PgpPublicKey)pgpSecretKey.PublicKey);
-				k.publicPk = new PublicSubkeyPacket(
-					k.Algorithm, k.CreationTime, k.publicPk.Key);
+				k.PublicPk = new PublicSubkeyPacket(
+					k.Algorithm, k.CreationTime, k.PublicPk.Key);
 
 				pubKeys.Add(k);
 			}

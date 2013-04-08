@@ -7,8 +7,7 @@ using Org.BouncyCastle.Utilities.IO;
 namespace Org.BouncyCastle.Bcpg
 {
 	/// <remarks>The string to key specifier class.</remarks>
-    public class S2k
-        : BcpgObject
+    public class S2k : BcpgObject
     {
         private const int ExpBias = 6;
 
@@ -17,32 +16,36 @@ namespace Org.BouncyCastle.Bcpg
         public const int SaltedAndIterated = 3;
         public const int GnuDummyS2K = 101;
 
-        internal int type;
-        internal HashAlgorithmTag algorithm;
-        internal byte[] iv;
-        internal int itCount = -1;
-        internal int protectionMode = -1;
+        private readonly int _type;
+        private readonly HashAlgorithmTag _algorithm;
+        private readonly byte[] _iv;
+        private readonly int _itCount = -1;
+        private readonly int _protectionMode = -1;
 
-        internal S2k(
-            Stream inStr)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="S2k"/> class.
+        /// </summary>
+        /// <param name="inStr">The in STR.</param>
+        /// <exception cref="System.IO.EndOfStreamException"></exception>
+        internal S2k(Stream inStr)
         {
-			type = inStr.ReadByte();
-            algorithm = (HashAlgorithmTag) inStr.ReadByte();
+			_type = inStr.ReadByte();
+            _algorithm = (HashAlgorithmTag) inStr.ReadByte();
 
             //
             // if this happens we have a dummy-S2k packet.
             //
-            if (type != GnuDummyS2K)
+            if (_type != GnuDummyS2K)
             {
-                if (type != 0)
+                if (_type != 0)
                 {
-					iv = new byte[8];
-					if (Streams.ReadFully(inStr, iv, 0, iv.Length) < iv.Length)
+					_iv = new byte[8];
+					if (Streams.ReadFully(inStr, _iv, 0, _iv.Length) < _iv.Length)
 						throw new EndOfStreamException();
 
-					if (type == 3)
+					if (_type == 3)
 					{
-						itCount = inStr.ReadByte();
+						_itCount = inStr.ReadByte();
 					}
 				}
             }
@@ -51,52 +54,61 @@ namespace Org.BouncyCastle.Bcpg
                 inStr.ReadByte(); // G
                 inStr.ReadByte(); // N
                 inStr.ReadByte(); // U
-                protectionMode = inStr.ReadByte(); // protection mode
+                _protectionMode = inStr.ReadByte(); // protection mode
             }
         }
 
-        public S2k(
-            HashAlgorithmTag algorithm)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="S2k"/> class.
+        /// </summary>
+        /// <param name="algorithm">The algorithm.</param>
+        public S2k(HashAlgorithmTag algorithm)
         {
-            this.type = 0;
-            this.algorithm = algorithm;
+            _type = 0;
+            _algorithm = algorithm;
         }
 
-        public S2k(
-            HashAlgorithmTag algorithm,
-            byte[] iv)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="S2k"/> class.
+        /// </summary>
+        /// <param name="algorithm">The algorithm.</param>
+        /// <param name="iv">The iv.</param>
+        public S2k(HashAlgorithmTag algorithm, byte[] iv)
         {
-            this.type = 1;
-            this.algorithm = algorithm;
-            this.iv = iv;
+            _type = 1;
+            _algorithm = algorithm;
+            _iv = iv;
         }
 
-        public S2k(
-            HashAlgorithmTag algorithm,
-            byte[] iv,
-            int itCount)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="S2k"/> class.
+        /// </summary>
+        /// <param name="algorithm">The algorithm.</param>
+        /// <param name="iv">The iv.</param>
+        /// <param name="itCount">It count.</param>
+        public S2k(HashAlgorithmTag algorithm, byte[] iv, int itCount)
         {
-            this.type = 3;
-            this.algorithm = algorithm;
-            this.iv = iv;
-            this.itCount = itCount;
+            _type = 3;
+            _algorithm = algorithm;
+            _iv = iv;
+            _itCount = itCount;
         }
 
         public int Type
         {
-			get { return type; }
+			get { return _type; }
         }
 
 		/// <summary>The hash algorithm.</summary>
         public HashAlgorithmTag HashAlgorithm
         {
-			get { return algorithm; }
+			get { return _algorithm; }
 		}
 
 		/// <summary>The IV for the key generation algorithm.</summary>
         public byte[] GetIV()
         {
-            return Arrays.Clone(iv);
+            return Arrays.Clone(_iv);
         }
 
 		[Obsolete("Use 'IterationCount' property instead")]
@@ -108,31 +120,30 @@ namespace Org.BouncyCastle.Bcpg
 		/// <summary>The iteration count</summary>
 		public long IterationCount
 		{
-			get { return (16 + (itCount & 15)) << ((itCount >> 4) + ExpBias); }
+			get { return (16 + (_itCount & 15)) << ((_itCount >> 4) + ExpBias); }
 		}
 
 		/// <summary>The protection mode - only if GnuDummyS2K</summary>
         public int ProtectionMode
         {
-			get { return protectionMode; }
+			get { return _protectionMode; }
         }
 
-        public override void Encode(
-            IBcpgOutputStream bcpgOut)
+        public override void Encode(IBcpgOutputStream bcpgOut)
         {
-            bcpgOut.WriteByte((byte) type);
-            bcpgOut.WriteByte((byte) algorithm);
+            bcpgOut.WriteByte((byte) _type);
+            bcpgOut.WriteByte((byte) _algorithm);
 
-            if (type != GnuDummyS2K)
+            if (_type != GnuDummyS2K)
             {
-                if (type != 0)
+                if (_type != 0)
                 {
-                    bcpgOut.Write(iv);
+                    bcpgOut.Write(_iv);
                 }
 
-                if (type == 3)
+                if (_type == 3)
                 {
-                    bcpgOut.WriteByte((byte) itCount);
+                    bcpgOut.WriteByte((byte) _itCount);
                 }
             }
             else
@@ -140,7 +151,7 @@ namespace Org.BouncyCastle.Bcpg
                 bcpgOut.WriteByte((byte) 'G');
                 bcpgOut.WriteByte((byte) 'N');
                 bcpgOut.WriteByte((byte) 'U');
-                bcpgOut.WriteByte((byte) protectionMode);
+                bcpgOut.WriteByte((byte) _protectionMode);
             }
         }
     }

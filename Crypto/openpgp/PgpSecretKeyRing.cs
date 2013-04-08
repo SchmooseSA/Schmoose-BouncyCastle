@@ -156,15 +156,14 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
 		public byte[] GetEncoded()
         {
-            MemoryStream bOut = new MemoryStream();
-
-            Encode(bOut);
-
-            return bOut.ToArray();
+		    using (var bOut = new MemoryStream())
+		    {
+		        Encode(bOut);
+		        return bOut.ToArray();
+		    }
         }
 
-        public void Encode(
-            Stream outStr)
+        public void Encode(Stream outStr)
         {
 			if (outStr == null)
 				throw new ArgumentNullException("outStr");
