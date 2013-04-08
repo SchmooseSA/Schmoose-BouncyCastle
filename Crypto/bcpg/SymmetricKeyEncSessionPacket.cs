@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 
 namespace Org.BouncyCastle.Bcpg
@@ -6,85 +5,91 @@ namespace Org.BouncyCastle.Bcpg
     /**
     * Basic type for a symmetric encrypted session key packet
     */
-    public class SymmetricKeyEncSessionPacket
-        : ContainedPacket
+    public class SymmetricKeyEncSessionPacket : ContainedPacket
     {
-        private int version;
-        private SymmetricKeyAlgorithmTag encAlgorithm;
-        private S2k s2k;
-        private readonly byte[] secKeyData;
+        private readonly byte[] _secKeyData;
 
-        public SymmetricKeyEncSessionPacket(
-            BcpgInputStream bcpgIn)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SymmetricKeyEncSessionPacket"/> class.
+        /// </summary>
+        /// <param name="bcpgIn">The BCPG in.</param>
+        public SymmetricKeyEncSessionPacket(BcpgInputStream bcpgIn)
         {
-            version = bcpgIn.ReadByte();
-            encAlgorithm = (SymmetricKeyAlgorithmTag) bcpgIn.ReadByte();
+            Version = bcpgIn.ReadByte();
+            EncAlgorithm = (SymmetricKeyAlgorithmTag)bcpgIn.ReadByte();
 
-            s2k = new S2k(bcpgIn);
+            S2K = new S2k(bcpgIn);
 
-            secKeyData = bcpgIn.ReadAll();
+            _secKeyData = bcpgIn.ReadAll();
         }
 
-		public SymmetricKeyEncSessionPacket(
-            SymmetricKeyAlgorithmTag	encAlgorithm,
-            S2k							s2k,
-            byte[]						secKeyData)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SymmetricKeyEncSessionPacket"/> class.
+        /// </summary>
+        /// <param name="encAlgorithm">The enc algorithm.</param>
+        /// <param name="s2k">The S2K.</param>
+        /// <param name="secKeyData">The sec key data.</param>
+        public SymmetricKeyEncSessionPacket(SymmetricKeyAlgorithmTag encAlgorithm, S2k s2k, byte[] secKeyData)
         {
-            this.version = 4;
-            this.encAlgorithm = encAlgorithm;
-            this.s2k = s2k;
-            this.secKeyData = secKeyData;
+            this.Version = 4;
+            this.EncAlgorithm = encAlgorithm;
+            this.S2K = s2k;
+            this._secKeyData = secKeyData;
         }
 
-        /**
-        * @return int
-        */
-        public SymmetricKeyAlgorithmTag EncAlgorithm
-        {
-			get { return encAlgorithm; }
-        }
+        /// <summary>
+        /// Gets the enc algorithm.
+        /// </summary>
+        /// <value>
+        /// The enc algorithm.
+        /// </value>
+        public SymmetricKeyAlgorithmTag EncAlgorithm { get; private set; }
 
-        /**
-        * @return S2k
-        */
-        public S2k S2k
-        {
-			get { return s2k; }
-        }
+        /// <summary>
+        /// Gets the s2 K.
+        /// </summary>
+        /// <value>
+        /// The s2 K.
+        /// </value>
+        public S2k S2K { get; private set; }
 
-        /**
-        * @return byte[]
-        */
+        /// <summary>
+        /// Gets the sec key data.
+        /// </summary>
+        /// <returns></returns>
         public byte[] GetSecKeyData()
         {
-            return secKeyData;
+            return _secKeyData;
         }
 
-        /**
-        * @return int
-        */
-        public int Version
-        {
-			get { return version; }
-        }
+        /// <summary>
+        /// Gets the version.
+        /// </summary>
+        /// <value>
+        /// The version.
+        /// </value>
+        public int Version { get; private set; }
 
-        public override void Encode(
-            IBcpgOutputStream bcpgOut)
+        /// <summary>
+        /// Encodes this instance to the given stream.
+        /// </summary>
+        /// <param name="bcpgOut">The BCPG out.</param>
+        public override void Encode(IBcpgOutputStream bcpgOut)
         {
-            using (MemoryStream bOut = new MemoryStream())
+            using (var bOut = new MemoryStream())
             {
-                using (BcpgOutputStream pOut = new BcpgOutputStream(bOut))
+                using (var pOut = new BcpgOutputStream(bOut))
                 {
 
                     pOut.Write(
-                        (byte) version,
-                        (byte) encAlgorithm);
+                        (byte)Version,
+                        (byte)EncAlgorithm);
 
-                    pOut.WriteObject(s2k);
+                    pOut.WriteObject(S2K);
 
-                    if (secKeyData != null && secKeyData.Length > 0)
+                    if (_secKeyData != null && _secKeyData.Length > 0)
                     {
-                        pOut.Write(secKeyData);
+                        pOut.Write(_secKeyData);
                     }
 
                     bcpgOut.WritePacket(PacketTag.SymmetricKeyEncryptedSessionKey, bOut.ToArray(), true);

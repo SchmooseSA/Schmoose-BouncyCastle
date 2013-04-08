@@ -38,7 +38,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 				SymmetricKeyAlgorithmTag keyAlgorithm = keyData.EncAlgorithm;
 
 				KeyParameter key = PgpUtilities.MakeKeyFromPassPhrase(
-					keyAlgorithm, keyData.S2k, passPhrase);
+					keyAlgorithm, keyData.S2K, passPhrase);
 
 
 				byte[] secKeyData = keyData.GetSecKeyData();
