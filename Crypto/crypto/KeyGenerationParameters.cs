@@ -8,8 +8,8 @@ namespace Org.BouncyCastle.Crypto
      */
     public class KeyGenerationParameters : IKeyGenerationParameters
     {
-        private ISecureRandom	random;
-        private int				strength;
+        private readonly ISecureRandom _random;
+        private readonly int _strength;
 
         /**
          * initialise the generator with a source of randomness
@@ -18,20 +18,18 @@ namespace Org.BouncyCastle.Crypto
          * @param random the random byte source.
          * @param strength the size, in bits, of the keys we want to produce.
          */
-        public KeyGenerationParameters(
-            ISecureRandom	random,
-            int				strength)
+        public KeyGenerationParameters(ISecureRandom random, int strength)
         {
-			if (random == null)
-				throw new ArgumentNullException("random");
-			if (strength < 1)
-				throw new ArgumentException("strength must be a positive value", "strength");
+            if (random == null)
+                throw new ArgumentNullException("random");
+            if (strength < 1)
+                throw new ArgumentException("strength must be a positive value", "strength");
 
-			this.random = random;
-            this.strength = strength;
+            _random = random;
+            _strength = strength;
         }
 
-		/**
+        /**
          * return the random source associated with this
          * generator.
          *
@@ -39,17 +37,17 @@ namespace Org.BouncyCastle.Crypto
          */
         public ISecureRandom Random
         {
-            get { return random; }
+            get { return _random; }
         }
 
-		/**
+        /**
          * return the bit strength for keys produced by this generator,
          *
          * @return the strength of the keys this generator produces (in bits).
          */
         public int Strength
         {
-            get { return strength; }
+            get { return _strength; }
         }
     }
 }

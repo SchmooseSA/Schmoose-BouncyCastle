@@ -1,6 +1,3 @@
-using System;
-
-using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Math;
 
@@ -12,38 +9,30 @@ namespace Org.BouncyCastle.Crypto.Generators
     public class RsaKeyPairGenerator
 		: IAsymmetricCipherKeyPairGenerator
     {
-		private static readonly IBigInteger DefaultPublicExponent = BigInteger.ValueOf(0x10001);
+		private static readonly IBigInteger _defaultPublicExponent = BigInteger.ValueOf(0x10001);
 		private const int DefaultTests = 12;
 
-		private RsaKeyGenerationParameters param;
+		private RsaKeyGenerationParameters _param;
 
-		public void Init(
-            IKeyGenerationParameters parameters)
-        {
-			if (parameters is RsaKeyGenerationParameters)
-			{
-				this.param = (RsaKeyGenerationParameters)parameters;
-			}
-			else
-			{
-				this.param = new RsaKeyGenerationParameters(
-					DefaultPublicExponent, parameters.Random, parameters.Strength, DefaultTests);
-			}
-        }
+		public void Init( IKeyGenerationParameters parameters)
+		{
+		    _param = parameters as RsaKeyGenerationParameters ??
+		             new RsaKeyGenerationParameters(_defaultPublicExponent, parameters.Random, parameters.Strength, DefaultTests);
+		}
 
-		public IAsymmetricCipherKeyPair GenerateKeyPair()
+        public IAsymmetricCipherKeyPair GenerateKeyPair()
         {
-            IBigInteger p, q, n, d, e, pSub1, qSub1, phi;
+            IBigInteger p, q, n, phi;
 
             //
             // p and q values should have a length of half the strength in bits
             //
-			int strength = param.Strength;
-            int pbitlength = (strength + 1) / 2;
-            int qbitlength = (strength - pbitlength);
-			int mindiffbits = strength / 3;
+			var strength = _param.Strength;
+            var pbitlength = (strength + 1) / 2;
+            var qbitlength = (strength - pbitlength);
+			var mindiffbits = strength / 3;
 
-			e = param.PublicExponent;
+			var e = _param.PublicExponent;
 
 			// TODO Consider generating safe primes for p, q (see DHParametersHelper.generateSafePrimes)
 			// (then p-1 and q-1 will not consist of only small factors - see "Pollard's algorithm")
@@ -53,12 +42,12 @@ namespace Org.BouncyCastle.Crypto.Generators
             //
             for (;;)
             {
-				p = new BigInteger(pbitlength, 1, param.Random);
+				p = new BigInteger(pbitlength, 1, _param.Random);
 
 				if (p.Mod(e).Equals(BigInteger.One))
 					continue;
 
-				if (!p.IsProbablePrime(param.Certainty))
+				if (!p.IsProbablePrime(_param.Certainty))
 					continue;
 
 				if (e.Gcd(p.Subtract(BigInteger.One)).Equals(BigInteger.One)) 
@@ -75,7 +64,7 @@ namespace Org.BouncyCastle.Crypto.Generators
                 //
                 for (;;)
                 {
-					q = new BigInteger(qbitlength, 1, param.Random);
+					q = new BigInteger(qbitlength, 1, _param.Random);
 
 					if (q.Subtract(p).Abs().BitLength < mindiffbits)
 						continue;
@@ -83,7 +72,7 @@ namespace Org.BouncyCastle.Crypto.Generators
 					if (q.Mod(e).Equals(BigInteger.One))
 						continue;
 
-					if (!q.IsProbablePrime(param.Certainty))
+					if (!q.IsProbablePrime(_param.Certainty))
 						continue;
 
 					if (e.Gcd(q.Subtract(BigInteger.One)).Equals(BigInteger.One)) 
@@ -95,7 +84,7 @@ namespace Org.BouncyCastle.Crypto.Generators
                 //
                 n = p.Multiply(q);
 
-                if (n.BitLength == param.Strength)
+                if (n.BitLength == _param.Strength)
 					break;
 
                 //
@@ -112,23 +101,22 @@ namespace Org.BouncyCastle.Crypto.Generators
 				q = phi;
 			}
 
-            pSub1 = p.Subtract(BigInteger.One);
-            qSub1 = q.Subtract(BigInteger.One);
+            var pSub1 = p.Subtract(BigInteger.One);
+            var qSub1 = q.Subtract(BigInteger.One);
             phi = pSub1.Multiply(qSub1);
 
             //
             // calculate the private exponent
             //
-            d = e.ModInverse(phi);
+            var d = e.ModInverse(phi);
 
             //
             // calculate the CRT factors
             //
-            IBigInteger dP, dQ, qInv;
 
-            dP = d.Remainder(pSub1);
-            dQ = d.Remainder(qSub1);
-            qInv = q.ModInverse(p);
+            var dP = d.Remainder(pSub1);
+            var dQ = d.Remainder(qSub1);
+            var qInv = q.ModInverse(p);
 
             return new AsymmetricCipherKeyPair(
                 new RsaKeyParameters(false, n, e),

@@ -1,55 +1,42 @@
-using System;
-
-using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Security;
 
 namespace Org.BouncyCastle.Crypto.Parameters
 {
-    public class RsaKeyGenerationParameters
-		: KeyGenerationParameters
+    public class RsaKeyGenerationParameters : KeyGenerationParameters
     {
-        private readonly IBigInteger publicExponent;
-        private readonly int certainty;
+        private readonly IBigInteger _publicExponent;
+        private readonly int _certainty;
 
-		public RsaKeyGenerationParameters(
-            IBigInteger		publicExponent,
-            ISecureRandom	random,
-            int				strength,
-            int				certainty)
-			: base(random, strength)
+        public RsaKeyGenerationParameters(IBigInteger publicExponent, ISecureRandom random, int strength, int certainty)
+            : base(random, strength)
         {
-            this.publicExponent = publicExponent;
-            this.certainty = certainty;
+            _publicExponent = publicExponent;
+            _certainty = certainty;
         }
 
-		public IBigInteger PublicExponent
+        public IBigInteger PublicExponent
         {
-			get { return publicExponent; }
+            get { return _publicExponent; }
         }
 
-		public int Certainty
+        public int Certainty
         {
-			get { return certainty; }
+            get { return _certainty; }
         }
 
-		public override bool Equals(
-			object obj)
-		{
-			RsaKeyGenerationParameters other = obj as RsaKeyGenerationParameters;
+        public override bool Equals(object obj)
+        {
+            var other = obj as RsaKeyGenerationParameters;
+            if (other == null)
+                return false;
+            return _certainty == other._certainty
+                && _publicExponent.Equals(other._publicExponent);
+        }
 
-			if (other == null)
-			{
-				return false;
-			}
-
-			return certainty == other.certainty
-				&& publicExponent.Equals(other.publicExponent);
-		}
-
-		public override int GetHashCode()
-		{
-			return certainty.GetHashCode() ^ publicExponent.GetHashCode();
-		}
+        public override int GetHashCode()
+        {
+            return _certainty.GetHashCode() ^ _publicExponent.GetHashCode();
+        }
     }
 }
