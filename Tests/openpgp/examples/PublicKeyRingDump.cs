@@ -1,10 +1,5 @@
 using System;
-using System.Collections;
 using System.IO;
-
-using Org.BouncyCastle.Asn1.Utilities;
-
-using Org.BouncyCastle.Bcpg.OpenPgp;
 using Org.BouncyCastle.Utilities.Encoders;
 
 namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
@@ -14,14 +9,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
     * as an argument. If the file contains more than one "key ring" they are
     * listed in the order found.
     */
-    public sealed class PublicKeyRingDump
+    public static class PublicKeyRingDump
     {
-        private PublicKeyRingDump()
-        {
-        }
-
-        public static string GetAlgorithm(
-            PublicKeyAlgorithmTag algId)
+        public static string GetAlgorithm(PublicKeyAlgorithmTag algId)
         {
             switch (algId)
             {
@@ -48,20 +38,16 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
             return "unknown";
         }
 
-		public static void Main(
-			string[] args)
-        {
-			Stream fs = File.OpenRead(args[0]);
+		public static void Main(string[] args)
+		{
+		    PgpPublicKeyRingBundle pubRings;
+		    using (Stream fs = File.OpenRead(args[0]))
+		    {
 
-			//
-            // Read the public key rings
-            //
-            PgpPublicKeyRingBundle pubRings = new PgpPublicKeyRingBundle(
-                PgpUtilities.GetDecoderStream(fs));
+		        pubRings = new PgpPublicKeyRingBundle(PgpUtilities.GetDecoderStream(fs));
+		    }
 
-			fs.Close();
-
-			foreach (PgpPublicKeyRing pgpPub in pubRings.GetKeyRings())
+		    foreach (PgpPublicKeyRing pgpPub in pubRings.GetKeyRings())
             {
                 try
                 {
@@ -75,8 +61,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
                     continue;
                 }
 
-				bool first = true;
-
+				var first = true;
 				foreach (PgpPublicKey pgpKey in pgpPub.GetPublicKeys())
                 {
                     if (first)

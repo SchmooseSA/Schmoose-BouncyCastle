@@ -6,19 +6,18 @@ namespace Org.BouncyCastle.Crypto.Generators
     /**
      * an RSA key pair generator.
      */
-    public class RsaKeyPairGenerator
-		: IAsymmetricCipherKeyPairGenerator
+    public class RsaKeyPairGenerator : IAsymmetricCipherKeyPairGenerator
     {
-		private static readonly IBigInteger _defaultPublicExponent = BigInteger.ValueOf(0x10001);
-		private const int DefaultTests = 12;
+        private static readonly IBigInteger _defaultPublicExponent = BigInteger.ValueOf(0x10001);
+        private const int DefaultTests = 12;
 
-		private RsaKeyGenerationParameters _param;
+        private RsaKeyGenerationParameters _param;
 
-		public void Init( IKeyGenerationParameters parameters)
-		{
-		    _param = parameters as RsaKeyGenerationParameters ??
-		             new RsaKeyGenerationParameters(_defaultPublicExponent, parameters.Random, parameters.Strength, DefaultTests);
-		}
+        public void Init(IKeyGenerationParameters parameters)
+        {
+            _param = parameters as RsaKeyGenerationParameters ??
+                     new RsaKeyGenerationParameters(_defaultPublicExponent, parameters.Random, parameters.Strength, DefaultTests);
+        }
 
         public IAsymmetricCipherKeyPair GenerateKeyPair()
         {
@@ -27,57 +26,57 @@ namespace Org.BouncyCastle.Crypto.Generators
             //
             // p and q values should have a length of half the strength in bits
             //
-			var strength = _param.Strength;
+            var strength = _param.Strength;
             var pbitlength = (strength + 1) / 2;
             var qbitlength = (strength - pbitlength);
-			var mindiffbits = strength / 3;
+            var mindiffbits = strength / 3;
 
-			var e = _param.PublicExponent;
+            var e = _param.PublicExponent;
 
-			// TODO Consider generating safe primes for p, q (see DHParametersHelper.generateSafePrimes)
-			// (then p-1 and q-1 will not consist of only small factors - see "Pollard's algorithm")
+            // TODO Consider generating safe primes for p, q (see DHParametersHelper.generateSafePrimes)
+            // (then p-1 and q-1 will not consist of only small factors - see "Pollard's algorithm")
 
-			//
+            //
             // Generate p, prime and (p-1) relatively prime to e
             //
-            for (;;)
+            for (; ; )
             {
-				p = new BigInteger(pbitlength, 1, _param.Random);
+                p = new BigInteger(pbitlength, 1, _param.Random);
 
-				if (p.Mod(e).Equals(BigInteger.One))
-					continue;
+                if (p.Mod(e).Equals(BigInteger.One))
+                    continue;
 
-				if (!p.IsProbablePrime(_param.Certainty))
-					continue;
+                if (!p.IsProbablePrime(_param.Certainty))
+                    continue;
 
-				if (e.Gcd(p.Subtract(BigInteger.One)).Equals(BigInteger.One)) 
-					break;
-			}
+                if (e.Gcd(p.Subtract(BigInteger.One)).Equals(BigInteger.One))
+                    break;
+            }
 
             //
             // Generate a modulus of the required length
             //
-            for (;;)
+            for (; ; )
             {
                 // Generate q, prime and (q-1) relatively prime to e,
                 // and not equal to p
                 //
-                for (;;)
+                for (; ; )
                 {
-					q = new BigInteger(qbitlength, 1, _param.Random);
+                    q = new BigInteger(qbitlength, 1, _param.Random);
 
-					if (q.Subtract(p).Abs().BitLength < mindiffbits)
-						continue;
+                    if (q.Subtract(p).Abs().BitLength < mindiffbits)
+                        continue;
 
-					if (q.Mod(e).Equals(BigInteger.One))
-						continue;
+                    if (q.Mod(e).Equals(BigInteger.One))
+                        continue;
 
-					if (!q.IsProbablePrime(_param.Certainty))
-						continue;
+                    if (!q.IsProbablePrime(_param.Certainty))
+                        continue;
 
-					if (e.Gcd(q.Subtract(BigInteger.One)).Equals(BigInteger.One)) 
-						break;
-				}
+                    if (e.Gcd(q.Subtract(BigInteger.One)).Equals(BigInteger.One))
+                        break;
+                }
 
                 //
                 // calculate the modulus
@@ -85,7 +84,7 @@ namespace Org.BouncyCastle.Crypto.Generators
                 n = p.Multiply(q);
 
                 if (n.BitLength == _param.Strength)
-					break;
+                    break;
 
                 //
                 // if we Get here our primes aren't big enough, make the largest
@@ -94,12 +93,12 @@ namespace Org.BouncyCastle.Crypto.Generators
                 p = p.Max(q);
             }
 
-			if (p.CompareTo(q) < 0)
-			{
-				phi = p;
-				p = q;
-				q = phi;
-			}
+            if (p.CompareTo(q) < 0)
+            {
+                phi = p;
+                p = q;
+                q = phi;
+            }
 
             var pSub1 = p.Subtract(BigInteger.One);
             var qSub1 = q.Subtract(BigInteger.One);

@@ -7,7 +7,7 @@
     <ProjectGuid>{C9A32B71-5377-43EB-B9CD-5B93AF005667}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>crypto.test</RootNamespace>
+    <RootNamespace>Org.BouncyCastle.Bcpg</RootNamespace>
     <AssemblyName>Org.BouncyCastle.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

@@ -6,46 +6,40 @@ using Org.BouncyCastle.Asn1.Nist;
 using Org.BouncyCastle.Asn1.Sec;
 using Org.BouncyCastle.Asn1.TeleTrust;
 using Org.BouncyCastle.Asn1.X9;
-using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Math;
-using Org.BouncyCastle.Math.EC;
 using Org.BouncyCastle.Security;
 
 namespace Org.BouncyCastle.Crypto.Generators
 {
-    public class ECKeyPairGenerator
-		: IAsymmetricCipherKeyPairGenerator
+    public class ECKeyPairGenerator : IAsymmetricCipherKeyPairGenerator
     {
-		private readonly string algorithm;
+		private readonly string _algorithm;
 
-		private ECDomainParameters parameters;
-		private DerObjectIdentifier publicKeyParamSet;
-        private ISecureRandom random;
+		private ECDomainParameters _parameters;
+		private DerObjectIdentifier _publicKeyParamSet;
+        private ISecureRandom _random;
 
 		public ECKeyPairGenerator()
 			: this("EC")
 		{
 		}
 
-		public ECKeyPairGenerator(
-			string algorithm)
+		public ECKeyPairGenerator(string algorithm)
 		{
 			if (algorithm == null)
 				throw new ArgumentNullException("algorithm");
 
-			this.algorithm = VerifyAlgorithmName(algorithm);
+			_algorithm = VerifyAlgorithmName(algorithm);
 		}
 
-		public void Init(
-            IKeyGenerationParameters parameters)
+		public void Init(IKeyGenerationParameters parameters)
         {
-			if (parameters is ECKeyGenerationParameters)
+		    var ecKeyGenerationParameters = parameters as ECKeyGenerationParameters;
+		    if (ecKeyGenerationParameters != null)
 			{
-				ECKeyGenerationParameters ecP = (ECKeyGenerationParameters) parameters;
-
-				this.publicKeyParamSet = ecP.PublicKeyParamSet;
-				this.parameters = ecP.DomainParameters;
+				_publicKeyParamSet = ecKeyGenerationParameters.PublicKeyParamSet;
+                _parameters = ecKeyGenerationParameters.DomainParameters;
 			}
 			else
 			{
@@ -74,13 +68,12 @@ namespace Org.BouncyCastle.Crypto.Generators
 						throw new InvalidParameterException("unknown key size.");
 				}
 
-				X9ECParameters ecps = FindECCurveByOid(oid);
+				var ecps = FindECCurveByOid(oid);
 
-				this.parameters = new ECDomainParameters(
-					ecps.Curve, ecps.G, ecps.N, ecps.H, ecps.GetSeed());
+				_parameters = new ECDomainParameters(ecps.Curve, ecps.G, ecps.N, ecps.H, ecps.GetSeed());
 			}
 
-			this.random = parameters.Random;
+			_random = parameters.Random;
 		}
 
 		/**
@@ -89,34 +82,30 @@ namespace Org.BouncyCastle.Crypto.Generators
          */
         public IAsymmetricCipherKeyPair GenerateKeyPair()
         {
-            IBigInteger n = parameters.N;
+            var n = _parameters.N;
             IBigInteger d;
-
             do
             {
-                d = new BigInteger(n.BitLength, random);
+                d = new BigInteger(n.BitLength, _random);
             }
             while (d.SignValue == 0 || (d.CompareTo(n) >= 0));
 
-            ECPoint q = parameters.G.Multiply(d);
-
-			if (publicKeyParamSet != null)
+            var q = _parameters.G.Multiply(d);
+			if (_publicKeyParamSet != null)
 			{
 				return new AsymmetricCipherKeyPair(
-					new ECPublicKeyParameters(algorithm, q, publicKeyParamSet),
-					new ECPrivateKeyParameters(algorithm, d, publicKeyParamSet));
+					new ECPublicKeyParameters(_algorithm, q, _publicKeyParamSet),
+					new ECPrivateKeyParameters(_algorithm, d, _publicKeyParamSet));
 			}
 
 			return new AsymmetricCipherKeyPair(
-				new ECPublicKeyParameters(algorithm, q, parameters),
-				new ECPrivateKeyParameters(algorithm, d, parameters));
+				new ECPublicKeyParameters(_algorithm, q, _parameters),
+				new ECPrivateKeyParameters(_algorithm, d, _parameters));
 		}
 
-		private string VerifyAlgorithmName(
-			string algorithm)
+		private static string VerifyAlgorithmName(string algorithm)
 		{
-			string upper = algorithm.ToUpper(CultureInfo.InvariantCulture);
-
+			var upper = algorithm.ToUpper(CultureInfo.InvariantCulture);
 			switch (upper)
 			{
 				case "EC":
@@ -137,38 +126,19 @@ namespace Org.BouncyCastle.Crypto.Generators
 		{
 			// TODO ECGost3410NamedCurves support (returns ECDomainParameters though)
 
-			X9ECParameters ecP = X962NamedCurves.GetByOid(oid);
-
-			if (ecP == null)
-			{
-				ecP = SecNamedCurves.GetByOid(oid);
-
-				if (ecP == null)
-				{
-					ecP = NistNamedCurves.GetByOid(oid);
-
-					if (ecP == null)
-					{
-						ecP = TeleTrusTNamedCurves.GetByOid(oid);
-					}
-				}
-			}
-
-			return ecP;
+		    return X962NamedCurves.GetByOid(oid) ??
+		           (SecNamedCurves.GetByOid(oid) ?? 
+                   (NistNamedCurves.GetByOid(oid) ?? TeleTrusTNamedCurves.GetByOid(oid)));
 		}
 
-		internal static ECPublicKeyParameters GetCorrespondingPublicKey(
-			ECPrivateKeyParameters privKey)
+		internal static ECPublicKeyParameters GetCorrespondingPublicKey(ECPrivateKeyParameters privKey)
 		{
-			ECDomainParameters parameters = privKey.Parameters;
-			ECPoint q = parameters.G.Multiply(privKey.D);
+			var parameters = privKey.Parameters;
+			var q = parameters.G.Multiply(privKey.D);
 
-			if (privKey.PublicKeyParamSet != null)
-			{
-				return new ECPublicKeyParameters(privKey.AlgorithmName, q, privKey.PublicKeyParamSet);
-			}
-
-			return new ECPublicKeyParameters(privKey.AlgorithmName, q, parameters);
+			return privKey.PublicKeyParamSet != null 
+                ? new ECPublicKeyParameters(privKey.AlgorithmName, q, privKey.PublicKeyParamSet) 
+                : new ECPublicKeyParameters(privKey.AlgorithmName, q, parameters);
 		}
 	}
 }
