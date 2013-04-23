@@ -1,19 +1,14 @@
-using System;
 using System.IO;
 
 namespace Org.BouncyCastle.Utilities.IO
 {
-	public sealed class Streams
+	public static class Streams
 	{
 		private const int BufferSize = 512;
 
-		private Streams()
+	    public static void Drain(Stream inStr)
 		{
-		}
-
-		public static void Drain(Stream inStr)
-		{
-			byte[] bs = new byte[BufferSize];
+			var bs = new byte[BufferSize];
 			while (inStr.Read(bs, 0, bs.Length) > 0)
 			{
 			}
@@ -21,16 +16,20 @@ namespace Org.BouncyCastle.Utilities.IO
 
 		public static byte[] ReadAll(Stream inStr)
 		{
-			MemoryStream buf = new MemoryStream();
-			PipeAll(inStr, buf);
-			return buf.ToArray();
+		    using (var buf = new MemoryStream())
+		    {
+		        PipeAll(inStr, buf);
+		        return buf.ToArray();
+		    }
 		}
 
 		public static byte[] ReadAllLimited(Stream inStr, int limit)
 		{
-			MemoryStream buf = new MemoryStream();
-			PipeAllLimited(inStr, limit, buf);
-			return buf.ToArray();
+		    using (var buf = new MemoryStream())
+		    {
+		        PipeAllLimited(inStr, limit, buf);
+		        return buf.ToArray();
+		    }
 		}
 
 		public static int ReadFully(Stream inStr, byte[] buf)
@@ -40,10 +39,10 @@ namespace Org.BouncyCastle.Utilities.IO
 
 		public static int ReadFully(Stream inStr, byte[] buf, int off, int len)
 		{
-			int totalRead = 0;
+			var totalRead = 0;
 			while (totalRead < len)
 			{
-				int numRead = inStr.Read(buf, off + totalRead, len - totalRead);
+				var numRead = inStr.Read(buf, off + totalRead, len - totalRead);
 				if (numRead < 1)
 					break;
 				totalRead += numRead;
@@ -53,7 +52,7 @@ namespace Org.BouncyCastle.Utilities.IO
 
 		public static void PipeAll(Stream inStr, Stream outStr)
 		{
-			byte[] bs = new byte[BufferSize];
+			var bs = new byte[BufferSize];
 			int numRead;
 			while ((numRead = inStr.Read(bs, 0, bs.Length)) > 0)
 			{
@@ -78,7 +77,7 @@ namespace Org.BouncyCastle.Utilities.IO
 		/// <exception cref="IOException"></exception>
 		public static long PipeAllLimited(Stream inStr, long limit, Stream outStr)
 		{
-			byte[] bs = new byte[BufferSize];
+			var bs = new byte[BufferSize];
 			long total = 0;
 			int numRead;
 			while ((numRead = inStr.Read(bs, 0, bs.Length)) > 0)

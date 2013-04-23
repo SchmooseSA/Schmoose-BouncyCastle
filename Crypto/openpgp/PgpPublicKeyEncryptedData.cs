@@ -10,14 +10,11 @@ using Org.BouncyCastle.Utilities.IO;
 namespace Org.BouncyCastle.Bcpg.OpenPgp
 {
     /// <remarks>A public key encrypted data object.</remarks>
-    public class PgpPublicKeyEncryptedData
-        : PgpEncryptedData
+    public class PgpPublicKeyEncryptedData : PgpEncryptedData
     {
         private readonly PublicKeyEncSessionPacket _keyData;
 
-        internal PgpPublicKeyEncryptedData(
-            PublicKeyEncSessionPacket keyData,
-            InputStreamPacket encData)
+        internal PgpPublicKeyEncryptedData(PublicKeyEncSessionPacket keyData, InputStreamPacket encData)
             : base(encData)
         {
             _keyData = keyData;
@@ -144,7 +141,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
             try
             {
-                if (encData is SymmetricEncIntegrityPacket)
+                if (EncData is SymmetricEncIntegrityPacket)
                 {
                     cName += "/CFB/NoPadding";
                 }
@@ -165,32 +162,29 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             }
 
             if (c2 == null)
-                return encData.GetInputStream();
+                return EncData.GetInputStream();
 
             try
             {
-                var key = ParameterUtilities.CreateKeyParameter(
-                    cipherName, plain, 1, plain.Length - 3);
-
+                var key = ParameterUtilities.CreateKeyParameter(cipherName, plain, 1, plain.Length - 3);
                 var iv = new byte[c2.GetBlockSize()];
-
+                
                 c2.Init(false, new ParametersWithIV(key, iv));
 
-                encStream = BcpgInputStream.Wrap(new CipherStream(encData.GetInputStream(), c2, null));
-
-                if (encData is SymmetricEncIntegrityPacket)
+                this.EncStream = BcpgInputStream.Wrap(new CipherStream(EncData.GetInputStream(), c2, null));
+                if (this.EncData is SymmetricEncIntegrityPacket)
                 {
-                    truncStream = new TruncatedStream(encStream);
+                    this.TruncStream = new TruncatedStream(this.EncStream);
 
                     var digest = DigestUtilities.GetDigest(PgpUtilities.GetDigestName(HashAlgorithmTag.Sha1));
-                    encStream = new DigestStream(truncStream, digest, null);
+                    EncStream = new DigestStream(TruncStream, digest, null);
                 }
 
-                if (Streams.ReadFully(encStream, iv, 0, iv.Length) < iv.Length)
+                if (Streams.ReadFully(EncStream, iv, 0, iv.Length) < iv.Length)
                     throw new EndOfStreamException("unexpected end of stream.");
 
-                var v1 = encStream.ReadByte();
-                var v2 = encStream.ReadByte();
+                var v1 = this.EncStream.ReadByte();
+                var v2 = this.EncStream.ReadByte();
 
                 if (v1 < 0 || v2 < 0)
                     throw new EndOfStreamException("unexpected end of stream.");
@@ -214,7 +208,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 //					throw new PgpDataValidationException("quick check failed.");
                 //				}
 
-                return encStream;
+                return this.EncStream;
             }
             catch (PgpException)
             {

@@ -9,127 +9,115 @@ using Org.BouncyCastle.Utilities.IO;
 
 namespace Org.BouncyCastle.Bcpg.OpenPgp
 {
-	/// <remarks>A password based encryption object.</remarks>
-    public class PgpPbeEncryptedData
-        : PgpEncryptedData
+    /// <remarks>A password based encryption object.</remarks>
+    public class PgpPbeEncryptedData : PgpEncryptedData
     {
-        private readonly SymmetricKeyEncSessionPacket keyData;
+        private readonly SymmetricKeyEncSessionPacket _keyData;
 
-		internal PgpPbeEncryptedData(
-			SymmetricKeyEncSessionPacket	keyData,
-			InputStreamPacket				encData)
-			: base(encData)
-		{
-			this.keyData = keyData;
-		}
-
-		/// <summary>Return the raw input stream for the data stream.</summary>
-		public override Stream GetInputStream()
-		{
-			return encData.GetInputStream();
-		}
-
-		/// <summary>Return the decrypted input stream, using the passed in passphrase.</summary>
-        public Stream GetDataStream(
-            char[] passPhrase)
+        internal PgpPbeEncryptedData(SymmetricKeyEncSessionPacket keyData, InputStreamPacket encData)
+            : base(encData)
         {
-			try
-			{
-				SymmetricKeyAlgorithmTag keyAlgorithm = keyData.EncAlgorithm;
+            _keyData = keyData;
+        }
 
-				KeyParameter key = PgpUtilities.MakeKeyFromPassPhrase(
-					keyAlgorithm, keyData.S2K, passPhrase);
+        /// <summary>Return the raw input stream for the data stream.</summary>
+        public override Stream GetInputStream()
+        {
+            return EncData.GetInputStream();
+        }
 
+        /// <summary>Return the decrypted input stream, using the passed in passphrase.</summary>
+        public Stream GetDataStream(char[] passPhrase)
+        {
+            try
+            {
+                var keyAlgorithm = _keyData.EncAlgorithm;
 
-				byte[] secKeyData = keyData.GetSecKeyData();
-				if (secKeyData != null && secKeyData.Length > 0)
-				{
-					IBufferedCipher keyCipher = CipherUtilities.GetCipher(
-						PgpUtilities.GetSymmetricCipherName(keyAlgorithm) + "/CFB/NoPadding");
-
-					keyCipher.Init(false,
-						new ParametersWithIV(key, new byte[keyCipher.GetBlockSize()]));
-
-					byte[] keyBytes = keyCipher.DoFinal(secKeyData);
-
-					keyAlgorithm = (SymmetricKeyAlgorithmTag) keyBytes[0];
-
-					key = ParameterUtilities.CreateKeyParameter(
-						PgpUtilities.GetSymmetricCipherName(keyAlgorithm),
-						keyBytes, 1, keyBytes.Length - 1);
-				}
+                var key = PgpUtilities.MakeKeyFromPassPhrase(
+                    keyAlgorithm, _keyData.S2K, passPhrase);
 
 
-				IBufferedCipher c = CreateStreamCipher(keyAlgorithm);
+                var secKeyData = _keyData.GetSecKeyData();
+                if (secKeyData != null && secKeyData.Length > 0)
+                {
+                    var keyCipher = CipherUtilities.GetCipher(
+                        PgpUtilities.GetSymmetricCipherName(keyAlgorithm) + "/CFB/NoPadding");
 
-				byte[] iv = new byte[c.GetBlockSize()];
+                    keyCipher.Init(false,
+                        new ParametersWithIV(key, new byte[keyCipher.GetBlockSize()]));
 
-				c.Init(false, new ParametersWithIV(key, iv));
+                    var keyBytes = keyCipher.DoFinal(secKeyData);
 
-				encStream = BcpgInputStream.Wrap(new CipherStream(encData.GetInputStream(), c, null));
+                    keyAlgorithm = (SymmetricKeyAlgorithmTag)keyBytes[0];
 
-				if (encData is SymmetricEncIntegrityPacket)
-				{
-					truncStream = new TruncatedStream(encStream);
-
-					string digestName = PgpUtilities.GetDigestName(HashAlgorithmTag.Sha1);
-					IDigest digest = DigestUtilities.GetDigest(digestName);
-
-					encStream = new DigestStream(truncStream, digest, null);
-				}
-
-				if (Streams.ReadFully(encStream, iv, 0, iv.Length) < iv.Length)
-					throw new EndOfStreamException("unexpected end of stream.");
-
-				int v1 = encStream.ReadByte();
-				int v2 = encStream.ReadByte();
-
-				if (v1 < 0 || v2 < 0)
-					throw new EndOfStreamException("unexpected end of stream.");
+                    key = ParameterUtilities.CreateKeyParameter(
+                        PgpUtilities.GetSymmetricCipherName(keyAlgorithm),
+                        keyBytes, 1, keyBytes.Length - 1);
+                }
 
 
-				// Note: the oracle attack on the "quick check" bytes is not deemed
-				// a security risk for PBE (see PgpPublicKeyEncryptedData)
+                var c = CreateStreamCipher(keyAlgorithm);
 
-				bool repeatCheckPassed =
-						iv[iv.Length - 2] == (byte)v1
-					&&	iv[iv.Length - 1] == (byte)v2;
+                var iv = new byte[c.GetBlockSize()];
 
-				// Note: some versions of PGP appear to produce 0 for the extra
-				// bytes rather than repeating the two previous bytes
-				bool zeroesCheckPassed =
-						v1 == 0
-					&&	v2 == 0;
+                c.Init(false, new ParametersWithIV(key, iv));
 
-				if (!repeatCheckPassed && !zeroesCheckPassed)
-				{
-					throw new PgpDataValidationException("quick check failed.");
-				}
+                EncStream = BcpgInputStream.Wrap(new CipherStream(EncData.GetInputStream(), c, null));
+
+                if (EncData is SymmetricEncIntegrityPacket)
+                {
+                    TruncStream = new TruncatedStream(EncStream);
+
+                    var digestName = PgpUtilities.GetDigestName(HashAlgorithmTag.Sha1);
+                    var digest = DigestUtilities.GetDigest(digestName);
+
+                    EncStream = new DigestStream(TruncStream, digest, null);
+                }
+
+                if (Streams.ReadFully(EncStream, iv, 0, iv.Length) < iv.Length)
+                    throw new EndOfStreamException("unexpected end of stream.");
+
+                var v1 = EncStream.ReadByte();
+                var v2 = EncStream.ReadByte();
+
+                if (v1 < 0 || v2 < 0)
+                    throw new EndOfStreamException("unexpected end of stream.");
 
 
-				return encStream;
-			}
-			catch (PgpException e)
-			{
-				throw e;
-			}
-			catch (Exception e)
-			{
-				throw new PgpException("Exception creating cipher", e);
-			}
-		}
+                // Note: the oracle attack on the "quick check" bytes is not deemed
+                // a security risk for PBE (see PgpPublicKeyEncryptedData)
 
-		private IBufferedCipher CreateStreamCipher(
-			SymmetricKeyAlgorithmTag keyAlgorithm)
-		{
-			string mode = (encData is SymmetricEncIntegrityPacket)
-				? "CFB"
-				: "OpenPGPCFB";
+                var repeatCheckPassed =
+                        iv[iv.Length - 2] == (byte)v1
+                    && iv[iv.Length - 1] == (byte)v2;
 
-			string cName = PgpUtilities.GetSymmetricCipherName(keyAlgorithm)
-				+ "/" + mode + "/NoPadding";
+                // Note: some versions of PGP appear to produce 0 for the extra
+                // bytes rather than repeating the two previous bytes
+                var zeroesCheckPassed = v1 == 0 && v2 == 0;
+                if (!repeatCheckPassed && !zeroesCheckPassed)
+                {
+                    throw new PgpDataValidationException("quick check failed.");
+                }
 
-			return CipherUtilities.GetCipher(cName);
-		}
-	}
+
+                return EncStream;
+            }
+            catch (PgpException)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                throw new PgpException("Exception creating cipher", e);
+            }
+        }
+
+        private IBufferedCipher CreateStreamCipher(SymmetricKeyAlgorithmTag keyAlgorithm)
+        {
+            var mode = (EncData is SymmetricEncIntegrityPacket)
+                ? "CFB"
+                : "OpenPGPCFB";
+            return CipherUtilities.GetCipher(PgpUtilities.GetSymmetricCipherName(keyAlgorithm) + "/" + mode + "/NoPadding");
+        }
+    }
 }

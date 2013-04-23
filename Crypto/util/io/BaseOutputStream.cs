@@ -6,21 +6,30 @@ namespace Org.BouncyCastle.Utilities.IO
 {
     public abstract class BaseOutputStream : Stream, IBaseOutputStream
     {
-		private bool closed;
+		private bool _closed;
 
 		public sealed override bool CanRead { get { return false; } }
+        
         public sealed override bool CanSeek { get { return false; } }
-        public sealed override bool CanWrite { get { return !closed; } }
-		public override void Close() { closed = true; }
+        
+        public sealed override bool CanWrite { get { return !_closed; } }
+		
+        public override void Close() { _closed = true; }
+        
         public override void Flush() {}
+        
         public sealed override long Length { get { throw new NotSupportedException(); } }
+        
         public sealed override long Position
         {
             get { throw new NotSupportedException(); }
             set { throw new NotSupportedException(); }
         }
+        
         public sealed override int Read(byte[] buffer, int offset, int count) { throw new NotSupportedException(); }
+        
         public sealed override long Seek(long offset, SeekOrigin origin) { throw new NotSupportedException(); }
+
         public sealed override void SetLength(long value) { throw new NotSupportedException(); }
 
         public override void Write(byte[] buffer, int offset, int count)
@@ -29,11 +38,11 @@ namespace Org.BouncyCastle.Utilities.IO
             Debug.Assert(0 <= offset && offset <= buffer.Length);
             Debug.Assert(count >= 0);
 
-            int end = offset + count;
+            var end = offset + count;
 
             Debug.Assert(0 <= end && end <= buffer.Length);
 
-            for (int i = offset; i < end; ++i)
+            for (var i = offset; i < end; ++i)
             {
                 this.WriteByte(buffer[i]);
             }
@@ -41,7 +50,7 @@ namespace Org.BouncyCastle.Utilities.IO
 
 		public virtual void Write(params byte[] buffer)
 		{
-			Write(buffer, 0, buffer.Length);
+			this.Write(buffer, 0, buffer.Length);
 		}
 	}
 }

@@ -4,7 +4,6 @@ using System.IO;
 using Org.BouncyCastle.Bcpg.Sig;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Parameters;
-using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Utilities;
 
@@ -115,22 +114,18 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             _dig.Update(b);
         }
 
-        public void Update(
-            params byte[] b)
+        public void Update(params byte[] b)
         {
             Update(b, 0, b.Length);
         }
 
-        public void Update(
-            byte[] b,
-            int off,
-            int len)
+        public void Update(byte[] b, int off, int len)
         {
             if (_signatureType == PgpSignature.CanonicalTextDocument)
             {
-                int finish = off + len;
+                var finish = off + len;
 
-                for (int i = off; i != finish; i++)
+                for (var i = off; i != finish; i++)
                 {
                     DoCanonicalUpdateByte(b[i]);
                 }
@@ -142,16 +137,14 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             }
         }
 
-        public void SetHashedSubpackets(
-            PgpSignatureSubpacketVector hashedPackets)
+        public void SetHashedSubpackets(PgpSignatureSubpacketVector hashedPackets)
         {
             _hashed = hashedPackets == null
                 ? _emptySignatureSubpackets
                 : hashedPackets.ToSubpacketArray();
         }
 
-        public void SetUnhashedSubpackets(
-            PgpSignatureSubpacketVector unhashedPackets)
+        public void SetUnhashedSubpackets(PgpSignatureSubpacketVector unhashedPackets)
         {
             _unhashed = unhashedPackets == null
                 ? _emptySignatureSubpackets
@@ -159,19 +152,16 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         }
 
         /// <summary>Return the one pass header associated with the current signature.</summary>
-        public PgpOnePassSignature GenerateOnePassVersion(
-            bool isNested)
+        public PgpOnePassSignature GenerateOnePassVersion(bool isNested)
         {
-            return new PgpOnePassSignature(
-                new OnePassSignaturePacket(
-                    _signatureType, _hashAlgorithm, _keyAlgorithm, _privKey.KeyId, isNested));
+            return new PgpOnePassSignature(new OnePassSignaturePacket(
+                _signatureType, _hashAlgorithm, _keyAlgorithm, _privKey.KeyId, isNested));
         }
 
         /// <summary>Return a signature object containing the current signature state.</summary>
         public PgpSignature Generate()
         {
             SignatureSubpacket[] hPkts = _hashed, unhPkts = _unhashed;
-
             if (!PacketPresent(_hashed, SignatureSubpacketTag.CreationTime))
             {
                 hPkts = InsertSubpacket(hPkts, new SignatureCreationTime(false, DateTime.UtcNow));
@@ -200,7 +190,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
                     using (var sOut = new MemoryStream(data.Length + 6))
                     {
-                        sOut.WriteByte((byte)version);
+                        sOut.WriteByte(version);
                         sOut.WriteByte((byte)_signatureType);
                         sOut.WriteByte((byte)_keyAlgorithm);
                         sOut.WriteByte((byte)_hashAlgorithm);
@@ -223,7 +213,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
             hData = new byte[]
 			{
-				(byte) version,
+				version,
 				0xff,
 				(byte)(hData.Length >> 24),
 				(byte)(hData.Length >> 16),
@@ -246,9 +236,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 ? PgpUtilities.RsaSigToMpi(sigBytes)
                 : PgpUtilities.DsaSigToMpi(sigBytes);
 
-            return new PgpSignature(
-                new SignaturePacket(_signatureType, _privKey.KeyId, _keyAlgorithm,
-                    _hashAlgorithm, hPkts, unhPkts, fingerPrint, sigValues));
+            return new PgpSignature(new SignaturePacket(_signatureType, _privKey.KeyId, _keyAlgorithm, _hashAlgorithm, hPkts, unhPkts, fingerPrint, sigValues));
         }
 
         /// <summary>
@@ -259,9 +247,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <returns>
         /// The certification.
         /// </returns>
-        public PgpSignature GenerateCertification(
-            string id,
-            IPgpPublicKey pubKey)
+        public PgpSignature GenerateCertification(string id, IPgpPublicKey pubKey)
         {
             UpdateWithPublicKey(pubKey);
 
@@ -282,9 +268,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// The certification.
         /// </returns>
         /// <exception cref="PgpException">cannot encode subpacket array</exception>
-        public PgpSignature GenerateCertification(
-            PgpUserAttributeSubpacketVector userAttributes,
-            IPgpPublicKey pubKey)
+        public PgpSignature GenerateCertification(PgpUserAttributeSubpacketVector userAttributes, IPgpPublicKey pubKey)
         {
             UpdateWithPublicKey(pubKey);
 
@@ -335,8 +319,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <returns>
         /// The certification.
         /// </returns>
-        public PgpSignature GenerateCertification(
-            IPgpPublicKey pubKey)
+        public PgpSignature GenerateCertification(IPgpPublicKey pubKey)
         {
             UpdateWithPublicKey(pubKey);
 
@@ -349,8 +332,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <param name="pubKey">The pub key.</param>
         /// <returns></returns>
         /// <exception cref="PgpException">exception preparing key.</exception>
-        private byte[] GetEncodedPublicKey(
-            IPgpPublicKey pubKey)
+        private static byte[] GetEncodedPublicKey(IPgpPublicKey pubKey)
         {
             try
             {
@@ -370,7 +352,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <returns></returns>
         private static bool PacketPresent(SignatureSubpacket[] packets, SignatureSubpacketTag type)
         {
-            for (int i = 0; i != packets.Length; i++)
+            for (var i = 0; i != packets.Length; i++)
             {
                 if (packets[i].SubpacketType == type)
                 {
@@ -387,9 +369,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <param name="packets">The packets.</param>
         /// <param name="subpacket">The subpacket.</param>
         /// <returns></returns>
-        private static SignatureSubpacket[] InsertSubpacket(
-            SignatureSubpacket[] packets,
-            SignatureSubpacket subpacket)
+        private static SignatureSubpacket[] InsertSubpacket(SignatureSubpacket[] packets, SignatureSubpacket subpacket)
         {
             var tmp = new SignatureSubpacket[packets.Length + 1];
             tmp[0] = subpacket;
@@ -397,9 +377,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             return tmp;
         }
 
-        private void UpdateWithIdData(
-            int header,
-            byte[] idBytes)
+        private void UpdateWithIdData(int header, byte[] idBytes)
         {
             this.Update(
                 (byte)header,
@@ -410,11 +388,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             this.Update(idBytes);
         }
 
-        private void UpdateWithPublicKey(
-            IPgpPublicKey key)
+        private void UpdateWithPublicKey(IPgpPublicKey key)
         {
-            byte[] keyBytes = GetEncodedPublicKey(key);
-
+            var keyBytes = GetEncodedPublicKey(key);
             this.Update(
                 (byte)0x99,
                 (byte)(keyBytes.Length >> 8),

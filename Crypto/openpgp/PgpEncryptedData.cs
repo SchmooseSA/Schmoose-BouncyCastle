@@ -1,8 +1,6 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-
-using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.IO;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Utilities;
@@ -12,65 +10,64 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 {
     public abstract class PgpEncryptedData
     {
-		internal class TruncatedStream
-			: BaseInputStream
+        protected class TruncatedStream : BaseInputStream
 		{
 			private const int LookAheadSize = 22;
 			private const int LookAheadBufSize = 512;
 			private const int LookAheadBufLimit = LookAheadBufSize - LookAheadSize;
 
-			private readonly Stream inStr;
-			private readonly byte[] lookAhead = new byte[LookAheadBufSize];
-			private int bufStart, bufEnd;
+			private readonly Stream _inStr;
+			private readonly byte[] _lookAhead = new byte[LookAheadBufSize];
+            private int _bufStart;
+            private int _bufEnd;
 
-			internal TruncatedStream(
-				Stream inStr)
+			public TruncatedStream(Stream inStr)
 			{
-				int numRead = Streams.ReadFully(inStr, lookAhead, 0, lookAhead.Length);
+				var numRead = Streams.ReadFully(inStr, _lookAhead, 0, _lookAhead.Length);
 
 				if (numRead < LookAheadSize)
 					throw new EndOfStreamException();
 
-				this.inStr = inStr;
-				this.bufStart = 0;
-				this.bufEnd = numRead - LookAheadSize;
+				_inStr = inStr;
+				_bufStart = 0;
+				_bufEnd = numRead - LookAheadSize;
 			}
 
 			private int FillBuffer()
 			{
-				if (bufEnd < LookAheadBufLimit)
+				if (_bufEnd < LookAheadBufLimit)
 					return 0;
 
-				Debug.Assert(bufStart == LookAheadBufLimit);
-				Debug.Assert(bufEnd == LookAheadBufLimit);
+				Debug.Assert(_bufStart == LookAheadBufLimit);
+				Debug.Assert(_bufEnd == LookAheadBufLimit);
 
-				Array.Copy(lookAhead, LookAheadBufLimit, lookAhead, 0, LookAheadSize);
-				bufEnd = Streams.ReadFully(inStr, lookAhead, LookAheadSize, LookAheadBufLimit);
-				bufStart = 0;
-				return bufEnd;
+				Array.Copy(_lookAhead, LookAheadBufLimit, _lookAhead, 0, LookAheadSize);
+				_bufEnd = Streams.ReadFully(_inStr, _lookAhead, LookAheadSize, LookAheadBufLimit);
+				_bufStart = 0;
+				return _bufEnd;
 			}
 
 			public override int ReadByte()
 			{
-				if (bufStart < bufEnd)
-					return lookAhead[bufStart++];
+				if (_bufStart < _bufEnd)
+					return _lookAhead[_bufStart++];
 
 				if (FillBuffer() < 1)
 					return -1;
 
-				return lookAhead[bufStart++];
+				return _lookAhead[_bufStart++];
 			}
 
 			public override int Read(byte[] buf, int off, int len)
 			{
-				int avail = bufEnd - bufStart;
+				var avail = _bufEnd - _bufStart;
 
-				int pos = off;
+				var pos = off;
 				while (len > avail)
 				{
-					Array.Copy(lookAhead, bufStart, buf, pos, avail);
+					Array.Copy(_lookAhead, _bufStart, buf, pos, avail);
 
-					bufStart += avail;
+					_bufStart += avail;
 					pos += avail;
 					len -= avail;
 
@@ -78,34 +75,33 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 						return pos - off;
 				}
 
-				Array.Copy(lookAhead, bufStart, buf, pos, len);
-				bufStart += len;
+				Array.Copy(_lookAhead, _bufStart, buf, pos, len);
+				_bufStart += len;
 
-				return pos + len - off;;
+				return pos + len - off;
 			}
 
-			internal byte[] GetLookAhead()
+			public byte[] GetLookAhead()
 			{
-				byte[] temp = new byte[LookAheadSize];
-				Array.Copy(lookAhead, bufStart, temp, 0, LookAheadSize);
+			    var temp = new byte[LookAheadSize];
+				Array.Copy(_lookAhead, _bufStart, temp, 0, LookAheadSize);
 				return temp;
 			}
 		}
 
-		internal InputStreamPacket	encData;
-        internal Stream				encStream;
-        internal TruncatedStream	truncStream;
+		protected InputStreamPacket	EncData;
+        protected Stream EncStream;
+        protected TruncatedStream TruncStream;
 
-		internal PgpEncryptedData(
-            InputStreamPacket encData)
+        protected PgpEncryptedData(InputStreamPacket encData)
         {
-            this.encData = encData;
+            this.EncData = encData;
         }
 
 		/// <summary>Return the raw input stream for the data stream.</summary>
         public virtual Stream GetInputStream()
         {
-            return encData.GetInputStream();
+            return EncData.GetInputStream();
         }
 
 		/// <summary>Return true if the message is integrity protected.</summary>
@@ -113,7 +109,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 		/// with this stream.</returns>
         public bool IsIntegrityProtected()
         {
-			return encData is SymmetricEncIntegrityPacket;
+			return EncData is SymmetricEncIntegrityPacket;
         }
 
 		/// <summary>Note: This can only be called after the message has been read.</summary>
@@ -123,12 +119,12 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             if (!IsIntegrityProtected())
                 throw new PgpException("data not integrity protected.");
 
-			DigestStream dIn = (DigestStream) encStream;
+			var dIn = (DigestStream) EncStream;
 
 			//
             // make sure we are at the end.
             //
-            while (encStream.ReadByte() >= 0)
+            while (EncStream.ReadByte() >= 0)
             {
 				// do nothing
             }
@@ -136,13 +132,13 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 			//
             // process the MDC packet
             //
-			byte[] lookAhead = truncStream.GetLookAhead();
+			var lookAhead = TruncStream.GetLookAhead();
 
-			IDigest hash = dIn.ReadDigest();
+			var hash = dIn.ReadDigest();
 			hash.BlockUpdate(lookAhead, 0, 2);
-			byte[] digest = DigestUtilities.DoFinal(hash);
 
-			byte[] streamDigest = new byte[digest.Length];
+			var digest = DigestUtilities.DoFinal(hash);
+			var streamDigest = new byte[digest.Length];
 			Array.Copy(lookAhead, 2, streamDigest, 0, streamDigest.Length);
 
 			return Arrays.ConstantTimeAreEqual(digest, streamDigest);
