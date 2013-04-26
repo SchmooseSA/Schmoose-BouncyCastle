@@ -475,6 +475,9 @@
     <Compile Include="bcpg\Crc24.cs" />
     <Compile Include="bcpg\DsaPublicBcpgKey.cs" />
     <Compile Include="bcpg\DsaSecretBcpgKey.cs" />
+    <Compile Include="bcpg\EcdsaPublicBcpgKey.cs" />
+    <Compile Include="bcpg\EcdhPublicBcpgKey.cs" />
+    <Compile Include="bcpg\EcPublicBcpgKey.cs" />
     <Compile Include="bcpg\ElGamalPublicBcpgKey.cs" />
     <Compile Include="bcpg\ElGamalSecretBcpgKey.cs" />
     <Compile Include="bcpg\ExperimentalPacket.cs" />

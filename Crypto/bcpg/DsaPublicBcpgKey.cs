@@ -5,8 +5,7 @@ using Org.BouncyCastle.Math;
 namespace Org.BouncyCastle.Bcpg
 {
 	/// <remarks>Base class for a DSA public key.</remarks>
-	public class DsaPublicBcpgKey
-		: BcpgObject, IBcpgKey
+	public class DsaPublicBcpgKey : BcpgObject, IBcpgKey
     {
         private readonly MPInteger p, q, g, y;
 

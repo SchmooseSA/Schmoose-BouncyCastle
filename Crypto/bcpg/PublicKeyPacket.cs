@@ -2,12 +2,12 @@ using System;
 using System.IO;
 
 using Org.BouncyCastle.Utilities.Date;
+using Org.BouncyCastle.bcpg;
 
 namespace Org.BouncyCastle.Bcpg
 {
     /// <remarks>Basic packet for a PGP public key.</remarks>
-    public class PublicKeyPacket
-        : ContainedPacket, IPublicKeyPacket //, PublicKeyAlgorithmTag
+    public class PublicKeyPacket : ContainedPacket, IPublicKeyPacket //, PublicKeyAlgorithmTag
     {
         private readonly int _version;
         private readonly long _time;
@@ -48,6 +48,14 @@ namespace Org.BouncyCastle.Bcpg
                 case PublicKeyAlgorithmTag.ElGamalGeneral:
                     _key = new ElGamalPublicBcpgKey(bcpgIn);
                     break;
+
+                case PublicKeyAlgorithmTag.Ecdh:
+                    _key = new EcdhPublicBcpgKey(bcpgIn);
+                    break;
+                case PublicKeyAlgorithmTag.Ecdsa:
+                    _key = new EcdsaPublicBcpgKey(bcpgIn);
+                    break;
+
                 default:
                     throw new IOException("unknown PGP public key algorithm encountered");
             }

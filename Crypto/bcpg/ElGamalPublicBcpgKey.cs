@@ -5,13 +5,11 @@ using Org.BouncyCastle.Math;
 namespace Org.BouncyCastle.Bcpg
 {
 	/// <remarks>Base class for an ElGamal public key.</remarks>
-	public class ElGamalPublicBcpgKey
-		: BcpgObject, IBcpgKey
+	public class ElGamalPublicBcpgKey : BcpgObject, IBcpgKey
 	{
 		internal MPInteger p, g, y;
 
-		public ElGamalPublicBcpgKey(
-			BcpgInputStream bcpgIn)
+		public ElGamalPublicBcpgKey(BcpgInputStream bcpgIn)
 		{
 			this.p = new MPInteger(bcpgIn);
 			this.g = new MPInteger(bcpgIn);

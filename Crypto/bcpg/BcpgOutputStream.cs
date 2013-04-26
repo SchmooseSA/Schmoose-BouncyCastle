@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 using Org.BouncyCastle.Utilities.IO;
@@ -310,9 +311,14 @@ namespace Org.BouncyCastle.Bcpg
             bcpgObject.Encode(this);
         }
 
-        public void WriteObjects(params IBcpgObject[] v)
+        public void WriteObjects(params IBcpgObject[] objects)
         {
-            foreach (BcpgObject o in v)
+            this.WriteObjects((IEnumerable<IBcpgObject>)objects);
+        }
+
+        public void WriteObjects(IEnumerable<IBcpgObject> objects)
+        {
+            foreach (var o in objects)
             {
                 o.Encode(this);
             }
@@ -327,11 +333,11 @@ namespace Org.BouncyCastle.Bcpg
         /// <summary>Finish writing out the current packet without closing the underlying stream.</summary>
         public void Finish()
         {
-            if (_partialBuffer != null)
-            {
-                PartialFlush(true);
-                _partialBuffer = null;
-            }
+            if (_partialBuffer == null) 
+                return;
+
+            PartialFlush(true);
+            _partialBuffer = null;
         }
 
         protected override void Dispose(bool disposing)

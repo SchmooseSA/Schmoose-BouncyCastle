@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using Org.BouncyCastle.Bcpg.Sig;
 using Org.BouncyCastle.Utilities.IO;
@@ -10,49 +9,48 @@ namespace Org.BouncyCastle.Bcpg
 	*/
 	public class SignatureSubpacketsParser
 	{
-		private readonly Stream input;
+		private readonly Stream _input;
 
-		public SignatureSubpacketsParser(
-			Stream input)
+		public SignatureSubpacketsParser(Stream input)
 		{
-			this.input = input;
+			_input = input;
 		}
 
 		public SignatureSubpacket ReadPacket()
 		{
-			int l = input.ReadByte();
+			var l = _input.ReadByte();
 			if (l < 0)
 				return null;
 
-			int bodyLen = 0;
+			var bodyLen = 0;
 			if (l < 192)
 			{
 				bodyLen = l;
 			}
 			else if (l <= 223)
 			{
-				bodyLen = ((l - 192) << 8) + (input.ReadByte()) + 192;
+				bodyLen = ((l - 192) << 8) + (_input.ReadByte()) + 192;
 			}
 			else if (l == 255)
 			{
-				bodyLen = (input.ReadByte() << 24) | (input.ReadByte() << 16)
-					|  (input.ReadByte() << 8)  | input.ReadByte();
+				bodyLen = (_input.ReadByte() << 24) | (_input.ReadByte() << 16)
+					|  (_input.ReadByte() << 8)  | _input.ReadByte();
 			}
 			else
 			{
 				// TODO Error?
 			}
 
-			int tag = input.ReadByte();
+			var tag = _input.ReadByte();
 			if (tag < 0)
 				throw new EndOfStreamException("unexpected EOF reading signature sub packet");
 
-			byte[] data = new byte[bodyLen - 1];
-			if (Streams.ReadFully(input, data) < data.Length)
+			var data = new byte[bodyLen - 1];
+			if (Streams.ReadFully(_input, data) < data.Length)
 				throw new EndOfStreamException();
 
-			bool isCritical = ((tag & 0x80) != 0);
-			SignatureSubpacketTag type = (SignatureSubpacketTag)(tag & 0x7f);
+			var isCritical = ((tag & 0x80) != 0);
+			var type = (SignatureSubpacketTag)(tag & 0x7f);
 			switch (type)
 			{
 				case SignatureSubpacketTag.CreationTime:

@@ -105,8 +105,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                         break;
                     case PublicKeyAlgorithmTag.Dsa:
                         throw new PgpException("Can't use DSA for encryption.");
-                    case PublicKeyAlgorithmTag.ECDsa:
-                        throw new PgpException("Can't use ECDSA for encryption.");
+                    case PublicKeyAlgorithmTag.Ecdsa:
+                        throw new PgpException("Can't use ECDSA for encryption.");                    
                     default:
                         throw new PgpException("unknown asymmetric algorithm: " + pubKey.Algorithm);
                 }

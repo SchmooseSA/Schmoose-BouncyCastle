@@ -229,7 +229,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                     case PublicKeyAlgorithmTag.RsaGeneral:
                     case PublicKeyAlgorithmTag.RsaSign:
                     case PublicKeyAlgorithmTag.Dsa:
-                    case PublicKeyAlgorithmTag.ECDsa:
+                    case PublicKeyAlgorithmTag.Ecdsa:
                     case PublicKeyAlgorithmTag.ElGamalGeneral:
                         return true;
                     default:

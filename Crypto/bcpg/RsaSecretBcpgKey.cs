@@ -30,13 +30,13 @@ namespace Org.BouncyCastle.Bcpg
             IBigInteger q)
 		{
 			// PGP requires (p < q)
-			int cmp = p.CompareTo(q);
+			var cmp = p.CompareTo(q);
 			if (cmp >= 0)
 			{
 				if (cmp == 0)
 					throw new ArgumentException("p and q cannot be equal");
 
-                IBigInteger tmp = p;
+                var tmp = p;
 				p = q;
 				q = tmp;
 			}

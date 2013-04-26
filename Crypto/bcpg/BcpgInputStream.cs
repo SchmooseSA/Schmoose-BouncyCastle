@@ -198,8 +198,7 @@ namespace Org.BouncyCastle.Bcpg
             }
             else
             {
-                PartialInputStream pis = new PartialInputStream(this, partial, bodyLen);
-                objStream = new BcpgInputStream(pis);
+                objStream = new BcpgInputStream(new PartialInputStream(this, partial, bodyLen));
             }
 
             switch (tag)
