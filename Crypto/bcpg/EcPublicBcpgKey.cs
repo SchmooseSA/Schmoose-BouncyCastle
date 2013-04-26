@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Org.BouncyCastle.Math;
 
 namespace Org.BouncyCastle.Bcpg
@@ -11,6 +12,7 @@ namespace Org.BouncyCastle.Bcpg
 
         private readonly MPInteger _point;
         private readonly byte[] _oid;
+        private int _bitStrength;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EcPublicBcpgKey"/> class.
@@ -22,6 +24,23 @@ namespace Org.BouncyCastle.Bcpg
             _point = new MPInteger(bcpgIn);
         }
 
+        public int BitStrength
+        {
+            get
+            {
+                if (_bitStrength == 0)
+                {
+                    if (this.IsNistCurveP256)
+                        _bitStrength = 256;
+                    else if(this.IsNistCurveP384)
+                        _bitStrength = 384;
+                    else if (this.IsNistCurveP521)
+                        _bitStrength = 521;
+                }
+                return _bitStrength;
+            }
+        }
+
         /// <summary>
         /// The base format for this key - in the case of the symmetric keys it will generally
         /// be raw indicating that the key is just a straight byte representation, for an asymmetric
@@ -31,6 +50,21 @@ namespace Org.BouncyCastle.Bcpg
         public string Format
         {
             get { return "PGP"; }
+        }
+
+        public bool IsNistCurveP256
+        {
+            get { return CompareOid(NistCurveP256Oid, _oid); }
+        }
+
+        public bool IsNistCurveP384
+        {
+            get { return CompareOid(NistCurveP384Oid, _oid); }
+        }
+
+        public bool IsNistCurveP521
+        {
+            get { return CompareOid(NistCurveP521Oid, _oid); }
         }
 
         /// <summary>
@@ -79,8 +113,16 @@ namespace Org.BouncyCastle.Bcpg
                 throw new NotSupportedException("future extensions not yet implemented.");
 
             var buffer = new byte[length];
-            bcpgIn.Read(buffer, 0, length);
+            bcpgIn.ReadFully(buffer);
             return buffer;
+        }
+
+        private static bool CompareOid(byte[] expected, byte[] actual)
+        {
+            if (expected == null || actual == null || expected.Length != actual.Length)
+                return false;
+
+            return !expected.Where((t, i) => t != actual[i]).Any();
         }
     }
 }

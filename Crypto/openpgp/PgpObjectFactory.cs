@@ -19,17 +19,13 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
     {
         private readonly BcpgInputStream _bcpgIn;
 
-        public PgpObjectFactory(
-            Stream inputStream)
+        public PgpObjectFactory(Stream inputStream)
         {
             _bcpgIn = BcpgInputStream.Wrap(inputStream);
         }
 
-        public PgpObjectFactory(
-            byte[] bytes)
-            : this(new MemoryStream(bytes, false))
-        {
-        }
+        public PgpObjectFactory(byte[] bytes)
+            : this(new MemoryStream(bytes, false)) { }
 
         /// <summary>Return the next object in the stream, or null if the end is reached.</summary>
         /// <exception cref="IOException">On a parse error</exception>
@@ -37,7 +33,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         {
             var tag = _bcpgIn.NextPacketTag();
 
-            if ((int)tag == -1) return null;
+            if ((int)tag == -1) 
+                return null;
 
             switch (tag)
             {
@@ -117,7 +114,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <returns>An <c>IList</c> containing all objects from this factory, in order.</returns>
         public IList AllPgpObjects()
         {
-            IList result = Platform.CreateArrayList();
+            var result = Platform.CreateArrayList();
             PgpObject pgpObject;
             while ((pgpObject = NextPgpObject()) != null)
             {

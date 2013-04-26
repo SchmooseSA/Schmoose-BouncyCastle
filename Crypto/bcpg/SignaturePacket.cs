@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-
+using System.Linq;
 using Org.BouncyCastle.Bcpg.Sig;
 using Org.BouncyCastle.Utilities;
 using Org.BouncyCastle.Utilities.Date;
@@ -26,6 +26,8 @@ namespace Org.BouncyCastle.Bcpg
         {
             _version = bcpgIn.ReadByte();
 
+
+            //TODO: refactor
             switch (_version)
             {
                 case 2:
@@ -62,58 +64,50 @@ namespace Org.BouncyCastle.Bcpg
                         using (var hashedStream = new MemoryStream(hashed, false))
                         {
                             var sIn = new SignatureSubpacketsParser(hashedStream);
-                            var v = Platform.CreateArrayList();
+                            var v = Platform.CreateArrayList<SignatureSubpacket>();
 
                             SignatureSubpacket sub;
                             while ((sub = sIn.ReadPacket()) != null)
                             {
                                 v.Add(sub);
-                            }
 
-                            _hashedData = new SignatureSubpacket[v.Count];
-
-                            for (var i = 0; i != _hashedData.Length; i++)
-                            {
-                                var p = (SignatureSubpacket) v[i];
-                                if (p is IssuerKeyId)
+                                var issuerKeyId = sub as IssuerKeyId;
+                                if (issuerKeyId != null)
                                 {
-                                    _keyId = ((IssuerKeyId) p).KeyId;
+                                    _keyId = issuerKeyId.KeyId;
                                 }
-                                else if (p is SignatureCreationTime)
+                                else
                                 {
-                                    CreationTime = DateTimeUtilities.DateTimeToUnixMs(
-                                        ((SignatureCreationTime) p).GetTime());
+                                    var signatureCreationTime = sub as SignatureCreationTime;
+                                    if (signatureCreationTime != null)
+                                    {
+                                        CreationTime = DateTimeUtilities.DateTimeToUnixMs(signatureCreationTime.GetTime());
+                                    }
                                 }
-
-                                _hashedData[i] = p;
                             }
+                            _hashedData = v.ToArray();
 
                             var unhashedLength = (bcpgIn.ReadByte() << 8) | bcpgIn.ReadByte();
                             var unhashed = new byte[unhashedLength];
                             bcpgIn.ReadFully(unhashed);
 
+                            v.Clear();
                             using (var unhashedStream = new MemoryStream(unhashed, false))
                             {
                                 sIn = new SignatureSubpacketsParser(unhashedStream);
-
-                                v.Clear();
+                                
                                 while ((sub = sIn.ReadPacket()) != null)
                                 {
                                     v.Add(sub);
-                                }
 
-                                _unhashedData = new SignatureSubpacket[v.Count];
-                                for (var i = 0; i != _unhashedData.Length; i++)
-                                {
-                                    var p = (SignatureSubpacket) v[i];
-                                    if (p is IssuerKeyId)
+                                    var issuerKeyId = sub as IssuerKeyId;
+                                    if (issuerKeyId != null)
                                     {
-                                        _keyId = ((IssuerKeyId) p).KeyId;
+                                        _keyId = issuerKeyId.KeyId;
                                     }
-
-                                    _unhashedData[i] = p;
                                 }
                             }
+                            _unhashedData = v.ToArray();
                         }
                     }
                     break;
@@ -132,6 +126,8 @@ namespace Org.BouncyCastle.Bcpg
                     _signature = new[] { v };
                     break;
                 case PublicKeyAlgorithmTag.Dsa:
+                case PublicKeyAlgorithmTag.Ecdsa:
+                case PublicKeyAlgorithmTag.Ecdh:  
                     var r = new MPInteger(bcpgIn);
                     var s = new MPInteger(bcpgIn);
                     _signature = new[] { r, s };
@@ -142,7 +138,7 @@ namespace Org.BouncyCastle.Bcpg
                     var g = new MPInteger(bcpgIn);
                     var y = new MPInteger(bcpgIn);
                     _signature = new[] { p, g, y };
-                    break;
+                    break;                                                  
                 default:
                     if (_keyAlgorithm >= PublicKeyAlgorithmTag.Experimental_1 && _keyAlgorithm <= PublicKeyAlgorithmTag.Experimental_11)
                     {
@@ -266,13 +262,13 @@ namespace Org.BouncyCastle.Bcpg
         */
         public byte[] GetSignatureTrailer()
         {
-            byte[] trailer = null;
+            byte[] trailer;
 
             if (_version == 3)
             {
                 trailer = new byte[5];
 
-                long time = CreationTime / 1000L;
+                var time = CreationTime / 1000L;
 
                 trailer[0] = (byte)_signatureType;
                 trailer[1] = (byte)(time >> 24);

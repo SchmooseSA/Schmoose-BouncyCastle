@@ -101,6 +101,10 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 {
                     BitStrength = ((ElGamalPublicBcpgKey)key).P.BitLength;
                 }
+                else if (key is EcPublicBcpgKey)
+                {
+                    BitStrength = ((EcPublicBcpgKey) key).BitStrength;
+                }
             }
         }
 
