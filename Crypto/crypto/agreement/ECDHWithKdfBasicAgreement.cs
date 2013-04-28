@@ -1,64 +1,55 @@
 using System;
-using System.Collections;
-
 using Org.BouncyCastle.Asn1;
-using Org.BouncyCastle.Asn1.Nist;
-using Org.BouncyCastle.Asn1.Pkcs;
 using Org.BouncyCastle.Asn1.X9;
 using Org.BouncyCastle.Crypto.Agreement.Kdf;
-using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Security;
 
 namespace Org.BouncyCastle.Crypto.Agreement
 {
-	public class ECDHWithKdfBasicAgreement
-		: ECDHBasicAgreement
-	{
-		private readonly string algorithm;
-		private readonly IDerivationFunction kdf;
+    public class EcdhWithKdfBasicAgreement
+        : EcdhBasicAgreement
+    {
+        private readonly string _algorithm;
+        private readonly IDerivationFunction _kdf;
 
-		public ECDHWithKdfBasicAgreement(
-			string				algorithm,
-			IDerivationFunction	kdf)
-		{
-			if (algorithm == null)
-				throw new ArgumentNullException("algorithm");
-			if (kdf == null)
-				throw new ArgumentNullException("kdf");
+        public EcdhWithKdfBasicAgreement(string algorithm, IDerivationFunction kdf)
+        {
+            if (algorithm == null)
+                throw new ArgumentNullException("algorithm");
+            if (kdf == null)
+                throw new ArgumentNullException("kdf");
 
-			this.algorithm = algorithm;
-			this.kdf = kdf;
-		}
+            _algorithm = algorithm;
+            _kdf = kdf;
+        }
 
-		public override IBigInteger CalculateAgreement(
-			ICipherParameters pubKey)
-		{
-			// Note that the ec.KeyAgreement class in JCE only uses kdf in one
-			// of the engineGenerateSecret methods.
+        public override IBigInteger CalculateAgreement(ICipherParameters pubKey)
+        {
+            // Note that the ec.KeyAgreement class in JCE only uses kdf in one
+            // of the engineGenerateSecret methods.
 
-			IBigInteger result = base.CalculateAgreement(pubKey);
+            var result = base.CalculateAgreement(pubKey);
 
-			int keySize = GeneratorUtilities.GetDefaultKeySize(algorithm);
+            var keySize = GeneratorUtilities.GetDefaultKeySize(_algorithm);
 
-			DHKdfParameters dhKdfParams = new DHKdfParameters(
-				new DerObjectIdentifier(algorithm),
-				keySize,
-				bigIntToBytes(result));
+            var dhKdfParams = new DHKdfParameters(
+                new DerObjectIdentifier(_algorithm),
+                keySize,
+                BigIntToBytes(result));
 
-			kdf.Init(dhKdfParams);
+            _kdf.Init(dhKdfParams);
 
-			byte[] keyBytes = new byte[keySize / 8];
-			kdf.GenerateBytes(keyBytes, 0, keyBytes.Length);
+            var keyBytes = new byte[keySize / 8];
+            _kdf.GenerateBytes(keyBytes, 0, keyBytes.Length);
 
-			return new BigInteger(1, keyBytes);
-		}
+            return new BigInteger(1, keyBytes);
+        }
 
-		private byte[] bigIntToBytes(
-			IBigInteger r)
-		{
-			int byteLength = X9IntegerConverter.GetByteLength(privKey.Parameters.G.X);
-			return X9IntegerConverter.IntegerToBytes(r, byteLength);
-		}
-	}
+        private byte[] BigIntToBytes(IBigInteger r)
+        {
+            var byteLength = X9IntegerConverter.GetByteLength(PrivKey.Parameters.G.X);
+            return X9IntegerConverter.IntegerToBytes(r, byteLength);
+        }
+    }
 }

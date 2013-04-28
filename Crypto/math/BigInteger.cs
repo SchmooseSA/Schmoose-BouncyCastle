@@ -128,7 +128,7 @@ namespace Org.BouncyCastle.Math
         private static readonly IBigInteger radix16 = ValueOf(16);
         private static readonly IBigInteger radix16E = radix16.Pow(chunk16);
 
-        private static readonly IRandom RandomSource = new bcpg.Random();
+        private static readonly IRandom RandomSource = new Bcpg.Random();
 
         private const int BitsPerByte = 8;
         private const int BitsPerInt = 32;
@@ -2661,34 +2661,33 @@ namespace Org.BouncyCastle.Math
             return ToByteArray(true);
         }
 
-        private byte[] ToByteArray(
-            bool unsigned)
+        private byte[] ToByteArray(bool unsigned)
         {
             if (SignValue == 0)
                 return unsigned ? ZeroEncoding : new byte[1];
 
-            int nBits = (unsigned && SignValue > 0)
+            var nBits = (unsigned && SignValue > 0)
                 ? BitLength
                 : BitLength + 1;
 
-            int nBytes = GetByteLength(nBits);
-            byte[] bytes = new byte[nBytes];
+            var nBytes = GetByteLength(nBits);
+            var bytes = new byte[nBytes];
 
-            int magIndex = Magnitude.Length;
-            int bytesIndex = bytes.Length;
+            var magIndex = Magnitude.Length;
+            var bytesIndex = bytes.Length;
 
             if (SignValue > 0)
             {
                 while (magIndex > 1)
                 {
-                    uint mag = (uint)Magnitude[--magIndex];
+                    var mag = (uint)Magnitude[--magIndex];
                     bytes[--bytesIndex] = (byte)mag;
                     bytes[--bytesIndex] = (byte)(mag >> 8);
                     bytes[--bytesIndex] = (byte)(mag >> 16);
                     bytes[--bytesIndex] = (byte)(mag >> 24);
                 }
 
-                uint lastMag = (uint)Magnitude[0];
+                var lastMag = (uint)Magnitude[0];
                 while (lastMag > byte.MaxValue)
                 {
                     bytes[--bytesIndex] = (byte)lastMag;
@@ -2699,11 +2698,11 @@ namespace Org.BouncyCastle.Math
             }
             else // sign < 0
             {
-                bool carry = true;
+                var carry = true;
 
                 while (magIndex > 1)
                 {
-                    uint mag = ~((uint)Magnitude[--magIndex]);
+                    var mag = ~((uint)Magnitude[--magIndex]);
 
                     if (carry)
                     {
@@ -2716,7 +2715,7 @@ namespace Org.BouncyCastle.Math
                     bytes[--bytesIndex] = (byte)(mag >> 24);
                 }
 
-                uint lastMag = (uint)Magnitude[0];
+                var lastMag = (uint)Magnitude[0];
 
                 if (carry)
                 {

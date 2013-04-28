@@ -90,20 +90,7 @@ namespace Org.BouncyCastle.Bcpg
 		public string Format
 		{
 			get { return "PGP"; }
-		}
-
-		/// <summary>Return the standard PGP encoding of the key.</summary>
-		public override byte[] GetEncoded()
-		{
-			try
-			{
-				return base.GetEncoded();
-			}
-			catch (Exception)
-			{
-				return null;
-			}
-		}
+		}		
 
 		public override void Encode(
 			IBcpgOutputStream bcpgOut)

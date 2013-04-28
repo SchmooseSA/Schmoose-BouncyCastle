@@ -31,7 +31,7 @@ namespace Org.BouncyCastle.Tests
 
 			IBigInteger mod_p = new BigInteger("57896044618658097711785492504343953926634992332820282019728792003956564821041"); //p
 
-			ECCurve curve = new FpCurve(
+			ECCurve curve = new FPCurve(
 				mod_p, // p
 				new BigInteger("7"), // a
 				new BigInteger("43308876546767276905765904595650931995942111794451039583252968842033849580414")); // b
@@ -197,7 +197,7 @@ namespace Org.BouncyCastle.Tests
 
 			IBigInteger mod_p = new BigInteger("57896044618658097711785492504343953926634992332820282019728792003956564821041"); //p
 
-			ECCurve curve = new FpCurve(
+			ECCurve curve = new FPCurve(
 				mod_p, // p
 				new BigInteger("7"), // a
 				new BigInteger("43308876546767276905765904595650931995942111794451039583252968842033849580414")); // b

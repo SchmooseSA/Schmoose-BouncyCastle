@@ -6,7 +6,7 @@ namespace App
     {
         static void Main(string[] args)
         {
-            PublicKeyRingDump.Main(args);
+            PrivateKeyRingDump.Main(args);
         }
     }
 }

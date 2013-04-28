@@ -51,10 +51,10 @@ namespace Org.BouncyCastle.Security
 				return new DHBasicAgreement();
 
 			if (mechanism == "ECDH")
-				return new ECDHBasicAgreement();
+				return new EcdhBasicAgreement();
 
 			if (mechanism == "ECDHC")
-				return new ECDHCBasicAgreement();
+				return new EcdhcBasicAgreement();
 
 			if (mechanism == "ECMQV")
 				return new ECMqvBasicAgreement();
@@ -83,15 +83,15 @@ namespace Org.BouncyCastle.Security
 
 			// 'DHWITHSHA1KDF' retained for backward compatibility
 			if (mechanism == "DHWITHSHA1KDF" || mechanism == "ECDHWITHSHA1KDF")
-				return new ECDHWithKdfBasicAgreement(
+				return new EcdhWithKdfBasicAgreement(
 					wrapAlgorithm,
-					new ECDHKekGenerator(
+					new EcdhKekGenerator(
 						new Sha1Digest()));
 
 			if (mechanism == "ECMQVWITHSHA1KDF")
 				return new ECMqvWithKdfBasicAgreement(
 					wrapAlgorithm,
-					new ECDHKekGenerator(
+					new EcdhKekGenerator(
 						new Sha1Digest()));
 
 			throw new SecurityUtilityException("Basic Agreement (with KDF) " + agreeAlgorithm + " not recognised.");

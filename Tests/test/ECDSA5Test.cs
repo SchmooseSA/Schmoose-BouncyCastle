@@ -29,7 +29,7 @@ namespace Org.BouncyCastle.Tests
 //				new ECFieldFp(new BigInteger("6277101735386680763835789423207666416083908700390324961279")), // q
 //				new BigInteger("fffffffffffffffffffffffffffffffefffffffffffffffc", 16), // a
 //				new BigInteger("64210519e59c80e70fa7e9ab72243049feb8deecc146b9b1", 16)); // b
-			ECCurve curve = new FpCurve(
+			ECCurve curve = new FPCurve(
 				new BigInteger("6277101735386680763835789423207666416083908700390324961279"), // q
 				new BigInteger("fffffffffffffffffffffffffffffffefffffffffffffffc", 16), // a
 				new BigInteger("64210519e59c80e70fa7e9ab72243049feb8deecc146b9b1", 16)); // b
@@ -70,7 +70,7 @@ namespace Org.BouncyCastle.Tests
 //				new ECFieldFp(new BigInteger("883423532389192164791648750360308885314476597252960362792450860609699839")), // q
 //				new BigInteger("7fffffffffffffffffffffff7fffffffffff8000000000007ffffffffffc", 16), // a
 //				new BigInteger("6b016c3bdcf18941d0d654921475ca71a9db2fb27d1d37796185c2942c0a", 16)); // b
-			ECCurve curve = new FpCurve(
+			ECCurve curve = new FPCurve(
 				new BigInteger("883423532389192164791648750360308885314476597252960362792450860609699839"), // q
 				new BigInteger("7fffffffffffffffffffffff7fffffffffff8000000000007ffffffffffc", 16), // a
 				new BigInteger("6b016c3bdcf18941d0d654921475ca71a9db2fb27d1d37796185c2942c0a", 16)); // b
@@ -152,7 +152,7 @@ namespace Org.BouncyCastle.Tests
 //							new int[] { 36 }), // k
 //				new BigInteger("32010857077C5431123A46B808906756F543423E8D27877578125778AC76", 16), // a
 //				new BigInteger("790408F2EEDAF392B012EDEFB3392F30F4327C0CA3F31FC383C422AA8C16", 16)); // b
-			ECCurve curve = new F2mCurve(
+			ECCurve curve = new F2MCurve(
 				239, // m
 				36, // k
 				new BigInteger("32010857077C5431123A46B808906756F543423E8D27877578125778AC76", 16), // a
@@ -228,7 +228,7 @@ namespace Org.BouncyCastle.Tests
 //				new ECFieldFp(new BigInteger("883423532389192164791648750360308885314476597252960362792450860609699839")), // q
 //				new BigInteger("7fffffffffffffffffffffff7fffffffffff8000000000007ffffffffffc", 16), // a
 //				new BigInteger("6b016c3bdcf18941d0d654921475ca71a9db2fb27d1d37796185c2942c0a", 16)); // b
-			ECCurve curve = new FpCurve(
+			ECCurve curve = new FPCurve(
 				new BigInteger("883423532389192164791648750360308885314476597252960362792450860609699839"), // q
 				new BigInteger("7fffffffffffffffffffffff7fffffffffff8000000000007ffffffffffc", 16), // a
 				new BigInteger("6b016c3bdcf18941d0d654921475ca71a9db2fb27d1d37796185c2942c0a", 16)); // b

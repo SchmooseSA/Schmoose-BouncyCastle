@@ -1,5 +1,3 @@
-using System;
-
 using Org.BouncyCastle.Math;
 
 namespace Org.BouncyCastle.Bcpg
@@ -7,63 +5,46 @@ namespace Org.BouncyCastle.Bcpg
 	/// <remarks>Base class for an ElGamal public key.</remarks>
 	public class ElGamalPublicBcpgKey : BcpgObject, IBcpgKey
 	{
-		internal MPInteger p, g, y;
+		private readonly MPInteger _p, _g, _y;
 
 		public ElGamalPublicBcpgKey(BcpgInputStream bcpgIn)
 		{
-			this.p = new MPInteger(bcpgIn);
-			this.g = new MPInteger(bcpgIn);
-			this.y = new MPInteger(bcpgIn);
+			_p = new MPInteger(bcpgIn);
+			_g = new MPInteger(bcpgIn);
+			_y = new MPInteger(bcpgIn);
 		}
 
-		public ElGamalPublicBcpgKey(
-			IBigInteger p,
-			IBigInteger g,
-			IBigInteger y)
+		public ElGamalPublicBcpgKey(IBigInteger p, IBigInteger g, IBigInteger y)
 		{
-			this.p = new MPInteger(p);
-			this.g = new MPInteger(g);
-			this.y = new MPInteger(y);
+			_p = new MPInteger(p);
+			_g = new MPInteger(g);
+			_y = new MPInteger(y);
 		}
 
 		/// <summary>The format, as a string, always "PGP".</summary>
 		public string Format
 		{
 			get { return "PGP"; }
-		}
-
-		/// <summary>Return the standard PGP encoding of the key.</summary>
-		public override byte[] GetEncoded()
-		{
-			try
-			{
-				return base.GetEncoded();
-			}
-			catch (Exception)
-			{
-				return null;
-			}
-		}
+		}		
 
         public IBigInteger P
 		{
-			get { return p.Value; }
+			get { return _p.Value; }
 		}
 
         public IBigInteger G
 		{
-			get { return g.Value; }
+			get { return _g.Value; }
 		}
 
         public IBigInteger Y
 		{
-			get { return y.Value; }
+			get { return _y.Value; }
 		}
 
-		public override void Encode(
-			IBcpgOutputStream bcpgOut)
+		public override void Encode(IBcpgOutputStream bcpgOut)
 		{
-			bcpgOut.WriteObjects(p, g, y);
+			bcpgOut.WriteObjects(_p, _g, _y);
 		}
 	}
 }

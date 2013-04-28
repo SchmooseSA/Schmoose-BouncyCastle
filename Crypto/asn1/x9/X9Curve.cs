@@ -34,11 +34,11 @@ namespace Org.BouncyCastle.Asn1.X9
 			this.curve = curve;
             this.seed = Arrays.Clone(seed);
 
-			if (curve is FpCurve)
+			if (curve is FPCurve)
 			{
 				this.fieldIdentifier = X9ObjectIdentifiers.PrimeField;
 			}
-			else if (curve is F2mCurve)
+			else if (curve is F2MCurve)
 			{
 				this.fieldIdentifier = X9ObjectIdentifiers.CharacteristicTwoField;
 			}
@@ -64,7 +64,7 @@ namespace Org.BouncyCastle.Asn1.X9
                 IBigInteger q = ((DerInteger) fieldID.Parameters).Value;
                 X9FieldElement x9A = new X9FieldElement(q, (Asn1OctetString) seq[0]);
                 X9FieldElement x9B = new X9FieldElement(q, (Asn1OctetString) seq[1]);
-                curve = new FpCurve(q, x9A.Value.ToBigInteger(), x9B.Value.ToBigInteger());
+                curve = new FPCurve(q, x9A.Value.ToBigInteger(), x9B.Value.ToBigInteger());
             }
             else
             {
@@ -95,7 +95,7 @@ namespace Org.BouncyCastle.Asn1.X9
 					X9FieldElement x9A = new X9FieldElement(m, k1, k2, k3, (Asn1OctetString)seq[0]);
 					X9FieldElement x9B = new X9FieldElement(m, k1, k2, k3, (Asn1OctetString)seq[1]);
 					// TODO Is it possible to get the order (n) and cofactor(h) too?
-					curve = new F2mCurve(m, k1, k2, k3, x9A.Value.ToBigInteger(), x9B.Value.ToBigInteger());
+					curve = new F2MCurve(m, k1, k2, k3, x9A.Value.ToBigInteger(), x9B.Value.ToBigInteger());
 				}
 			}
 

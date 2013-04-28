@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 
 namespace Org.BouncyCastle.Bcpg
@@ -5,16 +6,23 @@ namespace Org.BouncyCastle.Bcpg
 	/// <remarks>Base class for a PGP object.</remarks>
     public abstract class BcpgObject : IBcpgObject
 	{
-        public virtual byte[] GetEncoded()
+        public byte[] GetEncoded()
         {
-            using (var bOut = new MemoryStream())
+            try
             {
-                using (var pOut = new BcpgOutputStream(bOut))
+                using (var bOut = new MemoryStream())
                 {
-                    pOut.WriteObject(this);
-                    return bOut.ToArray();
+                    using (var pOut = new BcpgOutputStream(bOut))
+                    {
+                        pOut.WriteObject(this);
+                        return bOut.ToArray();
+                    }
                 }
             }
+            catch (Exception)
+            {
+                return null;
+            }            
         }
 
 		public abstract void Encode(IBcpgOutputStream bcpgOut);

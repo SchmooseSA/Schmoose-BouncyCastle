@@ -44,7 +44,7 @@ namespace Org.BouncyCastle.Asn1.Sec
                 IBigInteger n = FromHex("DB7C2ABF62E35E7628DFAC6561C5");
                 IBigInteger h = BigInteger.ValueOf(1);
 
-				ECCurve curve = new FpCurve(p, a, b);
+				ECCurve curve = new FPCurve(p, a, b);
 				//ECPoint G = curve.DecodePoint(Hex.Decode("02"
 				//+ "09487239995A5EE76B55F9C2F098"));
 				ECPoint G = curve.DecodePoint(Hex.Decode("04"
@@ -75,7 +75,7 @@ namespace Org.BouncyCastle.Asn1.Sec
 				IBigInteger n = FromHex("36DF0AAFD8B8D7597CA10520D04B");
                 IBigInteger h = BigInteger.ValueOf(4);
 
-				ECCurve curve = new FpCurve(p, a, b);
+				ECCurve curve = new FPCurve(p, a, b);
 				//ECPoint G = curve.DecodePoint(Hex.Decode("03"
 				//+ "4BA30AB5E892B4E1649DD0928643"));
 				ECPoint G = curve.DecodePoint(Hex.Decode("04"
@@ -106,7 +106,7 @@ namespace Org.BouncyCastle.Asn1.Sec
 				IBigInteger n = FromHex("FFFFFFFE0000000075A30D1B9038A115");
                 IBigInteger h = BigInteger.ValueOf(1);
 
-				ECCurve curve = new FpCurve(p, a, b);
+				ECCurve curve = new FPCurve(p, a, b);
 				//ECPoint G = curve.DecodePoint(Hex.Decode("03"
 				//+ "161FF7528B899B2D0C28607CA52C5B86"));
 				ECPoint G = curve.DecodePoint(Hex.Decode("04"
@@ -137,7 +137,7 @@ namespace Org.BouncyCastle.Asn1.Sec
 				IBigInteger n = FromHex("3FFFFFFF7FFFFFFFBE0024720613B5A3");
                 IBigInteger h = BigInteger.ValueOf(4);
 
-				ECCurve curve = new FpCurve(p, a, b);
+				ECCurve curve = new FPCurve(p, a, b);
 				//ECPoint G = curve.DecodePoint(Hex.Decode("02"
 				//+ "7B6AA5D85E572983E6FB32A7CDEBC140"));
 				ECPoint G = curve.DecodePoint(Hex.Decode("04"
@@ -168,7 +168,7 @@ namespace Org.BouncyCastle.Asn1.Sec
                 IBigInteger n = FromHex("0100000000000000000001B8FA16DFAB9ACA16B6B3");
                 IBigInteger h = BigInteger.ValueOf(1);
 
-				ECCurve curve = new FpCurve(p, a, b);
+				ECCurve curve = new FPCurve(p, a, b);
 				//ECPoint G = curve.DecodePoint(Hex.Decode("02"
 					//+ "3B4C382CE37AA192A4019E763036F4F5DD4D7EBB"));
 				ECPoint G = curve.DecodePoint(Hex.Decode("04"
@@ -199,7 +199,7 @@ namespace Org.BouncyCastle.Asn1.Sec
                 IBigInteger n = FromHex("0100000000000000000001F4C8F927AED3CA752257");
                 IBigInteger h = BigInteger.ValueOf(1);
 
-				ECCurve curve = new FpCurve(p, a, b);
+				ECCurve curve = new FPCurve(p, a, b);
 				//ECPoint G = curve.DecodePoint(Hex.Decode("02"
 					//+ "4A96B5688EF573284664698968C38BB913CBFC82"));
 				ECPoint G = curve.DecodePoint(Hex.Decode("04"
@@ -230,7 +230,7 @@ namespace Org.BouncyCastle.Asn1.Sec
 				IBigInteger n = FromHex("0100000000000000000000351EE786A818F3A1A16B");
 				IBigInteger h = BigInteger.ValueOf(1);
 
-				ECCurve curve = new FpCurve(p, a, b);
+				ECCurve curve = new FPCurve(p, a, b);
 				//ECPoint G = curve.DecodePoint(Hex.Decode("02"
 				//+ "52DCB034293A117E1F4FF11B30F7199D3144CE6D"));
 				ECPoint G = curve.DecodePoint(Hex.Decode("04"
@@ -261,7 +261,7 @@ namespace Org.BouncyCastle.Asn1.Sec
 				IBigInteger n = FromHex("FFFFFFFFFFFFFFFFFFFFFFFE26F2FC170F69466A74DEFD8D");
 				IBigInteger h = BigInteger.ValueOf(1);
 
-				ECCurve curve = new FpCurve(p, a, b);
+				ECCurve curve = new FPCurve(p, a, b);
 				//ECPoint G = curve.DecodePoint(Hex.Decode("03"
 				//+ "DB4FF10EC057E9AE26B07D0280B7F4341DA5D1B1EAE06C7D"));
 				ECPoint G = curve.DecodePoint(Hex.Decode("04"
@@ -292,7 +292,7 @@ namespace Org.BouncyCastle.Asn1.Sec
 				IBigInteger n = FromHex("FFFFFFFFFFFFFFFFFFFFFFFF99DEF836146BC9B1B4D22831");
 				IBigInteger h = BigInteger.ValueOf(1);
 
-				ECCurve curve = new FpCurve(p, a, b);
+				ECCurve curve = new FPCurve(p, a, b);
 				//ECPoint G = curve.DecodePoint(Hex.Decode("03"
 				//+ "188DA80EB03090F67CBF20EB43A18800F4FF0AFD82FF1012"));
 				ECPoint G = curve.DecodePoint(Hex.Decode("04"
@@ -323,7 +323,7 @@ namespace Org.BouncyCastle.Asn1.Sec
 				IBigInteger n = FromHex("010000000000000000000000000001DCE8D2EC6184CAF0A971769FB1F7");
 				IBigInteger h = BigInteger.ValueOf(1);
 
-				ECCurve curve = new FpCurve(p, a, b);
+				ECCurve curve = new FPCurve(p, a, b);
 				//ECPoint G = curve.DecodePoint(Hex.Decode("03"
 				//+ "A1455B334DF099DF30FC28A169A467E9E47075A90F7E650EB6B7A45C"));
 				ECPoint G = curve.DecodePoint(Hex.Decode("04"
@@ -354,7 +354,7 @@ namespace Org.BouncyCastle.Asn1.Sec
 				IBigInteger n = FromHex("FFFFFFFFFFFFFFFFFFFFFFFFFFFF16A2E0B8F03E13DD29455C5C2A3D");
 				IBigInteger h = BigInteger.ValueOf(1);
 
-				ECCurve curve = new FpCurve(p, a, b);
+				ECCurve curve = new FPCurve(p, a, b);
 				//ECPoint G = curve.DecodePoint(Hex.Decode("02"
 				//+ "B70E0CBD6BB4BF7F321390B94A03C1D356C21122343280D6115C1D21"));
 				ECPoint G = curve.DecodePoint(Hex.Decode("04"
@@ -385,7 +385,7 @@ namespace Org.BouncyCastle.Asn1.Sec
 				IBigInteger n = FromHex("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141");
 				IBigInteger h = BigInteger.ValueOf(1);
 
-				ECCurve curve = new FpCurve(p, a, b);
+				ECCurve curve = new FPCurve(p, a, b);
 				//ECPoint G = curve.DecodePoint(Hex.Decode("02"
 				//+ "79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798"));
 				ECPoint G = curve.DecodePoint(Hex.Decode("04"
@@ -416,7 +416,7 @@ namespace Org.BouncyCastle.Asn1.Sec
 				IBigInteger n = FromHex("FFFFFFFF00000000FFFFFFFFFFFFFFFFBCE6FAADA7179E84F3B9CAC2FC632551");
 				IBigInteger h = BigInteger.ValueOf(1);
 
-				ECCurve curve = new FpCurve(p, a, b);
+				ECCurve curve = new FPCurve(p, a, b);
 				//ECPoint G = curve.DecodePoint(Hex.Decode("03"
 				//+ "6B17D1F2E12C4247F8BCE6E563A440F277037D812DEB33A0F4A13945D898C296"));
 				ECPoint G = curve.DecodePoint(Hex.Decode("04"
@@ -447,7 +447,7 @@ namespace Org.BouncyCastle.Asn1.Sec
 				IBigInteger n = FromHex("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFC7634D81F4372DDF581A0DB248B0A77AECEC196ACCC52973");
 				IBigInteger h = BigInteger.ValueOf(1);
 
-				ECCurve curve = new FpCurve(p, a, b);
+				ECCurve curve = new FPCurve(p, a, b);
 				//ECPoint G = curve.DecodePoint(Hex.Decode("03"
 				//+ "AA87CA22BE8B05378EB1C71EF320AD746E1D3B628BA79B9859F741E082542A385502F25DBF55296C3A545E3872760AB7"));
 				ECPoint G = curve.DecodePoint(Hex.Decode("04"
@@ -478,7 +478,7 @@ namespace Org.BouncyCastle.Asn1.Sec
 				IBigInteger n = FromHex("01FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFA51868783BF2F966B7FCC0148F709A5D03BB5C9B8899C47AEBB6FB71E91386409");
 				IBigInteger h = BigInteger.ValueOf(1);
 
-				ECCurve curve = new FpCurve(p, a, b);
+				ECCurve curve = new FPCurve(p, a, b);
 				//ECPoint G = curve.DecodePoint(Hex.Decode("02"
 				//+ "00C6858E06B70404E9CD9E3ECB662395B4429C648139053FB521F828AF606B4D3DBAA14B5E77EFE75928FE1DC127A2FFA8DE3348B3C1856A429BF97E7E31C2E5BD66"));
 				ECPoint G = curve.DecodePoint(Hex.Decode("04"
@@ -510,7 +510,7 @@ namespace Org.BouncyCastle.Asn1.Sec
 				IBigInteger n = FromHex("0100000000000000D9CCEC8A39E56F");
 				IBigInteger h = BigInteger.ValueOf(2);
 
-				ECCurve curve = new F2mCurve(m, k, a, b, n, h);
+				ECCurve curve = new F2MCurve(m, k, a, b, n, h);
 				//ECPoint G = curve.DecodePoint(Hex.Decode("03"
 				//+ "009D73616F35F4AB1407D73562C10F"));
 				ECPoint G = curve.DecodePoint(Hex.Decode("04"
@@ -542,7 +542,7 @@ namespace Org.BouncyCastle.Asn1.Sec
 				IBigInteger n = FromHex("010000000000000108789B2496AF93");
 				IBigInteger h = BigInteger.ValueOf(2);
 
-				ECCurve curve = new F2mCurve(m, k, a, b, n, h);
+				ECCurve curve = new F2MCurve(m, k, a, b, n, h);
 				//ECPoint G = curve.DecodePoint(Hex.Decode("03"
 				//+ "01A57A6A7B26CA5EF52FCDB8164797"));
 				ECPoint G = curve.DecodePoint(Hex.Decode("04"
@@ -576,7 +576,7 @@ namespace Org.BouncyCastle.Asn1.Sec
 				IBigInteger n = FromHex("0400000000000000023123953A9464B54D");
 				IBigInteger h = BigInteger.ValueOf(2);
 
-				ECCurve curve = new F2mCurve(m, k1, k2, k3, a, b, n, h);
+				ECCurve curve = new F2MCurve(m, k1, k2, k3, a, b, n, h);
 				//ECPoint G = curve.DecodePoint(Hex.Decode("03"
 				//+ "0081BAF91FDF9833C40F9C181343638399"));
 				ECPoint G = curve.DecodePoint(Hex.Decode("04"
@@ -610,7 +610,7 @@ namespace Org.BouncyCastle.Asn1.Sec
 				IBigInteger n = FromHex("0400000000000000016954A233049BA98F");
 				IBigInteger h = BigInteger.ValueOf(2);
 
-				ECCurve curve = new F2mCurve(m, k1, k2, k3, a, b, n, h);
+				ECCurve curve = new F2MCurve(m, k1, k2, k3, a, b, n, h);
 				//ECPoint G = curve.DecodePoint(Hex.Decode("03"
 				//+ "0356DCD8F2F95031AD652D23951BB366A8"));
 				ECPoint G = curve.DecodePoint(Hex.Decode("04"
@@ -644,7 +644,7 @@ namespace Org.BouncyCastle.Asn1.Sec
 				IBigInteger n = FromHex("04000000000000000000020108A2E0CC0D99F8A5EF");
 				IBigInteger h = BigInteger.ValueOf(2);
 
-				ECCurve curve = new F2mCurve(m, k1, k2, k3, a, b, n, h);
+				ECCurve curve = new F2MCurve(m, k1, k2, k3, a, b, n, h);
 				//ECPoint G = curve.DecodePoint(Hex.Decode("03"
 				//+ "02FE13C0537BBC11ACAA07D793DE4E6D5E5C94EEE8"));
 				ECPoint G = curve.DecodePoint(Hex.Decode("04"
@@ -678,7 +678,7 @@ namespace Org.BouncyCastle.Asn1.Sec
 				IBigInteger n = FromHex("03FFFFFFFFFFFFFFFFFFFF48AAB689C29CA710279B");
 				IBigInteger h = BigInteger.ValueOf(2);
 
-				ECCurve curve = new F2mCurve(m, k1, k2, k3, a, b, n, h);
+				ECCurve curve = new F2MCurve(m, k1, k2, k3, a, b, n, h);
 				//ECPoint G = curve.DecodePoint(Hex.Decode("03"
 				//+ "0369979697AB43897789566789567F787A7876A654"));
 				ECPoint G = curve.DecodePoint(Hex.Decode("04"
@@ -712,7 +712,7 @@ namespace Org.BouncyCastle.Asn1.Sec
 				IBigInteger n = FromHex("040000000000000000000292FE77E70C12A4234C33");
 				IBigInteger h = BigInteger.ValueOf(2);
 
-				ECCurve curve = new F2mCurve(m, k1, k2, k3, a, b, n, h);
+				ECCurve curve = new F2MCurve(m, k1, k2, k3, a, b, n, h);
 				//ECPoint G = curve.DecodePoint(Hex.Decode("03"
 				//+ "03F0EBA16286A2D57EA0991168D4994637E8343E36"));
 				ECPoint G = curve.DecodePoint(Hex.Decode("04"
@@ -744,7 +744,7 @@ namespace Org.BouncyCastle.Asn1.Sec
 				IBigInteger n = FromHex("01000000000000000000000000C7F34A778F443ACC920EBA49");
 				IBigInteger h = BigInteger.ValueOf(2);
 
-				ECCurve curve = new F2mCurve(m, k, a, b, n, h);
+				ECCurve curve = new F2MCurve(m, k, a, b, n, h);
 				//ECPoint G = curve.DecodePoint(Hex.Decode("03"
 				//+ "01F481BC5F0FF84A74AD6CDF6FDEF4BF6179625372D8C0C5E1"));
 				ECPoint G = curve.DecodePoint(Hex.Decode("04"
@@ -776,7 +776,7 @@ namespace Org.BouncyCastle.Asn1.Sec
 				IBigInteger n = FromHex("010000000000000000000000015AAB561B005413CCD4EE99D5");
 				IBigInteger h = BigInteger.ValueOf(2);
 
-				ECCurve curve = new F2mCurve(m, k, a, b, n, h);
+				ECCurve curve = new F2MCurve(m, k, a, b, n, h);
 				//ECPoint G = curve.DecodePoint(Hex.Decode("03"
 				//+ "00D9B67D192E0367C803F39E1A7E82CA14A651350AAE617E8F"));
 				ECPoint G = curve.DecodePoint(Hex.Decode("04"
@@ -808,7 +808,7 @@ namespace Org.BouncyCastle.Asn1.Sec
 				IBigInteger n = FromHex("8000000000000000000000000000069D5BB915BCD46EFB1AD5F173ABDF");
 				IBigInteger h = BigInteger.ValueOf(4);
 
-				ECCurve curve = new F2mCurve(m, k, a, b, n, h);
+				ECCurve curve = new F2MCurve(m, k, a, b, n, h);
 				//ECPoint G = curve.DecodePoint(Hex.Decode("02"
 				//+ "017232BA853A7E731AF129F22FF4149563A419C26BF50A4C9D6EEFAD6126"));
 				ECPoint G = curve.DecodePoint(Hex.Decode("04"
@@ -840,7 +840,7 @@ namespace Org.BouncyCastle.Asn1.Sec
 				IBigInteger n = FromHex("01000000000000000000000000000013E974E72F8A6922031D2603CFE0D7");
 				IBigInteger h = BigInteger.ValueOf(2);
 
-				ECCurve curve = new F2mCurve(m, k, a, b, n, h);
+				ECCurve curve = new F2MCurve(m, k, a, b, n, h);
 				//ECPoint G = curve.DecodePoint(Hex.Decode("03"
 				//+ "00FAC9DFCBAC8313BB2139F1BB755FEF65BC391F8B36F8F8EB7371FD558B"));
 				ECPoint G = curve.DecodePoint(Hex.Decode("04"
@@ -872,7 +872,7 @@ namespace Org.BouncyCastle.Asn1.Sec
 				IBigInteger n = FromHex("2000000000000000000000000000005A79FEC67CB6E91F1C1DA800E478A5");
 				IBigInteger h = BigInteger.ValueOf(4);
 
-				ECCurve curve = new F2mCurve(m, k, a, b, n, h);
+				ECCurve curve = new F2MCurve(m, k, a, b, n, h);
 				//ECPoint G = curve.DecodePoint(Hex.Decode("03"
 				//+ "29A0B6A887A983E9730988A68727A8B2D126C44CC2CC7B2A6555193035DC"));
 				ECPoint G = curve.DecodePoint(Hex.Decode("04"
@@ -906,7 +906,7 @@ namespace Org.BouncyCastle.Asn1.Sec
 				IBigInteger n = FromHex("01FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE9AE2ED07577265DFF7F94451E061E163C61");
 				IBigInteger h = BigInteger.ValueOf(4);
 
-				ECCurve curve = new F2mCurve(m, k1, k2, k3, a, b, n, h);
+				ECCurve curve = new F2MCurve(m, k1, k2, k3, a, b, n, h);
 				//ECPoint G = curve.DecodePoint(Hex.Decode("02"
 				//+ "0503213F78CA44883F1A3B8162F188E553CD265F23C1567A16876913B0C2AC2458492836"));
 				ECPoint G = curve.DecodePoint(Hex.Decode("04"
@@ -940,7 +940,7 @@ namespace Org.BouncyCastle.Asn1.Sec
 				IBigInteger n = FromHex("03FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEF90399660FC938A90165B042A7CEFADB307");
 				IBigInteger h = BigInteger.ValueOf(2);
 
-				ECCurve curve = new F2mCurve(m, k1, k2, k3, a, b, n, h);
+				ECCurve curve = new F2MCurve(m, k1, k2, k3, a, b, n, h);
 				//ECPoint G = curve.DecodePoint(Hex.Decode("03"
 				//+ "05F939258DB7DD90E1934F8C70B0DFEC2EED25B8557EAC9C80E2E198F8CDBECD86B12053"));
 				ECPoint G = curve.DecodePoint(Hex.Decode("04"
@@ -972,7 +972,7 @@ namespace Org.BouncyCastle.Asn1.Sec
 				IBigInteger n = FromHex("7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE5F83B2D4EA20400EC4557D5ED3E3E7CA5B4B5C83B8E01E5FCF");
 				IBigInteger h = BigInteger.ValueOf(4);
 
-				ECCurve curve = new F2mCurve(m, k, a, b, n, h);
+				ECCurve curve = new F2MCurve(m, k, a, b, n, h);
 				//ECPoint G = curve.DecodePoint(Hex.Decode("03"
 				//+ "0060F05F658F49C1AD3AB1890F7184210EFD0987E307C84C27ACCFB8F9F67CC2C460189EB5AAAA62EE222EB1B35540CFE9023746"));
 				ECPoint G = curve.DecodePoint(Hex.Decode("04"
@@ -1004,7 +1004,7 @@ namespace Org.BouncyCastle.Asn1.Sec
 				IBigInteger n = FromHex("010000000000000000000000000000000000000000000000000001E2AAD6A612F33307BE5FA47C3C9E052F838164CD37D9A21173");
 				IBigInteger h = BigInteger.ValueOf(2);
 
-				ECCurve curve = new F2mCurve(m, k, a, b, n, h);
+				ECCurve curve = new F2MCurve(m, k, a, b, n, h);
 				//ECPoint G = curve.DecodePoint(Hex.Decode("03"
 				//+ "015D4860D088DDB3496B0C6064756260441CDE4AF1771D4DB01FFE5B34E59703DC255A868A1180515603AEAB60794E54BB7996A7"));
 				ECPoint G = curve.DecodePoint(Hex.Decode("04"
@@ -1038,7 +1038,7 @@ namespace Org.BouncyCastle.Asn1.Sec
 				IBigInteger n = FromHex("020000000000000000000000000000000000000000000000000000000000000000000000131850E1F19A63E4B391A8DB917F4138B630D84BE5D639381E91DEB45CFE778F637C1001");
 				IBigInteger h = BigInteger.ValueOf(4);
 
-				ECCurve curve = new F2mCurve(m, k1, k2, k3, a, b, n, h);
+				ECCurve curve = new F2MCurve(m, k1, k2, k3, a, b, n, h);
 				//ECPoint G = curve.DecodePoint(Hex.Decode("02"
 				//+ "026EB7A859923FBC82189631F8103FE4AC9CA2970012D5D46024804801841CA44370958493B205E647DA304DB4CEB08CBBD1BA39494776FB988B47174DCA88C7E2945283A01C8972"));
 				ECPoint G = curve.DecodePoint(Hex.Decode("04"
@@ -1072,7 +1072,7 @@ namespace Org.BouncyCastle.Asn1.Sec
                 IBigInteger n = FromHex("03FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE661CE18FF55987308059B186823851EC7DD9CA1161DE93D5174D66E8382E9BB2FE84E47");
                 IBigInteger h = BigInteger.ValueOf(2);
 
-				ECCurve curve = new F2mCurve(m, k1, k2, k3, a, b, n, h);
+				ECCurve curve = new F2MCurve(m, k1, k2, k3, a, b, n, h);
 				//ECPoint G = curve.DecodePoint(Hex.Decode("03"
 				//+ "0303001D34B856296C16C0D40D3CD7750A93D1D2955FA80AA5F40FC8DB7B2ABDBDE53950F4C0D293CDD711A35B67FB1499AE60038614F1394ABFA3B4C850D927E1E7769C8EEC2D19"));
 				ECPoint G = curve.DecodePoint(Hex.Decode("04"

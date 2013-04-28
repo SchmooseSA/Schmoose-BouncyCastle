@@ -388,7 +388,7 @@ namespace Org.BouncyCastle.Math.EC.Abc
 		* @param p The F2mPoint to which <code>&#964;()</code> is applied.
 		* @return <code>&#964;(p)</code>
 		*/
-		public static F2mPoint Tau(F2mPoint p)
+		public static F2MPoint Tau(F2MPoint p)
 		{
 			if (p.IsInfinity)
 				return p;
@@ -396,7 +396,7 @@ namespace Org.BouncyCastle.Math.EC.Abc
 			ECFieldElement x = p.X;
 			ECFieldElement y = p.Y;
 
-			return new F2mPoint(p.Curve, x.Square(), y.Square(), p.IsCompressed);
+			return new F2MPoint(p.Curve, x.Square(), y.Square(), p.IsCompressed);
 		}
 
 		/**
@@ -409,7 +409,7 @@ namespace Org.BouncyCastle.Math.EC.Abc
 		* @throws ArgumentException if the given ECCurve is not a Koblitz
 		* curve.
 		*/
-		public static sbyte GetMu(F2mCurve curve)
+		public static sbyte GetMu(F2MCurve curve)
 		{
             IBigInteger a = curve.A.ToBigInteger();
 
@@ -526,7 +526,7 @@ namespace Org.BouncyCastle.Math.EC.Abc
 		* @throws ArgumentException if <code>curve</code> is not a
 		* Koblitz curve (Anomalous Binary Curve, ABC).
 		*/
-        public static IBigInteger[] GetSi(F2mCurve curve)
+        public static IBigInteger[] GetSi(F2MCurve curve)
 		{
 			if (!curve.IsKoblitz)
 				throw new ArgumentException("si is defined for Koblitz curves only");
@@ -631,9 +631,9 @@ namespace Org.BouncyCastle.Math.EC.Abc
 		* @param k The <code>BigInteger</code> by which to Multiply <code>p</code>.
 		* @return <code>k * p</code>
 		*/
-        public static F2mPoint MultiplyRTnaf(F2mPoint p, IBigInteger k)
+        public static F2MPoint MultiplyRTnaf(F2MPoint p, IBigInteger k)
 		{
-			F2mCurve curve = (F2mCurve) p.Curve;
+			F2MCurve curve = (F2MCurve) p.Curve;
 			int m = curve.M;
 			sbyte a = (sbyte) curve.A.ToBigInteger().IntValue;
 			sbyte mu = curve.GetMu();
@@ -652,13 +652,13 @@ namespace Org.BouncyCastle.Math.EC.Abc
 		* <code><b>Z</b>[&#964;]</code>.
 		* @return <code>&#955; * p</code>
 		*/
-		public static F2mPoint MultiplyTnaf(F2mPoint p, ZTauElement lambda)
+		public static F2MPoint MultiplyTnaf(F2MPoint p, ZTauElement lambda)
 		{
-			F2mCurve curve = (F2mCurve)p.Curve;
+			F2MCurve curve = (F2MCurve)p.Curve;
 			sbyte mu = curve.GetMu();
 			sbyte[] u = TauAdicNaf(mu, lambda);
 
-			F2mPoint q = MultiplyFromTnaf(p, u);
+			F2MPoint q = MultiplyFromTnaf(p, u);
 
 			return q;
 		}
@@ -672,20 +672,20 @@ namespace Org.BouncyCastle.Math.EC.Abc
 		* @param u The the TNAF of <code>&#955;</code>..
 		* @return <code>&#955; * p</code>
 		*/
-		public static F2mPoint MultiplyFromTnaf(F2mPoint p, sbyte[] u)
+		public static F2MPoint MultiplyFromTnaf(F2MPoint p, sbyte[] u)
 		{
-			F2mCurve curve = (F2mCurve)p.Curve;
-			F2mPoint q = (F2mPoint) curve.Infinity;
+			F2MCurve curve = (F2MCurve)p.Curve;
+			F2MPoint q = (F2MPoint) curve.Infinity;
 			for (int i = u.Length - 1; i >= 0; i--)
 			{
 				q = Tau(q);
 				if (u[i] == 1)
 				{
-					q = (F2mPoint)q.AddSimple(p);
+					q = (F2MPoint)q.AddSimple(p);
 				}
 				else if (u[i] == -1)
 				{
-					q = (F2mPoint)q.SubtractSimple(p);
+					q = (F2MPoint)q.SubtractSimple(p);
 				}
 			}
 			return q;
@@ -800,10 +800,10 @@ namespace Org.BouncyCastle.Math.EC.Abc
 		* @param a The parameter <code>a</code> of the elliptic curve.
 		* @return The precomputation array for <code>p</code>. 
 		*/
-		public static F2mPoint[] GetPreComp(F2mPoint p, sbyte a)
+		public static F2MPoint[] GetPreComp(F2MPoint p, sbyte a)
 		{
-			F2mPoint[] pu;
-			pu = new F2mPoint[16];
+			F2MPoint[] pu;
+			pu = new F2MPoint[16];
 			pu[1] = p;
 			sbyte[][] alphaTnaf;
 			if (a == 0)

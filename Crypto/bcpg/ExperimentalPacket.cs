@@ -1,38 +1,32 @@
-using System;
-using System.IO;
-
 namespace Org.BouncyCastle.Bcpg
 {
 	/// <remarks>Basic packet for an experimental packet.</remarks>
-    public class ExperimentalPacket
-        : ContainedPacket //, PublicKeyAlgorithmTag
+    public class ExperimentalPacket : ContainedPacket //, PublicKeyAlgorithmTag
     {
-        private readonly PacketTag	tag;
-        private readonly byte[]		contents;
+        private readonly PacketTag	_tag;
+        private readonly byte[]		_contents;
 
 		internal ExperimentalPacket(
             PacketTag		tag,
             BcpgInputStream	bcpgIn)
         {
-            this.tag = tag;
-
-			this.contents = bcpgIn.ReadAll();
+            _tag = tag;
+			_contents = bcpgIn.ReadAll();
         }
 
 		public PacketTag Tag
         {
-			get { return tag; }
+			get { return _tag; }
         }
 
 		public byte[] GetContents()
         {
-			return (byte[]) contents.Clone();
+			return (byte[]) _contents.Clone();
         }
 
-		public override void Encode(
-            IBcpgOutputStream bcpgOut)
+		public override void Encode(IBcpgOutputStream bcpgOut)
         {
-            bcpgOut.WritePacket(tag, contents, true);
+            bcpgOut.WritePacket(_tag, _contents, true);
         }
     }
 }

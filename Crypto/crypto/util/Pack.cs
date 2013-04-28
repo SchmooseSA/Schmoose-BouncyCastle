@@ -1,14 +1,8 @@
-using System;
-
 namespace Org.BouncyCastle.Crypto.Utilities
 {
-	internal sealed class Pack
+	internal static class Pack
 	{
-		private Pack()
-		{
-		}
-
-		internal static void UInt32_To_BE(uint n, byte[] bs)
+	    internal static void UInt32_To_BE(uint n, byte[] bs)
 		{
 			bs[0] = (byte)(n >> 24);
 			bs[1] = (byte)(n >> 16);

@@ -1,5 +1,3 @@
-using System;
-
 using Org.BouncyCastle.Math;
 
 namespace Org.BouncyCastle.Bcpg
@@ -7,28 +5,23 @@ namespace Org.BouncyCastle.Bcpg
 	/// <remarks>Base class for a DSA public key.</remarks>
 	public class DsaPublicBcpgKey : BcpgObject, IBcpgKey
     {
-        private readonly MPInteger p, q, g, y;
+        private readonly MPInteger _p, _q, _g, _y;
 
 		/// <param name="bcpgIn">The stream to read the packet from.</param>
-		public DsaPublicBcpgKey(
-			BcpgInputStream bcpgIn)
+		public DsaPublicBcpgKey(BcpgInputStream bcpgIn)
 		{
-			this.p = new MPInteger(bcpgIn);
-			this.q = new MPInteger(bcpgIn);
-			this.g = new MPInteger(bcpgIn);
-			this.y = new MPInteger(bcpgIn);
+			_p = new MPInteger(bcpgIn);
+			_q = new MPInteger(bcpgIn);
+			_g = new MPInteger(bcpgIn);
+			_y = new MPInteger(bcpgIn);
 		}
 
-		public DsaPublicBcpgKey(
-            IBigInteger p,
-            IBigInteger q,
-            IBigInteger g,
-            IBigInteger y)
+		public DsaPublicBcpgKey(IBigInteger p, IBigInteger q, IBigInteger g, IBigInteger y)
 		{
-			this.p = new MPInteger(p);
-			this.q = new MPInteger(q);
-			this.g = new MPInteger(g);
-			this.y = new MPInteger(y);
+			_p = new MPInteger(p);
+			_q = new MPInteger(q);
+			_g = new MPInteger(g);
+			_y = new MPInteger(y);
 		}
 
 		/// <summary>The format, as a string, always "PGP".</summary>
@@ -37,43 +30,29 @@ namespace Org.BouncyCastle.Bcpg
 			get { return "PGP"; }
 		}
 
-		/// <summary>Return the standard PGP encoding of the key.</summary>
-        public override byte[] GetEncoded()
-        {
-            try
-            {
-            	return base.GetEncoded();
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
-		public override void Encode(
-			IBcpgOutputStream bcpgOut)
+		public override void Encode(IBcpgOutputStream bcpgOut)
 		{
-			bcpgOut.WriteObjects(p, q, g, y);
+			bcpgOut.WriteObjects(_p, _q, _g, _y);
 		}
 
         public IBigInteger G
 		{
-			get { return g.Value; }
+			get { return _g.Value; }
 		}
 
         public IBigInteger P
 		{
-			get { return p.Value; }
+			get { return _p.Value; }
 		}
 
         public IBigInteger Q
 		{
-			get { return q.Value; }
+			get { return _q.Value; }
 		}
 
         public IBigInteger Y
 		{
-			get { return y.Value; }
+			get { return _y.Value; }
 		}
     }
 }

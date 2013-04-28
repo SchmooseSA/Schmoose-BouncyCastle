@@ -47,23 +47,7 @@ namespace Org.BouncyCastle.Bcpg
         public IBigInteger X
 		{
             get { return _x.Value; }
-		}
-
-        /// <summary>
-        /// Return the standard PGP encoding of the key.
-        /// </summary>
-        /// <returns></returns>
-		public override byte[] GetEncoded()
-		{
-			try
-			{
-				return base.GetEncoded();
-			}
-			catch (Exception)
-			{
-				return null;
-			}
-		}
+		}        
 
 		public override void Encode(IBcpgOutputStream bcpgOut)
 		{

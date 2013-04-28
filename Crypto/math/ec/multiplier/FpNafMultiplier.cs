@@ -4,13 +4,13 @@ namespace Org.BouncyCastle.Math.EC.Multiplier
 	* Class implementing the NAF (Non-Adjacent Form) multiplication algorithm.
 	*/
 	internal class FpNafMultiplier
-		: ECMultiplier
+		: IECMultiplier
 	{
 		/**
 		* D.3.2 pg 101
 		* @see org.bouncycastle.math.ec.multiplier.ECMultiplier#multiply(org.bouncycastle.math.ec.ECPoint, java.math.BigInteger)
 		*/
-        public ECPoint Multiply(ECPoint p, IBigInteger k, PreCompInfo preCompInfo)
+        public ECPoint Multiply(ECPoint p, IBigInteger k, IPreCompInfo preCompInfo)
 		{
 			// TODO Probably should try to add this
 			// IBigInteger e = k.Mod(n); // n == order of p

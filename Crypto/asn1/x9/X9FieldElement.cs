@@ -22,7 +22,7 @@ namespace Org.BouncyCastle.Asn1.X9
 		public X9FieldElement(
 			IBigInteger		p,
 			Asn1OctetString	s)
-			: this(new FpFieldElement(p, new BigInteger(1, s.GetOctets())))
+			: this(new FPFieldElement(p, new BigInteger(1, s.GetOctets())))
 		{
 		}
 
@@ -32,7 +32,7 @@ namespace Org.BouncyCastle.Asn1.X9
 			int				k2,
 			int				k3,
 			Asn1OctetString	s)
-			: this(new F2mFieldElement(m, k1, k2, k3, new BigInteger(1, s.GetOctets())))
+			: this(new F2MFieldElement(m, k1, k2, k3, new BigInteger(1, s.GetOctets())))
 		{
 		}
 

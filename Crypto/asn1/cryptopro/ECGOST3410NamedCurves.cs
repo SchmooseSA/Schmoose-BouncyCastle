@@ -28,7 +28,7 @@ namespace Org.BouncyCastle.Asn1.CryptoPro
             IBigInteger mod_p = new BigInteger("115792089237316195423570985008687907853269984665640564039457584007913129639319");
             IBigInteger mod_q = new BigInteger("115792089237316195423570985008687907853073762908499243225378155805079068850323");
 
-            FpCurve curve = new FpCurve(
+            FPCurve curve = new FPCurve(
                 mod_p, // p
                 new BigInteger("115792089237316195423570985008687907853269984665640564039457584007913129639316"), // a
                 new BigInteger("166")); // b
@@ -46,7 +46,7 @@ namespace Org.BouncyCastle.Asn1.CryptoPro
             mod_p = new BigInteger("115792089237316195423570985008687907853269984665640564039457584007913129639319");
             mod_q = new BigInteger("115792089237316195423570985008687907853073762908499243225378155805079068850323");
 
-            curve = new FpCurve(
+            curve = new FPCurve(
                 mod_p, // p
                 new BigInteger("115792089237316195423570985008687907853269984665640564039457584007913129639316"),
                 new BigInteger("166"));
@@ -64,7 +64,7 @@ namespace Org.BouncyCastle.Asn1.CryptoPro
             mod_p = new BigInteger("57896044618658097711785492504343953926634992332820282019728792003956564823193"); //p
             mod_q = new BigInteger("57896044618658097711785492504343953927102133160255826820068844496087732066703"); //q
 
-            curve = new FpCurve(
+            curve = new FPCurve(
                 mod_p, // p
                 new BigInteger("57896044618658097711785492504343953926634992332820282019728792003956564823190"), // a
                 new BigInteger("28091019353058090096996979000309560759124368558014865957655842872397301267595")); // b
@@ -82,7 +82,7 @@ namespace Org.BouncyCastle.Asn1.CryptoPro
             mod_p = new BigInteger("70390085352083305199547718019018437841079516630045180471284346843705633502619");
             mod_q = new BigInteger("70390085352083305199547718019018437840920882647164081035322601458352298396601");
 
-            curve = new FpCurve(
+            curve = new FPCurve(
                 mod_p, // p
                 new BigInteger("70390085352083305199547718019018437841079516630045180471284346843705633502616"),
                 new BigInteger("32858"));
@@ -99,7 +99,7 @@ namespace Org.BouncyCastle.Asn1.CryptoPro
 
             mod_p = new BigInteger("70390085352083305199547718019018437841079516630045180471284346843705633502619"); //p
             mod_q = new BigInteger("70390085352083305199547718019018437840920882647164081035322601458352298396601"); //q
-            curve = new FpCurve(
+            curve = new FPCurve(
                 mod_p, // p
                 new BigInteger("70390085352083305199547718019018437841079516630045180471284346843705633502616"), // a
                 new BigInteger("32858")); // b

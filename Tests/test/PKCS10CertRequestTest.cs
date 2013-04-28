@@ -126,7 +126,7 @@ namespace Org.BouncyCastle.Tests
 			string				algorithm,
 			DerObjectIdentifier	algOid)
 		{
-			FpCurve curve = new FpCurve(
+			FPCurve curve = new FPCurve(
 				new BigInteger("6864797660130609714981900799081393217269435300143305409394463459185543183397656052122559640661454554977296311391480858037121987999716643812574028291115057151"), // q (or p)
 				new BigInteger("01FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFC", 16),   // a
 				new BigInteger("0051953EB9618E1C9A1F929A21A0B68540EEA2DA725B99B315F3B8B489918EF109E156193951EC7E937B1652C0BD3BB1BF073573DF883D2C34F1EF451FD46B503F00", 16));  // b
@@ -174,10 +174,10 @@ namespace Org.BouncyCastle.Tests
 			// try with point compression turned off
 			//
 //			((ECPointEncoder)pubKey).setPointFormat("UNCOMPRESSED");
-			FpPoint q = (FpPoint) pubKey.Q;
+			FPPoint q = (FPPoint) pubKey.Q;
 			pubKey = new ECPublicKeyParameters(
 				pubKey.AlgorithmName,
-				new FpPoint(q.Curve, q.X, q.Y, false),
+				new FPPoint(q.Curve, q.X, q.Y, false),
 				pubKey.Parameters);
 
 			req = new Pkcs10CertificationRequest(
@@ -413,7 +413,7 @@ namespace Org.BouncyCastle.Tests
 			// elliptic curve openSSL
 			IAsymmetricCipherKeyPairGenerator g = GeneratorUtilities.GetKeyPairGenerator("ECDSA");
 
-			ECCurve curve = new FpCurve(
+			ECCurve curve = new FPCurve(
 				new BigInteger("883423532389192164791648750360308885314476597252960362792450860609699839"), // q
 				new BigInteger("7fffffffffffffffffffffff7fffffffffff8000000000007ffffffffffc", 16), // a
 				new BigInteger("6b016c3bdcf18941d0d654921475ca71a9db2fb27d1d37796185c2942c0a", 16)); // b

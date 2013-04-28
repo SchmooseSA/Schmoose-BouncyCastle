@@ -6,8 +6,7 @@ namespace Org.BouncyCastle.Math.EC.Multiplier
 	* Class implementing the WNAF (Window Non-Adjacent Form) multiplication
 	* algorithm.
 	*/
-	internal class WNafMultiplier
-		: ECMultiplier 
+	internal class WNafMultiplier : IECMultiplier 
 	{
 		/**
 		* Computes the Window NAF (non-adjacent Form) of an integer.
@@ -88,7 +87,7 @@ namespace Org.BouncyCastle.Math.EC.Multiplier
 		* @return A new <code>ECPoint</code> which equals <code>this</code>
 		* multiplied by <code>k</code>.
 		*/
-        public ECPoint Multiply(ECPoint p, IBigInteger k, PreCompInfo preCompInfo)
+        public ECPoint Multiply(ECPoint p, IBigInteger k, IPreCompInfo preCompInfo)
 		{
 			WNafPreCompInfo wnafPreCompInfo;
 
@@ -234,7 +233,7 @@ namespace Org.BouncyCastle.Math.EC.Multiplier
 			// multiplication.
 			wnafPreCompInfo.SetPreComp(preComp);
 			wnafPreCompInfo.SetTwiceP(twiceP);
-			p.SetPreCompInfo(wnafPreCompInfo);
+			p.PreCompInfo = wnafPreCompInfo;
 			return q;
 		}
 	}

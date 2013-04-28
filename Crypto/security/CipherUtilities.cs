@@ -262,7 +262,7 @@ namespace Org.BouncyCastle.Security
 			}
 			else if (algorithm == "ECIES")
 			{
-				iesAgreement = new ECDHBasicAgreement();
+				iesAgreement = new EcdhBasicAgreement();
 			}
 
 			if (iesAgreement != null)

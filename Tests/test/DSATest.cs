@@ -251,7 +251,7 @@ namespace Org.BouncyCastle.Tests
 
 			SecureRandom k = FixedSecureRandom.From(kData);
 
-			ECCurve curve = new FpCurve(
+			ECCurve curve = new FPCurve(
 				new BigInteger("883423532389192164791648750360308885314476597252960362792450860609699839"), // q
 				new BigInteger("7fffffffffffffffffffffff7fffffffffff8000000000007ffffffffffc", 16), // a
 				new BigInteger("6b016c3bdcf18941d0d654921475ca71a9db2fb27d1d37796185c2942c0a", 16)); // b
@@ -329,7 +329,7 @@ namespace Org.BouncyCastle.Tests
 
 			SecureRandom k = FixedSecureRandom.From(kData);
 
-			ECCurve curve = new F2mCurve(
+			ECCurve curve = new F2MCurve(
 				239, // m
 				36, // k
 				new BigInteger("32010857077C5431123A46B808906756F543423E8D27877578125778AC76", 16), // a
@@ -434,7 +434,7 @@ namespace Org.BouncyCastle.Tests
 
 			SecureRandom k = FixedSecureRandom.From(kData);
 
-			ECCurve curve = new F2mCurve(
+			ECCurve curve = new F2MCurve(
 				239, // m
 				36, // k
 				new BigInteger("32010857077C5431123A46B808906756F543423E8D27877578125778AC76", 16), // a
@@ -553,7 +553,7 @@ namespace Org.BouncyCastle.Tests
 			//
 			s = SignerUtilities.GetSigner("ECDSA");
 
-			ECCurve curve = new FpCurve(
+			ECCurve curve = new FPCurve(
 				new BigInteger("883423532389192164791648750360308885314476597252960362792450860609699839"), // q
 				new BigInteger("7fffffffffffffffffffffff7fffffffffff8000000000007ffffffffffc", 16), // a
 				new BigInteger("6b016c3bdcf18941d0d654921475ca71a9db2fb27d1d37796185c2942c0a", 16)); // b
@@ -593,7 +593,7 @@ namespace Org.BouncyCastle.Tests
 			//
 			s = SignerUtilities.GetSigner("ECDSA");
 
-			curve = new F2mCurve(
+			curve = new F2MCurve(
 					239, // m
 					36, // k
 					new BigInteger("32010857077C5431123A46B808906756F543423E8D27877578125778AC76", 16), // a

@@ -8,86 +8,81 @@ using Org.BouncyCastle.Security;
 
 namespace Org.BouncyCastle.Crypto.Agreement
 {
-	/**
-	 * a Diffie-Hellman key exchange engine.
-	 * <p>
-	 * note: This uses MTI/A0 key agreement in order to make the key agreement
-	 * secure against passive attacks. If you're doing Diffie-Hellman and both
-	 * parties have long term public keys you should look at using this. For
-	 * further information have a look at RFC 2631.</p>
-	 * <p>
-	 * It's possible to extend this to more than two parties as well, for the moment
-	 * that is left as an exercise for the reader.</p>
-	 */
-	public class DHAgreement
-	{
-		private DHPrivateKeyParameters  key;
-		private DHParameters			dhParams;
-		private IBigInteger				privateValue;
-		private SecureRandom			random;
+    /**
+     * a Diffie-Hellman key exchange engine.
+     * <p>
+     * note: This uses MTI/A0 key agreement in order to make the key agreement
+     * secure against passive attacks. If you're doing Diffie-Hellman and both
+     * parties have long term public keys you should look at using this. For
+     * further information have a look at RFC 2631.</p>
+     * <p>
+     * It's possible to extend this to more than two parties as well, for the moment
+     * that is left as an exercise for the reader.</p>
+     */
+    public class DHAgreement
+    {
+        private DHPrivateKeyParameters _key;
+        private DHParameters _dhParams;
+        private IBigInteger _privateValue;
+        private SecureRandom _random;
 
-		public void Init(
-			ICipherParameters parameters)
-		{
-			IAsymmetricKeyParameter kParam;
-			if (parameters is ParametersWithRandom)
-			{
-				ParametersWithRandom rParam = (ParametersWithRandom)parameters;
+        public void Init(ICipherParameters parameters)
+        {
+            IAsymmetricKeyParameter kParam;
+            var rParam = parameters as ParametersWithRandom;
+            if (rParam != null)
+            {
+                _random = rParam.Random;
+                kParam = (AsymmetricKeyParameter)rParam.Parameters;
+            }
+            else
+            {
+                _random = new SecureRandom();
+                kParam = (AsymmetricKeyParameter)parameters;
+            }
 
-				this.random = rParam.Random;
-				kParam = (AsymmetricKeyParameter)rParam.Parameters;
-			}
-			else
-			{
-				this.random = new SecureRandom();
-				kParam = (AsymmetricKeyParameter)parameters;
-			}
+            if (!(kParam is DHPrivateKeyParameters))
+            {
+                throw new ArgumentException("DHEngine expects DHPrivateKeyParameters");
+            }
 
-			if (!(kParam is DHPrivateKeyParameters))
-			{
-				throw new ArgumentException("DHEngine expects DHPrivateKeyParameters");
-			}
+            _key = (DHPrivateKeyParameters)kParam;
+            _dhParams = _key.Parameters;
+        }
 
-			this.key = (DHPrivateKeyParameters)kParam;
-			this.dhParams = key.Parameters;
-		}
+        /**
+         * calculate our initial message.
+         */
+        public IBigInteger CalculateMessage()
+        {
+            var dhGen = new DHKeyPairGenerator();
+            dhGen.Init(new DHKeyGenerationParameters(_random, _dhParams));
 
-		/**
-		 * calculate our initial message.
-		 */
-		public IBigInteger CalculateMessage()
-		{
-			DHKeyPairGenerator dhGen = new DHKeyPairGenerator();
-			dhGen.Init(new DHKeyGenerationParameters(random, dhParams));
-			IAsymmetricCipherKeyPair dhPair = dhGen.GenerateKeyPair();
+            var dhPair = dhGen.GenerateKeyPair();
+            _privateValue = ((DHPrivateKeyParameters)dhPair.Private).X;
 
-			this.privateValue = ((DHPrivateKeyParameters)dhPair.Private).X;
+            return ((DHPublicKeyParameters)dhPair.Public).Y;
+        }
 
-			return ((DHPublicKeyParameters)dhPair.Public).Y;
-		}
+        /**
+         * given a message from a given party and the corresponding public key
+         * calculate the next message in the agreement sequence. In this case
+         * this will represent the shared secret.
+         */
+        public IBigInteger CalculateAgreement(DHPublicKeyParameters pub, IBigInteger message)
+        {
+            if (pub == null)
+                throw new ArgumentNullException("pub");
+            if (message == null)
+                throw new ArgumentNullException("message");
 
-		/**
-		 * given a message from a given party and the corresponding public key
-		 * calculate the next message in the agreement sequence. In this case
-		 * this will represent the shared secret.
-		 */
-		public IBigInteger CalculateAgreement(
-			DHPublicKeyParameters	pub,
-			IBigInteger				message)
-		{
-			if (pub == null)
-				throw new ArgumentNullException("pub");
-			if (message == null)
-				throw new ArgumentNullException("message");
+            if (!pub.Parameters.Equals(_dhParams))
+            {
+                throw new ArgumentException("Diffie-Hellman public key has wrong parameters.");
+            }
 
-			if (!pub.Parameters.Equals(dhParams))
-			{
-				throw new ArgumentException("Diffie-Hellman public key has wrong parameters.");
-			}
-
-			IBigInteger p = dhParams.P;
-
-			return message.ModPow(key.X, p).Multiply(pub.Y.ModPow(privateValue, p)).Mod(p);
-		}
-	}
+            var p = _dhParams.P;
+            return message.ModPow(_key.X, p).Multiply(pub.Y.ModPow(_privateValue, p)).Mod(p);
+        }
+    }
 }

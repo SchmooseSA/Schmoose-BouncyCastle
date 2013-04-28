@@ -8,108 +8,102 @@ namespace Org.BouncyCastle.Crypto.Parameters
 {
     public class ECDomainParameters
     {
-        internal ECCurve     curve;
-        internal byte[]      seed;
-        internal ECPoint     g;
-        internal IBigInteger n;
-        internal IBigInteger h;
+        private readonly ECCurve _curve;
+        private readonly byte[] _seed;
+        private readonly ECPoint _g;
+        private readonly IBigInteger _n;
+        private readonly IBigInteger _h;
 
-		public ECDomainParameters(
-            ECCurve     curve,
-            ECPoint     g,
+        public ECDomainParameters(
+            ECCurve curve,
+            ECPoint g,
             IBigInteger n)
-			: this(curve, g, n, BigInteger.One)
+            : this(curve, g, n, BigInteger.One)
         {
         }
 
         public ECDomainParameters(
-            ECCurve     curve,
-            ECPoint     g,
+            ECCurve curve,
+            ECPoint g,
             IBigInteger n,
             IBigInteger h)
-			: this(curve, g, n, h, null)
-		{
+            : this(curve, g, n, h, null)
+        {
         }
 
-		public ECDomainParameters(
-            ECCurve     curve,
-            ECPoint     g,
+        public ECDomainParameters(
+            ECCurve curve,
+            ECPoint g,
             IBigInteger n,
             IBigInteger h,
-            byte[]      seed)
+            byte[] seed)
         {
-			if (curve == null)
-				throw new ArgumentNullException("curve");
-			if (g == null)
-				throw new ArgumentNullException("g");
-			if (n == null)
-				throw new ArgumentNullException("n");
-			if (h == null)
-				throw new ArgumentNullException("h");
+            if (curve == null)
+                throw new ArgumentNullException("curve");
+            if (g == null)
+                throw new ArgumentNullException("g");
+            if (n == null)
+                throw new ArgumentNullException("n");
+            if (h == null)
+                throw new ArgumentNullException("h");
 
-			this.curve = curve;
-            this.g = g;
-            this.n = n;
-            this.h = h;
-            this.seed = Arrays.Clone(seed);
+            _curve = curve;
+            _g = g;
+            _n = n;
+            _h = h;
+            _seed = Arrays.Clone(seed);
         }
 
-		public ECCurve Curve
+        public ECCurve Curve
         {
-            get { return curve; }
+            get { return _curve; }
         }
 
         public ECPoint G
         {
-            get { return g; }
+            get { return _g; }
         }
 
         public IBigInteger N
         {
-            get { return n; }
+            get { return _n; }
         }
 
         public IBigInteger H
         {
-            get { return h; }
+            get { return _h; }
         }
 
         public byte[] GetSeed()
         {
-			return Arrays.Clone(seed);
+            return Arrays.Clone(_seed);
         }
 
-		public override bool Equals(
-			object obj)
+        public override bool Equals(object obj)
         {
-			if (obj == this)
-				return true;
+            if (obj == this)
+                return true;
 
-			ECDomainParameters other = obj as ECDomainParameters;
-
-			if (other == null)
-				return false;
-
-			return Equals(other);
+            var other = obj as ECDomainParameters;
+            return other != null && Equals(other);
         }
 
-		protected bool Equals(
-			ECDomainParameters other)
-		{
-			return curve.Equals(other.curve)
-				&&	g.Equals(other.g)
-				&&	n.Equals(other.n)
-				&&	h.Equals(other.h)
-				&&	Arrays.AreEqual(seed, other.seed);
-		}
-
-		public override int GetHashCode()
+        protected bool Equals(ECDomainParameters other)
         {
-            return curve.GetHashCode()
-				^	g.GetHashCode()
-				^	n.GetHashCode()
-				^	h.GetHashCode()
-				^	Arrays.GetHashCode(seed);
+            return _curve.Equals(other.Curve)
+                && _g.Equals(other.G)
+                && _n.Equals(other.N)
+                && _h.Equals(other.H)
+                && Arrays.AreEqual(_seed, other._seed);
+        }
+
+        public override int GetHashCode()
+        {
+            return _curve.GetHashCode()
+                ^ _g.GetHashCode()
+                ^ _n.GetHashCode()
+                ^ _h.GetHashCode()
+                ^ Arrays.GetHashCode(_seed);
         }
     }
 

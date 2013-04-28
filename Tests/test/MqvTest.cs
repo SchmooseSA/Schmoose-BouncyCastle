@@ -35,7 +35,7 @@ namespace Org.BouncyCastle.Tests
 //				new ECFieldFp(new BigInteger("883423532389192164791648750360308885314476597252960362792450860609699839")), // q
 //				new BigInteger("7fffffffffffffffffffffff7fffffffffff8000000000007ffffffffffc", 16), // a
 //				new BigInteger("6b016c3bdcf18941d0d654921475ca71a9db2fb27d1d37796185c2942c0a", 16)); // b
-			ECCurve curve = new FpCurve(
+			ECCurve curve = new FPCurve(
 				new BigInteger("883423532389192164791648750360308885314476597252960362792450860609699839"), // q
 				new BigInteger("7fffffffffffffffffffffff7fffffffffff8000000000007ffffffffffc", 16), // a
 				new BigInteger("6b016c3bdcf18941d0d654921475ca71a9db2fb27d1d37796185c2942c0a", 16)); // b

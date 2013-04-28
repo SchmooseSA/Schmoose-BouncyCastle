@@ -4,7 +4,7 @@ namespace Org.BouncyCastle.Math.EC.Multiplier
 	* Interface for classes encapsulating a point multiplication algorithm
 	* for <code>ECPoint</code>s.
 	*/
-	internal interface ECMultiplier
+	public interface IECMultiplier
 	{
 		/**
 		* Multiplies the <code>ECPoint p</code> by <code>k</code>, i.e.
@@ -13,6 +13,6 @@ namespace Org.BouncyCastle.Math.EC.Multiplier
 		* @param k The factor by which <code>p</code> i multiplied.
 		* @return <code>p</code> multiplied by <code>k</code>.
 		*/
-        ECPoint Multiply(ECPoint p, IBigInteger k, PreCompInfo preCompInfo);
+        ECPoint Multiply(ECPoint p, IBigInteger k, IPreCompInfo preCompInfo);
 	}
 }

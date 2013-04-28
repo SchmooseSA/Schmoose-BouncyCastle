@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.IO;
-
+using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Security;
@@ -433,6 +433,12 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                                 var elPriv = new ElGamalSecretBcpgKey(bcpgIn);
                                 var elParams = new ElGamalParameters(elPub.P, elPub.G);
                                 privateKey = new ElGamalPrivateKeyParameters(elPriv.X, elParams);
+                                break;
+                            case PublicKeyAlgorithmTag.Ecdh:
+                            case PublicKeyAlgorithmTag.Ecdsa:
+                                var ecPub = (EcPublicBcpgKey)pubPk.Key;
+                                var ecPriv = new EcSecretBcpgKey(bcpgIn);
+                                privateKey = new ECPrivateKeyParameters(pubPk.Algorithm.ToString(), ecPriv.X, ecPub.Oid);
                                 break;
                             default:
                                 throw new PgpException("unknown public key algorithm encountered");

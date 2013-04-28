@@ -2,18 +2,16 @@ using System;
 
 using NUnit.Framework;
 using Org.BouncyCastle.Bcpg;
-using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Utilities;
 using Org.BouncyCastle.Utilities.Encoders;
-using Org.BouncyCastle.bcpg;
-using Random = Org.BouncyCastle.bcpg.Random;
+using Random = Org.BouncyCastle.Bcpg.Random;
 
 namespace Org.BouncyCastle.Math.Tests
 {
 	[TestFixture]
 	public class BigIntegerTest
 	{
-		private static IRandom random = new Random();
+		private static readonly IRandom _random = new Random();
 
 		[Test]
 		public void MonoBug81857()
@@ -103,7 +101,7 @@ namespace Org.BouncyCastle.Math.Tests
 
 			for (int i = 0; i < 10; ++i)
 			{
-				IBigInteger test = new BigInteger(128, 0, random);
+				IBigInteger test = new BigInteger(128, 0, _random);
 				int bitCount = 0;
 
 				for (int bit = 0; bit < test.BitLength; ++bit)
@@ -129,8 +127,8 @@ namespace Org.BouncyCastle.Math.Tests
 
 			for (int i = 0; i < 100; ++i)
 			{
-				int bit = i + random.Next(64);
-				IBigInteger odd = new BigInteger(bit, random).SetBit(bit + 1).SetBit(0);
+				int bit = i + _random.Next(64);
+				IBigInteger odd = new BigInteger(bit, _random).SetBit(bit + 1).SetBit(0);
 				IBigInteger pow2 = one.ShiftLeft(bit);
 
 				Assert.AreEqual(bit + 2, odd.BitLength);
@@ -157,11 +155,11 @@ namespace Org.BouncyCastle.Math.Tests
 
 			for (int i = 0; i < 10; ++i)
 			{
-				IBigInteger n = new BigInteger(128, random);
+				IBigInteger n = new BigInteger(128, _random);
 
 				for (int j = 0; j < 10; ++j)
 				{
-					int pos = random.Next(128);
+					int pos = _random.Next(128);
 					IBigInteger m = n.ClearBit(pos);
 					bool test = m.ShiftRight(pos).Remainder(two).Equals(one);
 
@@ -231,7 +229,7 @@ namespace Org.BouncyCastle.Math.Tests
 
 			for (int i = 0; i < 10; ++i)
 			{
-				Assert.IsTrue(new BigInteger(i + 3, 0, random).TestBit(0));
+				Assert.IsTrue(new BigInteger(i + 3, 0, _random).TestBit(0));
 			}
 
 			// TODO Other constructors
@@ -276,9 +274,9 @@ namespace Org.BouncyCastle.Math.Tests
 
 			for (int rep = 0; rep < 10; ++rep)
 			{
-				IBigInteger a = new BigInteger(100 - rep, 0, random);
-				IBigInteger b = new BigInteger(100 + rep, 0, random);
-				IBigInteger c = new BigInteger(10 + rep, 0, random);
+				IBigInteger a = new BigInteger(100 - rep, 0, _random);
+				IBigInteger b = new BigInteger(100 + rep, 0, _random);
+				IBigInteger c = new BigInteger(10 + rep, 0, _random);
 				IBigInteger d = a.Multiply(b).Add(c);
 				IBigInteger e = d.Divide(a);
 
@@ -288,9 +286,9 @@ namespace Org.BouncyCastle.Math.Tests
 			// Special tests for power of two since uses different code path internally
 			for (int i = 0; i < 100; ++i)
 			{
-				int shift = random.Next(64);
+				int shift = _random.Next(64);
 				IBigInteger a = one.ShiftLeft(shift);
-				IBigInteger b = new BigInteger(64 + random.Next(64), random);
+				IBigInteger b = new BigInteger(64 + _random.Next(64), _random);
 				IBigInteger bShift = b.ShiftRight(shift);
 
 				string data = "shift=" + shift +", b=" + b.ToString(16);
@@ -322,16 +320,16 @@ namespace Org.BouncyCastle.Math.Tests
 		{
 			// TODO More basic tests
 
-			IBigInteger n = new BigInteger(48, random);
+			IBigInteger n = new BigInteger(48, _random);
 			IBigInteger[] qr = n.DivideAndRemainder(one);
 			Assert.AreEqual(n, qr[0]);
 			Assert.AreEqual(zero, qr[1]);
 
 			for (int rep = 0; rep < 10; ++rep)
 			{
-				IBigInteger a = new BigInteger(100 - rep, 0, random);
-				IBigInteger b = new BigInteger(100 + rep, 0, random);
-				IBigInteger c = new BigInteger(10 + rep, 0, random);
+				IBigInteger a = new BigInteger(100 - rep, 0, _random);
+				IBigInteger b = new BigInteger(100 + rep, 0, _random);
+				IBigInteger c = new BigInteger(10 + rep, 0, _random);
 				IBigInteger d = a.Multiply(b).Add(c);
 				IBigInteger[] es = d.DivideAndRemainder(a);
 
@@ -342,9 +340,9 @@ namespace Org.BouncyCastle.Math.Tests
 			// Special tests for power of two since uses different code path internally
 			for (int i = 0; i < 100; ++i)
 			{
-				int shift = random.Next(64);
+				int shift = _random.Next(64);
 				IBigInteger a = one.ShiftLeft(shift);
-				IBigInteger b = new BigInteger(64 + random.Next(64), random);
+				IBigInteger b = new BigInteger(64 + _random.Next(64), _random);
 				IBigInteger bShift = b.ShiftRight(shift);
 				IBigInteger bMod = b.And(a.Subtract(one));
 
@@ -373,13 +371,13 @@ namespace Org.BouncyCastle.Math.Tests
 		{
 			for (int i = 0; i < 10; ++i)
 			{
-				IBigInteger a = new BigInteger(128, 0, random);
+				IBigInteger a = new BigInteger(128, 0, _random);
 				IBigInteger b = a;
 
 				for (int x = 0; x < 100; ++x)
 				{
 					// Note: Intentionally greater than initial size
-					int pos = random.Next(256);
+					int pos = _random.Next(256);
 
 					a = a.FlipBit(pos);
 					b = b.TestBit(pos) ? b.ClearBit(pos) : b.SetBit(pos);
@@ -413,9 +411,9 @@ namespace Org.BouncyCastle.Math.Tests
 		{
 			for (int i = 0; i < 10; ++i)
 			{
-				IBigInteger fac = new BigInteger(32, random).Add(two);
-				IBigInteger p1 = BigInteger.ProbablePrime(63, random);
-				IBigInteger p2 = BigInteger.ProbablePrime(64, random);
+				IBigInteger fac = new BigInteger(32, _random).Add(two);
+				IBigInteger p1 = BigInteger.ProbablePrime(63, _random);
+				IBigInteger p2 = BigInteger.ProbablePrime(64, _random);
 
 				IBigInteger gcd = fac.Multiply(p1).Gcd(fac.Multiply(p2));
 
@@ -428,7 +426,7 @@ namespace Org.BouncyCastle.Math.Tests
 		{
 			for (int i = 0; i < 10; ++i)
 			{
-				IBigInteger test = new BigInteger(128, 0, random).Add(one);
+				IBigInteger test = new BigInteger(128, 0, _random).Add(one);
 				int bit1 = test.GetLowestSetBit();
 				Assert.AreEqual(test, test.ShiftRight(bit1).ShiftLeft(bit1));
 				int bit2 = test.ShiftLeft(i + 1).GetLowestSetBit();
@@ -535,16 +533,16 @@ namespace Org.BouncyCastle.Math.Tests
 
 			for (int rep = 0; rep < 100; ++rep)
 			{
-				int diff = random.Next(25);
-				IBigInteger a = new BigInteger(100 - diff, 0, random);
-				IBigInteger b = new BigInteger(100 + diff, 0, random);
-				IBigInteger c = new BigInteger(10 + diff, 0, random);
+				int diff = _random.Next(25);
+				IBigInteger a = new BigInteger(100 - diff, 0, _random);
+				IBigInteger b = new BigInteger(100 + diff, 0, _random);
+				IBigInteger c = new BigInteger(10 + diff, 0, _random);
 
 				IBigInteger d = a.Multiply(b).Add(c);
 				IBigInteger e = d.Mod(a);
 				Assert.AreEqual(c, e);
 
-				IBigInteger pow2 = one.ShiftLeft(random.Next(128));
+				IBigInteger pow2 = one.ShiftLeft(_random.Next(128));
 				Assert.AreEqual(b.And(pow2.Subtract(one)), b.Mod(pow2));
 			}
 		}
@@ -554,8 +552,8 @@ namespace Org.BouncyCastle.Math.Tests
 		{
 			for (int i = 0; i < 10; ++i)
 			{
-				IBigInteger p = BigInteger.ProbablePrime(64, random);
-				IBigInteger q = new BigInteger(63, random).Add(one);
+				IBigInteger p = BigInteger.ProbablePrime(64, _random);
+				IBigInteger q = new BigInteger(63, _random).Add(one);
 				IBigInteger inv = q.ModInverse(p);
 				IBigInteger inv2 = inv.ModInverse(p);
 
@@ -581,8 +579,8 @@ namespace Org.BouncyCastle.Math.Tests
 
 			for (int i = 0; i < 10; ++i)
 			{
-				IBigInteger m = BigInteger.ProbablePrime(10 + i * 3, random);
-				IBigInteger x = new BigInteger(m.BitLength - 1, random);
+				IBigInteger m = BigInteger.ProbablePrime(10 + i * 3, _random);
+				IBigInteger x = new BigInteger(m.BitLength - 1, _random);
 
 				Assert.AreEqual(x, x.ModPow(m, m));
 				if (x.SignValue != 0)
@@ -591,8 +589,8 @@ namespace Org.BouncyCastle.Math.Tests
 					Assert.AreEqual(one, x.ModPow(m.Subtract(one), m));
 				}
 
-				IBigInteger y = new BigInteger(m.BitLength - 1, random);
-				IBigInteger n = new BigInteger(m.BitLength - 1, random);
+				IBigInteger y = new BigInteger(m.BitLength - 1, _random);
+				IBigInteger n = new BigInteger(m.BitLength - 1, _random);
 				IBigInteger n3 = n.ModPow(three, m);
 
 				IBigInteger resX = n.ModPow(x, m);
@@ -618,12 +616,12 @@ namespace Org.BouncyCastle.Math.Tests
 
 			for (int i = 0; i < 100; ++i)
 			{
-				int aLen = 64 + random.Next(64);
-				int bLen = 64 + random.Next(64);
+				int aLen = 64 + _random.Next(64);
+				int bLen = 64 + _random.Next(64);
 
-				IBigInteger a = new BigInteger(aLen, random).SetBit(aLen);
-				IBigInteger b = new BigInteger(bLen, random).SetBit(bLen);
-				IBigInteger c = new BigInteger(32, random);
+				IBigInteger a = new BigInteger(aLen, _random).SetBit(aLen);
+				IBigInteger b = new BigInteger(bLen, _random).SetBit(bLen);
+				IBigInteger c = new BigInteger(32, _random);
 
 				IBigInteger ab = a.Multiply(b);
 				IBigInteger bc = b.Multiply(c);
@@ -635,9 +633,9 @@ namespace Org.BouncyCastle.Math.Tests
 			// Special tests for power of two since uses different code path internally
 			for (int i = 0; i < 100; ++i)
 			{
-				int shift = random.Next(64);
+				int shift = _random.Next(64);
 				IBigInteger a = one.ShiftLeft(shift);
-				IBigInteger b = new BigInteger(64 + random.Next(64), random);
+				IBigInteger b = new BigInteger(64 + _random.Next(64), _random);
 				IBigInteger bShift = b.ShiftLeft(shift);
 
 				Assert.AreEqual(bShift, a.Multiply(b));
@@ -664,7 +662,7 @@ namespace Org.BouncyCastle.Math.Tests
 		[Test]
 		public void TestNextProbablePrime()
 		{
-			IBigInteger firstPrime = BigInteger.ProbablePrime(32, random);
+			IBigInteger firstPrime = BigInteger.ProbablePrime(32, _random);
 			IBigInteger nextPrime = firstPrime.NextProbablePrime();
 
 			Assert.IsTrue(firstPrime.IsProbablePrime(10));
@@ -739,9 +737,9 @@ namespace Org.BouncyCastle.Math.Tests
 
 			for (int rep = 0; rep < 10; ++rep)
 			{
-				IBigInteger a = new BigInteger(100 - rep, 0, random);
-				IBigInteger b = new BigInteger(100 + rep, 0, random);
-				IBigInteger c = new BigInteger(10 + rep, 0, random);
+				IBigInteger a = new BigInteger(100 - rep, 0, _random);
+				IBigInteger b = new BigInteger(100 + rep, 0, _random);
+				IBigInteger c = new BigInteger(10 + rep, 0, _random);
 				IBigInteger d = a.Multiply(b).Add(c);
 				IBigInteger e = d.Remainder(a);
 
@@ -766,11 +764,11 @@ namespace Org.BouncyCastle.Math.Tests
 
 			for (int i = 0; i < 10; ++i)
 			{
-				IBigInteger n = new BigInteger(128, random);
+				IBigInteger n = new BigInteger(128, _random);
 
 				for (int j = 0; j < 10; ++j)
 				{
-					int pos = random.Next(128);
+					int pos = _random.Next(128);
 					IBigInteger m = n.SetBit(pos);
 					bool test = m.ShiftRight(pos).Remainder(two).Equals(one);
 
@@ -803,9 +801,9 @@ namespace Org.BouncyCastle.Math.Tests
 		{
 			for (int i = 0; i < 100; ++i)
 			{
-				int shift = random.Next(128);
+				int shift = _random.Next(128);
 
-				IBigInteger a = new BigInteger(128 + i, random).Add(one);
+				IBigInteger a = new BigInteger(128 + i, _random).Add(one);
 				int bits = a.BitCount; // Make sure nBits is set
 
 				IBigInteger negA = a.Negate();
@@ -837,8 +835,8 @@ namespace Org.BouncyCastle.Math.Tests
 		{
 			for (int i = 0; i < 10; ++i)
 			{
-				int shift = random.Next(128);
-				IBigInteger a = new BigInteger(256 + i, random).SetBit(256 + i);
+				int shift = _random.Next(128);
+				IBigInteger a = new BigInteger(256 + i, _random).SetBit(256 + i);
 				IBigInteger b = a.ShiftRight(shift);
 
 				Assert.AreEqual(a.BitLength - shift, b.BitLength);
@@ -879,14 +877,14 @@ namespace Org.BouncyCastle.Math.Tests
 		{
 			for (int i = 0; i < 10; ++i)
 			{
-				IBigInteger n = new BigInteger(128, random);
+				IBigInteger n = new BigInteger(128, _random);
 
 				Assert.IsFalse(n.TestBit(128));
 				Assert.IsTrue(n.Negate().TestBit(128));
 
 				for (int j = 0; j < 10; ++j)
 				{
-					int pos = random.Next(128);
+					int pos = _random.Next(128);
 					bool test = n.ShiftRight(pos).Remainder(two).Equals(one);
 
 					Assert.AreEqual(test, n.TestBit(pos));
@@ -902,7 +900,7 @@ namespace Org.BouncyCastle.Math.Tests
 
 			for (int i = 16; i <= 48; ++i)
 			{
-				IBigInteger x = BigInteger.ProbablePrime(i, random);
+				IBigInteger x = BigInteger.ProbablePrime(i, _random);
 				byte[] b = x.ToByteArray();
 				Assert.AreEqual((i / 8 + 1), b.Length);
 				IBigInteger y = new BigInteger(b);
@@ -924,7 +922,7 @@ namespace Org.BouncyCastle.Math.Tests
 
 			for (int i = 16; i <= 48; ++i)
 			{
-				IBigInteger x = BigInteger.ProbablePrime(i, random);
+				IBigInteger x = BigInteger.ProbablePrime(i, _random);
 				byte[] b = x.ToByteArrayUnsigned();
 				Assert.AreEqual((i + 7) / 8, b.Length);
 				IBigInteger y = new BigInteger(1, b);
@@ -949,7 +947,7 @@ namespace Org.BouncyCastle.Math.Tests
 
 			for (int i = 0; i < 100; ++i)
 			{
-				IBigInteger n = new BigInteger(i, random);
+				IBigInteger n = new BigInteger(i, _random);
 
 				Assert.AreEqual(n, new BigInteger(n.ToString(2), 2));
 				Assert.AreEqual(n, new BigInteger(n.ToString(10), 10));

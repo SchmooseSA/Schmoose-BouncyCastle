@@ -2,33 +2,35 @@ using System.IO;
 
 namespace Org.BouncyCastle.Asn1
 {
-	public abstract class Asn1Encodable
-		: IAsn1Convertible
+	public abstract class Asn1Encodable : IAsn1Convertible
     {
 		public const string Der = "DER";
 		public const string Ber = "BER";
 
 		public byte[] GetEncoded()
         {
-            MemoryStream bOut = new MemoryStream();
-            Asn1OutputStream aOut = new Asn1OutputStream(bOut);
-
-			aOut.WriteObject(this);
-
-			return bOut.ToArray();
+		    using (var bOut = new MemoryStream())
+		    {
+		        using (var aOut = new Asn1OutputStream(bOut))
+		        {
+		            aOut.WriteObject(this);
+		            return bOut.ToArray();
+		        }
+		    }
         }
 
-		public byte[] GetEncoded(
-			string encoding)
+		public byte[] GetEncoded(string encoding)
 		{
 			if (encoding.Equals(Der))
 			{
-				MemoryStream bOut = new MemoryStream();
-				DerOutputStream dOut = new DerOutputStream(bOut);
-
-				dOut.WriteObject(this);
-
-				return bOut.ToArray();
+			    using (var bOut = new MemoryStream())
+			    {
+			        using (var dOut = new DerOutputStream(bOut))
+			        {
+			            dOut.WriteObject(this);
+			            return bOut.ToArray();
+			        }
+			    }
 			}
 
 			return GetEncoded();
@@ -56,20 +58,17 @@ namespace Org.BouncyCastle.Asn1
 			return ToAsn1Object().CallAsn1GetHashCode();
 		}
 
-		public sealed override bool Equals(
-			object obj)
+		public sealed override bool Equals(object obj)
 		{
 			if (obj == this)
 				return true;
 
-			IAsn1Convertible other = obj as IAsn1Convertible;
-
+			var other = obj as IAsn1Convertible;
 			if (other == null)
 				return false;
 
-			Asn1Object o1 = ToAsn1Object();
-			Asn1Object o2 = other.ToAsn1Object();
-
+			var o1 = ToAsn1Object();
+			var o2 = other.ToAsn1Object();
 			return o1 == o2 || o1.CallAsn1Equals(o2);
 		}
 

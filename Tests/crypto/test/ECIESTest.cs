@@ -37,7 +37,7 @@ namespace Org.BouncyCastle.Crypto.Tests
 
 		private void StaticTest()
 		{
-			FpCurve curve = new FpCurve(
+			FPCurve curve = new FPCurve(
 				new BigInteger("6277101735386680763835789423207666416083908700390324961279"), // q
 				new BigInteger("fffffffffffffffffffffffffffffffefffffffffffffffc", 16), // a
 				new BigInteger("64210519e59c80e70fa7e9ab72243049feb8deecc146b9b1", 16)); // b
@@ -64,11 +64,11 @@ namespace Org.BouncyCastle.Crypto.Tests
 			// stream test
 			//
 			IesEngine i1 = new IesEngine(
-				new ECDHBasicAgreement(),
+				new EcdhBasicAgreement(),
 				new Kdf2BytesGenerator(new Sha1Digest()),
 				new HMac(new Sha1Digest()));
 			IesEngine i2 = new IesEngine(
-				new ECDHBasicAgreement(),
+				new EcdhBasicAgreement(),
 				new Kdf2BytesGenerator(new Sha1Digest()),
 				new HMac(new Sha1Digest()));
 			byte[] d = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 };
@@ -102,12 +102,12 @@ namespace Org.BouncyCastle.Crypto.Tests
 			BufferedBlockCipher c2 = new PaddedBufferedBlockCipher(
 				new CbcBlockCipher(new TwofishEngine()));
 			i1 = new IesEngine(
-				new ECDHBasicAgreement(),
+				new EcdhBasicAgreement(),
 				new Kdf2BytesGenerator(new Sha1Digest()),
 				new HMac(new Sha1Digest()),
 				c1);
 			i2 = new IesEngine(
-				new ECDHBasicAgreement(),
+				new EcdhBasicAgreement(),
 				new Kdf2BytesGenerator(new Sha1Digest()),
 				new HMac(new Sha1Digest()),
 				c2);
@@ -143,11 +143,11 @@ namespace Org.BouncyCastle.Crypto.Tests
 			// stream test
 			//
 			IesEngine i1 = new IesEngine(
-				new ECDHBasicAgreement(),
+				new EcdhBasicAgreement(),
 				new Kdf2BytesGenerator(new Sha1Digest()),
 				new HMac(new Sha1Digest()));
 			IesEngine i2 = new IesEngine(
-				new ECDHBasicAgreement(),
+				new EcdhBasicAgreement(),
 				new Kdf2BytesGenerator(new Sha1Digest()),
 				new HMac(new Sha1Digest()));
 			byte[] d = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 };
@@ -176,12 +176,12 @@ namespace Org.BouncyCastle.Crypto.Tests
 			BufferedBlockCipher c2 = new PaddedBufferedBlockCipher(
 				new CbcBlockCipher(new TwofishEngine()));
 			i1 = new IesEngine(
-				new ECDHBasicAgreement(),
+				new EcdhBasicAgreement(),
 				new Kdf2BytesGenerator(new Sha1Digest()),
 				new HMac(new Sha1Digest()),
 				c1);
 			i2 = new IesEngine(
-				new ECDHBasicAgreement(),
+				new EcdhBasicAgreement(),
 				new Kdf2BytesGenerator(new Sha1Digest()),
 				new HMac(new Sha1Digest()),
 				c2);
@@ -208,7 +208,7 @@ namespace Org.BouncyCastle.Crypto.Tests
 		{
 			StaticTest();
 
-			FpCurve curve = new FpCurve(
+			FPCurve curve = new FPCurve(
 				new BigInteger("6277101735386680763835789423207666416083908700390324961279"), // q
 				new BigInteger("fffffffffffffffffffffffffffffffefffffffffffffffc", 16), // a
 				new BigInteger("64210519e59c80e70fa7e9ab72243049feb8deecc146b9b1", 16)); // b

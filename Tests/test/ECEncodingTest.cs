@@ -56,7 +56,7 @@ namespace Org.BouncyCastle.Tests
 
 		private void doTestPointCompression() 
 		{
-			ECCurve curve = new F2mCurve(m, k1, k2, k3, a, b);
+			ECCurve curve = new F2MCurve(m, k1, k2, k3, a, b);
 			curve.DecodePoint(enc);
 
 			int[] ks = new int[3];

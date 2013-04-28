@@ -41,7 +41,7 @@ namespace Org.BouncyCastle.Crypto.Tests
 
 			SecureRandom k = FixedSecureRandom.From(kData);
 
-			FpCurve curve = new FpCurve(
+			FPCurve curve = new FPCurve(
 				new BigInteger("6277101735386680763835789423207666416083908700390324961279"), // q
 				new BigInteger("fffffffffffffffffffffffffffffffefffffffffffffffc", 16), // a
 				new BigInteger("64210519e59c80e70fa7e9ab72243049feb8deecc146b9b1", 16)); // b
@@ -95,7 +95,7 @@ namespace Org.BouncyCastle.Crypto.Tests
 		[Test]
 		public void TestDecode()
 		{
-			FpCurve curve = new FpCurve(
+			FPCurve curve = new FPCurve(
 				new BigInteger("6277101735386680763835789423207666416083908700390324961279"), // q
 				new BigInteger("fffffffffffffffffffffffffffffffefffffffffffffffc", 16), // a
 				new BigInteger("64210519e59c80e70fa7e9ab72243049feb8deecc146b9b1", 16)); // b
@@ -135,7 +135,7 @@ namespace Org.BouncyCastle.Crypto.Tests
 
 			SecureRandom k = FixedSecureRandom.From(kData);
 
-			FpCurve curve = new FpCurve(
+			FPCurve curve = new FPCurve(
 				new BigInteger("883423532389192164791648750360308885314476597252960362792450860609699839"), // q
 				new BigInteger("7fffffffffffffffffffffff7fffffffffff8000000000007ffffffffffc", 16), // a
 				new BigInteger("6b016c3bdcf18941d0d654921475ca71a9db2fb27d1d37796185c2942c0a", 16)); // b
@@ -201,7 +201,7 @@ namespace Org.BouncyCastle.Crypto.Tests
 
 			SecureRandom k = FixedSecureRandom.From(kData);
 
-			F2mCurve curve = new F2mCurve(
+			F2MCurve curve = new F2MCurve(
 				191, // m
 				9, //k
 				new BigInteger("2866537B676752636A68F56554E12640276B649EF7526267", 16), // a
@@ -268,7 +268,7 @@ namespace Org.BouncyCastle.Crypto.Tests
 
 			SecureRandom k = FixedSecureRandom.From(kData);
 
-			F2mCurve curve = new F2mCurve(
+			F2MCurve curve = new F2MCurve(
 				239, // m
 				36, //k
 				new BigInteger("32010857077C5431123A46B808906756F543423E8D27877578125778AC76", 16), // a
@@ -572,7 +572,7 @@ namespace Org.BouncyCastle.Crypto.Tests
 
 			SecureRandom k = FixedSecureRandom.From(kData);
 
-			F2mCurve curve = new F2mCurve(
+			F2MCurve curve = new F2MCurve(
 				239, // m
 				36, //k
 				new BigInteger("32010857077C5431123A46B808906756F543423E8D27877578125778AC76", 16), // a
@@ -634,7 +634,7 @@ namespace Org.BouncyCastle.Crypto.Tests
 		{
 			SecureRandom random = new SecureRandom();
 
-			FpCurve curve = new FpCurve(
+			FPCurve curve = new FPCurve(
 				new BigInteger("883423532389192164791648750360308885314476597252960362792450860609699839"), // q
 				new BigInteger("7fffffffffffffffffffffff7fffffffffff8000000000007ffffffffffc", 16), // a
 				new BigInteger("6b016c3bdcf18941d0d654921475ca71a9db2fb27d1d37796185c2942c0a", 16)); // b
@@ -679,7 +679,7 @@ namespace Org.BouncyCastle.Crypto.Tests
 		{
 			SecureRandom random = new SecureRandom();
 
-			FpCurve curve = new FpCurve(
+			FPCurve curve = new FPCurve(
 				new BigInteger("883423532389192164791648750360308885314476597252960362792450860609699839"), // q
 				new BigInteger("7fffffffffffffffffffffff7fffffffffff8000000000007ffffffffffc", 16), // a
 				new BigInteger("6b016c3bdcf18941d0d654921475ca71a9db2fb27d1d37796185c2942c0a", 16)); // b
@@ -701,8 +701,8 @@ namespace Org.BouncyCastle.Crypto.Tests
 			//
 			// two way
 			//
-			IBasicAgreement e1 = new ECDHBasicAgreement();
-			IBasicAgreement e2 = new ECDHBasicAgreement();
+			IBasicAgreement e1 = new EcdhBasicAgreement();
+			IBasicAgreement e2 = new EcdhBasicAgreement();
 
 			e1.Init(p1.Private);
 			e2.Init(p2.Private);
@@ -718,8 +718,8 @@ namespace Org.BouncyCastle.Crypto.Tests
 			//
 			// two way
 			//
-			e1 = new ECDHCBasicAgreement();
-			e2 = new ECDHCBasicAgreement();
+			e1 = new EcdhcBasicAgreement();
+			e2 = new EcdhcBasicAgreement();
 
 			e1.Init(p1.Private);
 			e2.Init(p2.Private);
@@ -822,7 +822,7 @@ namespace Org.BouncyCastle.Crypto.Tests
 		{
 			SecureRandom random = new SecureRandom();
 
-			FpCurve curve = new FpCurve(
+			FPCurve curve = new FPCurve(
 				new BigInteger("883423532389192164791648750360308885314476597252960362792450860609699839"), // q
 				new BigInteger("7fffffffffffffffffffffff7fffffffffff8000000000007ffffffffffc", 16), // a
 				new BigInteger("6b016c3bdcf18941d0d654921475ca71a9db2fb27d1d37796185c2942c0a", 16)); // b

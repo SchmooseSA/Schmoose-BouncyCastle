@@ -55,8 +55,8 @@ namespace Org.BouncyCastle.Asn1.Tests
 			X962Parameters _params = new X962Parameters(X9ObjectIdentifiers.Prime192v1);
 
 			X9ECPoint pPoint = new X9ECPoint(
-				new FpPoint(ecP.Curve, new FpFieldElement(BigInteger.Two, BigInteger.One),
-				new FpFieldElement(BigInteger.ValueOf(4), BigInteger.ValueOf(3)),
+				new FPPoint(ecP.Curve, new FPFieldElement(BigInteger.Two, BigInteger.One),
+				new FPFieldElement(BigInteger.ValueOf(4), BigInteger.ValueOf(3)),
 				true));
 
 			Asn1OctetString p = (Asn1OctetString) pPoint.ToAsn1Object();
@@ -110,8 +110,8 @@ namespace Org.BouncyCastle.Asn1.Tests
 			X962Parameters _params = new X962Parameters(X9ObjectIdentifiers.Prime192v1);
 
 			X9ECPoint pPoint = new X9ECPoint(
-				new FpPoint(ecP.Curve, new FpFieldElement(BigInteger.Two, BigInteger.One),
-				new FpFieldElement(BigInteger.ValueOf(4), BigInteger.ValueOf(3)),
+				new FPPoint(ecP.Curve, new FPFieldElement(BigInteger.Two, BigInteger.One),
+				new FPFieldElement(BigInteger.ValueOf(4), BigInteger.ValueOf(3)),
 				true));
 
 			Asn1OctetString p = (Asn1OctetString) pPoint.ToAsn1Object();

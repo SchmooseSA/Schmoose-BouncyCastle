@@ -5,7 +5,7 @@ namespace Org.BouncyCastle.Math.EC.Multiplier
 	* <code>&#964;</code>-adic Non-Adjacent Form) algorithm.
 	*/
 	internal class WTauNafPreCompInfo
-		: PreCompInfo
+		: IPreCompInfo
 	{
 		/**
 		* Array holding the precomputed <code>F2mPoint</code>s used for the
@@ -13,7 +13,7 @@ namespace Org.BouncyCastle.Math.EC.Multiplier
 		* {@link org.bouncycastle.math.ec.multiplier.WTauNafMultiplier.multiply()
 		* WTauNafMultiplier.multiply()}</code>.
 		*/
-		private readonly F2mPoint[] preComp;
+		private readonly F2MPoint[] preComp;
 
 		/**
 		* Constructor for <code>WTauNafPreCompInfo</code>
@@ -22,7 +22,7 @@ namespace Org.BouncyCastle.Math.EC.Multiplier
 		* {@link org.bouncycastle.math.ec.multiplier.WTauNafMultiplier.multiply()
 		* WTauNafMultiplier.multiply()}</code>.
 		*/
-		internal WTauNafPreCompInfo(F2mPoint[] preComp)
+		internal WTauNafPreCompInfo(F2MPoint[] preComp)
 		{
 			this.preComp = preComp;
 		}
@@ -33,7 +33,7 @@ namespace Org.BouncyCastle.Math.EC.Multiplier
 		* {@link org.bouncycastle.math.ec.multiplier.WTauNafMultiplier.multiply()
 		* WTauNafMultiplier.multiply()}</code>.
 		*/
-		internal F2mPoint[] GetPreComp()
+		internal F2MPoint[] GetPreComp()
 		{
 			return preComp;
 		}

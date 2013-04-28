@@ -1,28 +1,23 @@
-using System;
-
 using Org.BouncyCastle.Math;
 
 namespace Org.BouncyCastle.Bcpg
 {
 	/// <remarks>Base class for a DSA secret key.</remarks>
-	public class DsaSecretBcpgKey
-		: BcpgObject, IBcpgKey
+	public class DsaSecretBcpgKey : BcpgObject, IBcpgKey
     {
-		internal MPInteger x;
+		private readonly MPInteger _x;
 
 		/**
 		* @param in
 		*/
-		public DsaSecretBcpgKey(
-			BcpgInputStream bcpgIn)
+		public DsaSecretBcpgKey(BcpgInputStream bcpgIn)
 		{
-			this.x = new MPInteger(bcpgIn);
+            _x = new MPInteger(bcpgIn);
 		}
 
-		public DsaSecretBcpgKey(
-			IBigInteger x)
+		public DsaSecretBcpgKey(IBigInteger x)
 		{
-			this.x = new MPInteger(x);
+            _x = new MPInteger(x);
 		}
 
 		/// <summary>The format, as a string, always "PGP".</summary>
@@ -30,24 +25,10 @@ namespace Org.BouncyCastle.Bcpg
 		{
 			get { return "PGP"; }
 		}
-
-		/// <summary>Return the standard PGP encoding of the key.</summary>
-		public override byte[] GetEncoded()
+		
+		public override void Encode(IBcpgOutputStream bcpgOut)
 		{
-			try
-			{
-				return base.GetEncoded();
-			}
-			catch (Exception)
-			{
-				return null;
-			}
-		}
-
-		public override void Encode(
-			IBcpgOutputStream bcpgOut)
-		{
-			bcpgOut.WriteObject(x);
+			bcpgOut.WriteObject(_x);
 		}
 
 		/**
@@ -55,7 +36,7 @@ namespace Org.BouncyCastle.Bcpg
 		*/
         public IBigInteger X
 		{
-			get { return x.Value; }
+			get { return _x.Value; }
 		}
 	}
 }

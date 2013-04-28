@@ -91,13 +91,13 @@ namespace Org.BouncyCastle.Asn1.X9
             this.h = h;
             this.seed = seed;
 
-			if (curve is FpCurve)
+			if (curve is FPCurve)
 			{
-				this.fieldID = new X9FieldID(((FpCurve) curve).Q);
+				this.fieldID = new X9FieldID(((FPCurve) curve).Q);
 			}
-			else if (curve is F2mCurve)
+			else if (curve is F2MCurve)
 			{
-				F2mCurve curveF2m = (F2mCurve) curve;
+				F2MCurve curveF2m = (F2MCurve) curve;
 				this.fieldID = new X9FieldID(curveF2m.M, curveF2m.K1,
 					curveF2m.K2, curveF2m.K3);
 			}

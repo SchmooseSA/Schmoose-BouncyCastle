@@ -1,6 +1,4 @@
-﻿using Org.BouncyCastle.Bcpg;
-
-namespace Org.BouncyCastle.bcpg
+﻿namespace Org.BouncyCastle.Bcpg
 {
     public class Random : System.Random, IRandom
     {

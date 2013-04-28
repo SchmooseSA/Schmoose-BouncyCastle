@@ -1,6 +1,4 @@
 using Org.BouncyCastle.Math;
-using Org.BouncyCastle.Math.EC;
-using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Parameters;
 
 namespace Org.BouncyCastle.Crypto.Agreement
@@ -19,31 +17,28 @@ namespace Org.BouncyCastle.Crypto.Agreement
      * DL/ECKAS-DH2. It assumes that the input keys are valid (see also
      * Section 7.2.2).
      */
-    public class ECDHBasicAgreement
-		: IBasicAgreement
+    public class EcdhBasicAgreement : IBasicAgreement
     {
-        protected internal ECPrivateKeyParameters privKey;
+        protected internal ECPrivateKeyParameters PrivKey;
 
-        public void Init(
-			ICipherParameters parameters)
+        public void Init(ICipherParameters parameters)
         {
 			if (parameters is ParametersWithRandom)
 			{
 				parameters = ((ParametersWithRandom)parameters).Parameters;
 			}
 
-			this.privKey = (ECPrivateKeyParameters)parameters;
+			this.PrivKey = (ECPrivateKeyParameters)parameters;
         }
 
-        public virtual IBigInteger CalculateAgreement(
-            ICipherParameters pubKey)
+        public virtual IBigInteger CalculateAgreement(ICipherParameters pubKey)
         {
-            ECPublicKeyParameters pub = (ECPublicKeyParameters) pubKey;
-            ECPoint P = pub.Q.Multiply(privKey.D);
+            var pub = (ECPublicKeyParameters) pubKey;
+            var p = pub.Q.Multiply(PrivKey.D);
 
             // if ( p.IsInfinity ) throw new Exception("d*Q == infinity");
 
-            return P.X.ToBigInteger();
+            return p.X.ToBigInteger();
         }
     }
 

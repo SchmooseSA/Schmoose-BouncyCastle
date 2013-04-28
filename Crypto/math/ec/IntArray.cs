@@ -8,16 +8,16 @@ namespace Org.BouncyCastle.Math.EC
         // TODO make m fixed for the IntArray, and hence compute T once and for all
 
 		// TODO Use uint's internally?
-		private int[] m_ints;
+		private int[] _ints;
 
 		public IntArray(int intLen)
 		{
-			m_ints = new int[intLen];
+			_ints = new int[intLen];
 		}
 
 		private IntArray(int[] ints)
 		{
-			m_ints = ints;
+			_ints = ints;
 		}
 
         public IntArray(IBigInteger bigInt)
@@ -28,55 +28,55 @@ namespace Org.BouncyCastle.Math.EC
         public IntArray(IBigInteger bigInt, int minIntLen)
 		{
 			if (bigInt.SignValue == -1)
-				throw new ArgumentException("Only positive Integers allowed", "bigint");
+                throw new ArgumentException("Only positive Integers allowed", "bigInt");
 
 			if (bigInt.SignValue == 0)
 			{
-				m_ints = new int[] { 0 };
+				_ints = new int[] { 0 };
 				return;
 			}
 
-			byte[] barr = bigInt.ToByteArrayUnsigned();
-			int barrLen = barr.Length;
+			var barr = bigInt.ToByteArrayUnsigned();
+			var barrLen = barr.Length;
 
-			int intLen = (barrLen + 3) / 4;
-			m_ints = new int[System.Math.Max(intLen, minIntLen)];
+			var intLen = (barrLen + 3) / 4;
+			_ints = new int[System.Math.Max(intLen, minIntLen)];
 
-			int rem = barrLen % 4;
-			int barrI = 0;
+			var rem = barrLen % 4;
+			var barrI = 0;
 
 			if (0 < rem)
 			{
-				int temp = (int) barr[barrI++];
+				var temp = (int) barr[barrI++];
 				while (barrI < rem)
 				{
 					temp = temp << 8 | (int) barr[barrI++];
 				}
-				m_ints[--intLen] = temp;
+				_ints[--intLen] = temp;
 			}
 
 			while (intLen > 0)
 			{
-				int temp = (int) barr[barrI++];
-				for (int i = 1; i < 4; i++)
+				var temp = (int) barr[barrI++];
+				for (var i = 1; i < 4; i++)
 				{
 					temp = temp << 8 | (int) barr[barrI++];
 				}
-				m_ints[--intLen] = temp;
+				_ints[--intLen] = temp;
 			}
 		}
 
 		public int GetUsedLength()
 		{
-			int highestIntPos = m_ints.Length;
+			int highestIntPos = _ints.Length;
 
 			if (highestIntPos < 1)
 				return 0;
 
 			// Check if first element will act as sentinel
-			if (m_ints[0] != 0)
+			if (_ints[0] != 0)
 			{
-				while (m_ints[--highestIntPos] == 0)
+				while (_ints[--highestIntPos] == 0)
 				{
 				}
 				return highestIntPos + 1;
@@ -84,7 +84,7 @@ namespace Org.BouncyCastle.Math.EC
 
 			do
 			{
-				if (m_ints[--highestIntPos] != 0)
+				if (_ints[--highestIntPos] != 0)
 				{
 					return highestIntPos + 1;
 				}
@@ -103,9 +103,9 @@ namespace Org.BouncyCastle.Math.EC
 				if (intLen == 0)
 					return 0;
 
-				int last = intLen - 1;
-				uint highest = (uint) m_ints[last];
-				int bits = (last << 5) + 1;
+				var last = intLen - 1;
+				var highest = (uint) _ints[last];
+				var bits = (last << 5) + 1;
 
 				// A couple of binary search steps
 				if (highest > 0x0000ffff)
@@ -137,50 +137,50 @@ namespace Org.BouncyCastle.Math.EC
 			}
 		}
 
-		private int[] resizedInts(int newLen)
+		private int[] ResizedInts(int newLen)
 		{
-			int[] newInts = new int[newLen];
-			int oldLen = m_ints.Length;
-			int copyLen = oldLen < newLen ? oldLen : newLen;
-			Array.Copy(m_ints, 0, newInts, 0, copyLen);
+			var newInts = new int[newLen];
+			var oldLen = _ints.Length;
+			var copyLen = oldLen < newLen ? oldLen : newLen;
+			Array.Copy(_ints, 0, newInts, 0, copyLen);
 			return newInts;
 		}
 
         public IBigInteger ToBigInteger()
 		{
-			int usedLen = GetUsedLength();
+			var usedLen = GetUsedLength();
 			if (usedLen == 0)
 			{
 				return BigInteger.Zero;
 			}
 
-			int highestInt = m_ints[usedLen - 1];
-			byte[] temp = new byte[4];
-			int barrI = 0;
-			bool trailingZeroBytesDone = false;
-			for (int j = 3; j >= 0; j--)
+			var highestInt = _ints[usedLen - 1];
+			var temp = new byte[4];
+			var barrI = 0;
+			var trailingZeroBytesDone = false;
+			for (var j = 3; j >= 0; j--)
 			{
-				byte thisByte = (byte)((int)((uint) highestInt >> (8 * j)));
-				if (trailingZeroBytesDone || (thisByte != 0))
-				{
-					trailingZeroBytesDone = true;
-					temp[barrI++] = thisByte;
-				}
+				var thisByte = (byte)((int)((uint) highestInt >> (8 * j)));
+			    if (!trailingZeroBytesDone && (thisByte == 0)) 
+                    continue;
+
+			    trailingZeroBytesDone = true;
+			    temp[barrI++] = thisByte;
 			}
 
-			int barrLen = 4 * (usedLen - 1) + barrI;
-			byte[] barr = new byte[barrLen];
-			for (int j = 0; j < barrI; j++)
+			var barrLen = 4 * (usedLen - 1) + barrI;
+			var barr = new byte[barrLen];
+			for (var j = 0; j < barrI; j++)
 			{
 				barr[j] = temp[j];
 			}
 			// Highest value int is done now
 
-			for (int iarrJ = usedLen - 2; iarrJ >= 0; iarrJ--)
+			for (var iarrJ = usedLen - 2; iarrJ >= 0; iarrJ--)
 			{
-				for (int j = 3; j >= 0; j--)
+				for (var j = 3; j >= 0; j--)
 				{
-					barr[barrI++] = (byte)((int)((uint)m_ints[iarrJ] >> (8 * j)));
+					barr[barrI++] = (byte)((int)((uint)_ints[iarrJ] >> (8 * j)));
 				}
 			}
 			return new BigInteger(1, barr);
@@ -193,16 +193,16 @@ namespace Org.BouncyCastle.Math.EC
 			{
 				return;
 			}
-			if (m_ints[usedLen - 1] < 0)
+			if (_ints[usedLen - 1] < 0)
 			{
 				// highest bit of highest used byte is set, so shifting left will
 				// make the IntArray one byte longer
 				usedLen++;
-				if (usedLen > m_ints.Length)
+				if (usedLen > _ints.Length)
 				{
 					// make the m_ints one byte longer, because we need one more
 					// byte which is not available in m_ints
-					m_ints = resizedInts(m_ints.Length + 1);
+					_ints = ResizedInts(_ints.Length + 1);
 				}
 			}
 
@@ -210,12 +210,12 @@ namespace Org.BouncyCastle.Math.EC
 			for (int i = 0; i < usedLen; i++)
 			{
 				// nextCarry is true if highest bit is set
-				bool nextCarry = m_ints[i] < 0;
-				m_ints[i] <<= 1;
+				bool nextCarry = _ints[i] < 0;
+				_ints[i] <<= 1;
 				if (carry)
 				{
 					// set lowest bit
-					m_ints[i] |= 1;
+					_ints[i] |= 1;
 				}
 				carry = nextCarry;
 			}
@@ -223,7 +223,7 @@ namespace Org.BouncyCastle.Math.EC
 
 		public IntArray ShiftLeft(int n)
 		{
-			int usedLen = GetUsedLength();
+			var usedLen = GetUsedLength();
 			if (usedLen == 0)
 			{
 				return this;
@@ -240,88 +240,88 @@ namespace Org.BouncyCastle.Math.EC
 					+ ", " + n + "bit shift is not possible", "n");
 			}
 
-			int[] newInts = new int[usedLen + 1];
+			var newInts = new int[usedLen + 1];
 
-			int nm32 = 32 - n;
-			newInts[0] = m_ints[0] << n;
-			for (int i = 1; i < usedLen; i++)
+			var nm32 = 32 - n;
+			newInts[0] = _ints[0] << n;
+			for (var i = 1; i < usedLen; i++)
 			{
-				newInts[i] = (m_ints[i] << n) | (int)((uint)m_ints[i - 1] >> nm32);
+				newInts[i] = (_ints[i] << n) | (int)((uint)_ints[i - 1] >> nm32);
 			}
-			newInts[usedLen] = (int)((uint)m_ints[usedLen - 1] >> nm32);
+			newInts[usedLen] = (int)((uint)_ints[usedLen - 1] >> nm32);
 
 			return new IntArray(newInts);
 		}
 
 		public void AddShifted(IntArray other, int shift)
 		{
-			int usedLenOther = other.GetUsedLength();
-			int newMinUsedLen = usedLenOther + shift;
-			if (newMinUsedLen > m_ints.Length)
+			var usedLenOther = other.GetUsedLength();
+			var newMinUsedLen = usedLenOther + shift;
+			if (newMinUsedLen > _ints.Length)
 			{
-				m_ints = resizedInts(newMinUsedLen);
+				_ints = ResizedInts(newMinUsedLen);
 				//Console.WriteLine("Resize required");
 			}
 
-			for (int i = 0; i < usedLenOther; i++)
+			for (var i = 0; i < usedLenOther; i++)
 			{
-				m_ints[i + shift] ^= other.m_ints[i];
+				_ints[i + shift] ^= other._ints[i];
 			}
 		}
 
 		public int Length
 		{
-			get { return m_ints.Length; }
+			get { return _ints.Length; }
 		}
 
 		public bool TestBit(int n)
 		{
 			// theInt = n / 32
-			int theInt = n >> 5;
+			var theInt = n >> 5;
 			// theBit = n % 32
-			int theBit = n & 0x1F;
-			int tester = 1 << theBit;
-			return ((m_ints[theInt] & tester) != 0);
+			var theBit = n & 0x1F;
+			var tester = 1 << theBit;
+			return ((_ints[theInt] & tester) != 0);
 		}
 
 		public void FlipBit(int n)
 		{
 			// theInt = n / 32
-			int theInt = n >> 5;
+			var theInt = n >> 5;
 			// theBit = n % 32
-			int theBit = n & 0x1F;
-			int flipper = 1 << theBit;
-			m_ints[theInt] ^= flipper;
+			var theBit = n & 0x1F;
+			var flipper = 1 << theBit;
+			_ints[theInt] ^= flipper;
 		}
 
 		public void SetBit(int n)
 		{
 			// theInt = n / 32
-			int theInt = n >> 5;
+			var theInt = n >> 5;
 			// theBit = n % 32
-			int theBit = n & 0x1F;
-			int setter = 1 << theBit;
-			m_ints[theInt] |= setter;
+			var theBit = n & 0x1F;
+			var setter = 1 << theBit;
+			_ints[theInt] |= setter;
 		}
 
 		public IntArray Multiply(IntArray other, int m)
 		{
 			// Lenght of c is 2m bits rounded up to the next int (32 bit)
-			int t = (m + 31) >> 5;
-			if (m_ints.Length < t)
+			var t = (m + 31) >> 5;
+			if (_ints.Length < t)
 			{
-				m_ints = resizedInts(t);
+				_ints = ResizedInts(t);
 			}
 
-			IntArray b = new IntArray(other.resizedInts(other.Length + 1));
-			IntArray c = new IntArray((m + m + 31) >> 5);
+			var b = new IntArray(other.ResizedInts(other.Length + 1));
+			var c = new IntArray((m + m + 31) >> 5);
 			// IntArray c = new IntArray(t + t);
 			int testBit = 1;
 			for (int k = 0; k < 32; k++)
 			{
 				for (int j = 0; j < t; j++)
 				{
-					if ((m_ints[j] & testBit) != 0)
+					if ((_ints[j] & testBit) != 0)
 					{
 						// The kth bit of m_ints[j] is set
 						c.AddShifted(b, j);
@@ -362,21 +362,21 @@ namespace Org.BouncyCastle.Math.EC
 		// TODO note, redPol.Length must be 3 for TPB and 5 for PPB
 		public void Reduce(int m, int[] redPol)
 		{
-			for (int i = m + m - 2; i >= m; i--)
+			for (var i = m + m - 2; i >= m; i--)
 			{
-				if (TestBit(i))
-				{
-					int bit = i - m;
-					FlipBit(bit);
-					FlipBit(i);
-					int l = redPol.Length;
-					while (--l >= 0)
-					{
-						FlipBit(redPol[l] + bit);
-					}
-				}
+			    if (!TestBit(i)) 
+                    continue;
+
+			    var bit = i - m;
+			    FlipBit(bit);
+			    FlipBit(i);
+			    var l = redPol.Length;
+			    while (--l >= 0)
+			    {
+			        FlipBit(redPol[l] + bit);
+			    }
 			}
-			m_ints = resizedInts((m + 31) >> 5);
+			_ints = ResizedInts((m + 31) >> 5);
 		}
 
 		public IntArray Square(int m)
@@ -385,37 +385,37 @@ namespace Org.BouncyCastle.Math.EC
 			int[] table = { 0x0, 0x1, 0x4, 0x5, 0x10, 0x11, 0x14, 0x15, 0x40,
 									0x41, 0x44, 0x45, 0x50, 0x51, 0x54, 0x55 };
 
-			int t = (m + 31) >> 5;
-			if (m_ints.Length < t)
+			var t = (m + 31) >> 5;
+			if (_ints.Length < t)
 			{
-				m_ints = resizedInts(t);
+				_ints = ResizedInts(t);
 			}
 
-			IntArray c = new IntArray(t + t);
+			var c = new IntArray(t + t);
 
 			// TODO twice the same code, put in separate private method
-			for (int i = 0; i < t; i++)
+			for (var i = 0; i < t; i++)
 			{
-				int v0 = 0;
-				for (int j = 0; j < 4; j++)
+				var v0 = 0;
+				for (var j = 0; j < 4; j++)
 				{
 					v0 = (int)((uint) v0 >> 8);
-					int u = (int)((uint)m_ints[i] >> (j * 4)) & 0xF;
-					int w = table[u] << 24;
+					var u = (int)((uint)_ints[i] >> (j * 4)) & 0xF;
+					var w = table[u] << 24;
 					v0 |= w;
 				}
-				c.m_ints[i + i] = v0;
+				c._ints[i + i] = v0;
 
 				v0 = 0;
-				int upper = (int)((uint) m_ints[i] >> 16);
-				for (int j = 0; j < 4; j++)
+				var upper = (int)((uint) _ints[i] >> 16);
+				for (var j = 0; j < 4; j++)
 				{
 					v0 = (int)((uint) v0 >> 8);
-					int u = (int)((uint)upper >> (j * 4)) & 0xF;
-					int w = table[u] << 24;
+					var u = (int)((uint)upper >> (j * 4)) & 0xF;
+					var w = table[u] << 24;
 					v0 |= w;
 				}
-				c.m_ints[i + i + 1] = v0;
+				c._ints[i + i + 1] = v0;
 			}
 			return c;
 		}
@@ -426,15 +426,15 @@ namespace Org.BouncyCastle.Math.EC
 			{
 				return false;
 			}
-			IntArray other = (IntArray) o;
-			int usedLen = GetUsedLength();
+			var other = (IntArray) o;
+			var usedLen = GetUsedLength();
 			if (other.GetUsedLength() != usedLen)
 			{
 				return false;
 			}
-			for (int i = 0; i < usedLen; i++)
+			for (var i = 0; i < usedLen; i++)
 			{
-				if (m_ints[i] != other.m_ints[i])
+				if (_ints[i] != other._ints[i])
 				{
 					return false;
 				}
@@ -444,36 +444,36 @@ namespace Org.BouncyCastle.Math.EC
 
 		public override int GetHashCode()
 		{
-			int i = GetUsedLength();
-			int hc = i;
+			var i = GetUsedLength();
+			var hc = i;
 			while (--i >= 0)
 			{
 				hc *= 17;
-				hc ^= m_ints[i];
+				hc ^= _ints[i];
 			}
 			return hc;
 		}
 
 		internal IntArray Copy()
 		{
-			return new IntArray((int[]) m_ints.Clone());
+			return new IntArray((int[]) _ints.Clone());
 		}
 
 		public override string ToString()
 		{
-			int usedLen = GetUsedLength();
+			var usedLen = GetUsedLength();
 			if (usedLen == 0)
 			{
 				return "0";
 			}
 
-			StringBuilder sb = new StringBuilder(Convert.ToString(m_ints[usedLen - 1], 2));
-			for (int iarrJ = usedLen - 2; iarrJ >= 0; iarrJ--)
+			var sb = new StringBuilder(Convert.ToString(_ints[usedLen - 1], 2));
+			for (var iarrJ = usedLen - 2; iarrJ >= 0; iarrJ--)
 			{
-				string hexString = Convert.ToString(m_ints[iarrJ], 2);
+				var hexString = Convert.ToString(_ints[iarrJ], 2);
 
 				// Add leading zeroes, except for highest significant int
-				for (int i = hexString.Length; i < 8; i++)
+				for (var i = hexString.Length; i < 8; i++)
 				{
 					hexString = "0" + hexString;
 				}

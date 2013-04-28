@@ -2,7 +2,6 @@ using System;
 using System.IO;
 
 using Org.BouncyCastle.Utilities.Date;
-using Org.BouncyCastle.bcpg;
 
 namespace Org.BouncyCastle.Bcpg
 {

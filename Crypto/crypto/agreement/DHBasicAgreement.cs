@@ -13,47 +13,42 @@ namespace Org.BouncyCastle.Crypto.Agreement
 	 * long term public keys if they are available. See the DHAgreement class
 	 * for a "better" implementation.</p>
 	 */
-	public class DHBasicAgreement
-		: IBasicAgreement
+	public class DHBasicAgreement : IBasicAgreement
 	{
-		private DHPrivateKeyParameters	key;
-		private DHParameters			dhParams;
+		private DHPrivateKeyParameters	_key;
+		private DHParameters			_dhParams;
 
-		public void Init(
-			ICipherParameters parameters)
+		public void Init(ICipherParameters parameters)
 		{
 			if (parameters is ParametersWithRandom)
 			{
 				parameters = ((ParametersWithRandom) parameters).Parameters;
 			}
-
 			if (!(parameters is DHPrivateKeyParameters))
 			{
 				throw new ArgumentException("DHEngine expects DHPrivateKeyParameters");
 			}
 
-			this.key = (DHPrivateKeyParameters) parameters;
-			this.dhParams = key.Parameters;
+			this._key = (DHPrivateKeyParameters) parameters;
+			this._dhParams = _key.Parameters;
 		}
 
 		/**
 		 * given a short term public key from a given party calculate the next
 		 * message in the agreement sequence.
 		 */
-		public IBigInteger CalculateAgreement(
-			ICipherParameters pubKey)
+		public IBigInteger CalculateAgreement(ICipherParameters pubKey)
 		{
-			if (this.key == null)
+			if (this._key == null)
 				throw new InvalidOperationException("Agreement algorithm not initialised");
 
-			DHPublicKeyParameters pub = (DHPublicKeyParameters)pubKey;
-
-			if (!pub.Parameters.Equals(dhParams))
+			var pub = (DHPublicKeyParameters)pubKey;
+			if (!pub.Parameters.Equals(_dhParams))
 			{
 				throw new ArgumentException("Diffie-Hellman public key has wrong parameters.");
 			}
 
-			return pub.Y.ModPow(key.X, dhParams.P);
+			return pub.Y.ModPow(_key.X, _dhParams.P);
 		}
 	}
 

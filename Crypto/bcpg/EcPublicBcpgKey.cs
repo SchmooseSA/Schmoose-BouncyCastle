@@ -1,6 +1,11 @@
 ﻿using System;
-using System.Linq;
+using System.IO;
+using Org.BouncyCastle.Asn1;
+using Org.BouncyCastle.Asn1.Sec;
+using Org.BouncyCastle.Asn1.X9;
+using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Math;
+using Org.BouncyCastle.Math.EC;
 
 namespace Org.BouncyCastle.Bcpg
 {
@@ -11,35 +16,27 @@ namespace Org.BouncyCastle.Bcpg
         public static readonly byte[] NistCurveP521Oid = new byte[] { 0x2B, 0x81, 0x04, 0x00, 0x23 };
 
         private readonly MPInteger _point;
-        private readonly byte[] _oid;
-        private int _bitStrength;
-
+        private readonly DerObjectIdentifier _oid;
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="EcPublicBcpgKey"/> class.
         /// </summary>
         /// <param name="bcpgIn">The BCPG in.</param>
         protected EcPublicBcpgKey(BcpgInputStream bcpgIn)
         {
-            _oid = this.ReadBytesOfEncodedLength(bcpgIn);
+            _oid = new DerObjectIdentifier(this.ReadBytesOfEncodedLength(bcpgIn));
             _point = new MPInteger(bcpgIn);
+
+            this.Initialize();
         }
 
-        public int BitStrength
-        {
-            get
-            {
-                if (_bitStrength == 0)
-                {
-                    if (this.IsNistCurveP256)
-                        _bitStrength = 256;
-                    else if(this.IsNistCurveP384)
-                        _bitStrength = 384;
-                    else if (this.IsNistCurveP521)
-                        _bitStrength = 521;
-                }
-                return _bitStrength;
-            }
-        }
+        /// <summary>
+        /// Gets the bit strength.
+        /// </summary>
+        /// <value>
+        /// The bit strength.
+        /// </value>
+        public int BitStrength { get; private set; }
 
         /// <summary>
         /// The base format for this key - in the case of the symmetric keys it will generally
@@ -51,43 +48,19 @@ namespace Org.BouncyCastle.Bcpg
         {
             get { return "PGP"; }
         }
-
-        public bool IsNistCurveP256
-        {
-            get { return CompareOid(NistCurveP256Oid, _oid); }
-        }
-
-        public bool IsNistCurveP384
-        {
-            get { return CompareOid(NistCurveP384Oid, _oid); }
-        }
-
-        public bool IsNistCurveP521
-        {
-            get { return CompareOid(NistCurveP521Oid, _oid); }
-        }
-
+        
         /// <summary>
         /// Gets the curve oid.
         /// </summary>
         /// <value>
         /// The oid.
         /// </value>
-        public byte[] Oid
+        public DerObjectIdentifier Oid
         {
             get { return _oid; }
         }
 
-        /// <summary>
-        /// Gets the EC point representing a public key.
-        /// </summary>
-        /// <value>
-        /// The point.
-        /// </value>
-        public IBigInteger Point
-        {
-            get { return _point.Value; }
-        }
+        public ECPoint Point { get; private set; }
 
         /// <summary>
         /// Encodes the specified BCPG out.
@@ -95,8 +68,9 @@ namespace Org.BouncyCastle.Bcpg
         /// <param name="bcpgOut">The BCPG out.</param>
         public override void Encode(IBcpgOutputStream bcpgOut)
         {
-            bcpgOut.WriteByte((byte)this.Oid.Length);
-            bcpgOut.Write(this.Oid, 0, this.Oid.Length);
+            var oid = this.Oid.ToBytes();
+            bcpgOut.WriteByte((byte)oid.Length);
+            bcpgOut.Write(oid, 0, oid.Length);
             bcpgOut.WriteObject(_point);
         }
 
@@ -117,12 +91,45 @@ namespace Org.BouncyCastle.Bcpg
             return buffer;
         }
 
-        private static bool CompareOid(byte[] expected, byte[] actual)
+        private void Initialize()
         {
-            if (expected == null || actual == null || expected.Length != actual.Length)
-                return false;
+            int len;
+            if (this.Oid.Equals(X9ObjectIdentifiers.Prime256v1))
+            {
+                this.BitStrength = 256;
+                len = 32;                
+            }
+            else if (this.Oid.Equals(SecObjectIdentifiers.SecP384r1))
+            {
+                this.BitStrength = 384;
+                len = 48;            
+            }
+            else if (this.Oid.Equals(SecObjectIdentifiers.SecP521r1))
+            {
+                this.BitStrength = 521;
+                len = 66;                
+            }
+            else
+            {
+                throw new NotSupportedException("Oid not supported.");
+            }
 
-            return !expected.Where((t, i) => t != actual[i]).Any();
+            var bytes = _point.Value.ToByteArrayUnsigned();
+            if (bytes.Length - 1 == len)
+            {
+                throw new NotSupportedException("Compressed ec points are not yet supported.");
+            }
+            if (bytes.Length - 1 != 2*len)
+            {
+                throw new InvalidDataException("Invalid data length.");
+            }
+            if (bytes[0] != 4)
+                throw new InvalidDataException("4 was expected for w but was " + bytes[0]);
+
+            var curve = ECKeyPairGenerator.FindECCurveByOid(this.Oid);
+            this.Point = new FPPoint(curve.Curve, 
+                new FPFieldElement(curve.N, new BigInteger(bytes, 1, len)), 
+                new FPFieldElement(curve.N, new BigInteger(bytes, 1 + len, len)));
         }
     }
 }

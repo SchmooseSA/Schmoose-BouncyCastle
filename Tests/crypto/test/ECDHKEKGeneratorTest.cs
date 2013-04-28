@@ -35,9 +35,9 @@ namespace Org.BouncyCastle.Crypto.Tests
 
 		public override void PerformTest()
 		{
-			CheckMask(1, new ECDHKekGenerator(new Sha1Digest()), new DHKdfParameters(alg1, 256, seed1), result1);
-			CheckMask(2, new ECDHKekGenerator(new Sha1Digest()), new DHKdfParameters(alg2, 128, seed2), result2);
-			CheckMask(3, new ECDHKekGenerator(new Sha1Digest()), new DHKdfParameters(alg3, 192, seed3), result3);
+			CheckMask(1, new EcdhKekGenerator(new Sha1Digest()), new DHKdfParameters(alg1, 256, seed1), result1);
+			CheckMask(2, new EcdhKekGenerator(new Sha1Digest()), new DHKdfParameters(alg2, 128, seed2), result2);
+			CheckMask(3, new EcdhKekGenerator(new Sha1Digest()), new DHKdfParameters(alg3, 192, seed3), result3);
 		}
 
 		private void CheckMask(

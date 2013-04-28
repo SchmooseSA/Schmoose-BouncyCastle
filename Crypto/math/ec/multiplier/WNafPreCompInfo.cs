@@ -5,7 +5,7 @@ namespace Org.BouncyCastle.Math.EC.Multiplier
 	* algorithm.
 	*/
 	internal class WNafPreCompInfo
-		: PreCompInfo 
+		: IPreCompInfo 
 	{
 		/**
 		* Array holding the precomputed <code>ECPoint</code>s used for the Window
