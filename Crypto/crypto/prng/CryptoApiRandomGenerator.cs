@@ -58,7 +58,8 @@ namespace Org.BouncyCastle.Crypto.Prng
 #if SILVERLIGHT
             _rndProv.GetBytes(bytes);
 #else
-            _rndProv.GetNonZeroBytes(bytes);
+            //_rndProv.GetNonZeroBytes(bytes);
+            _rndProv.GetBytes(bytes);
 #endif
         }
 

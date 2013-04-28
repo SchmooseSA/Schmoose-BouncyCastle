@@ -40,7 +40,7 @@ namespace Org.BouncyCastle.Crypto.Agreement.Kdf
 
         public byte[] GetExtraInfo()
         {
-            return (byte[])_extraInfo.Clone();
+            return _extraInfo != null ? (byte[])_extraInfo.Clone() : null;
         }
     }
 }
