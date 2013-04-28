@@ -31,7 +31,7 @@ namespace Org.BouncyCastle.Crypto.Prng
 
 		public virtual void NextBytes(byte[] bytes)
 		{
-			_rndProv.GetNonZeroBytes(bytes);
+            this.GetRandomBytes(bytes);
 		}
 
 		public virtual void NextBytes(byte[] bytes, int start, int len)
@@ -48,10 +48,19 @@ namespace Org.BouncyCastle.Crypto.Prng
 			else 
 			{
 				var tmpBuf = new byte[len];
-                _rndProv.GetNonZeroBytes(tmpBuf);
+                this.GetRandomBytes(tmpBuf);
 				Array.Copy(tmpBuf, 0, bytes, start, len);
 			}
 		}
+
+        private void GetRandomBytes(byte[] bytes)
+        {
+#if SILVERLIGHT
+            _rndProv.GetBytes(bytes);
+#else
+            _rndProv.GetNonZeroBytes(bytes);
+#endif
+        }
 
 		#endregion
 	}
