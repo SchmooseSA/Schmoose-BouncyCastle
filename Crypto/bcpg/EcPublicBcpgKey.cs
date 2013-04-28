@@ -9,10 +9,6 @@ namespace Org.BouncyCastle.Bcpg
 {
     public abstract class EcPublicBcpgKey : BcpgObject, IBcpgPublicKey
     {
-        public static readonly byte[] NistCurveP256Oid = new byte[] { 0x2A, 0x86, 0x48, 0xCE, 0x3D, 0x03, 0x01, 0x07 };
-        public static readonly byte[] NistCurveP384Oid = new byte[] { 0x2B, 0x81, 0x04, 0x00, 0x22 };
-        public static readonly byte[] NistCurveP521Oid = new byte[] { 0x2B, 0x81, 0x04, 0x00, 0x23 };
-
         private readonly MPInteger _point;
         private readonly DerObjectIdentifier _oid;
 
