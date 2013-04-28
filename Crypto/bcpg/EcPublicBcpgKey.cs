@@ -1,8 +1,7 @@
-﻿using System;
-using System.IO;
-using Org.BouncyCastle.Asn1;
+﻿using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Asn1.Sec;
 using Org.BouncyCastle.Asn1.X9;
+using Org.BouncyCastle.Bcpg.OpenPgp;
 using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Math.EC;
@@ -84,7 +83,7 @@ namespace Org.BouncyCastle.Bcpg
         {
             var length = bcpgIn.ReadByte();
             if (length == 0 || length == 0xFF)
-                throw new NotSupportedException("future extensions not yet implemented.");
+                throw new PgpException("future extensions not yet implemented.");
 
             var buffer = new byte[length];
             bcpgIn.ReadFully(buffer);
@@ -111,20 +110,20 @@ namespace Org.BouncyCastle.Bcpg
             }
             else
             {
-                throw new NotSupportedException("Oid not supported.");
+                throw new PgpException("Oid not supported.");
             }
 
             var bytes = _point.Value.ToByteArrayUnsigned();
             if (bytes.Length - 1 == len)
             {
-                throw new NotSupportedException("Compressed ec points are not yet supported.");
+                throw new PgpException("Compressed ec points are not yet supported.");
             }
             if (bytes.Length - 1 != 2*len)
             {
-                throw new InvalidDataException("Invalid data length.");
+                throw new PgpException("Invalid data length.");
             }
             if (bytes[0] != 4)
-                throw new InvalidDataException("4 was expected for w but was " + bytes[0]);
+                throw new PgpException("4 was expected for w but was " + bytes[0]);
 
             var curve = ECKeyPairGenerator.FindECCurveByOid(this.Oid);
             this.Point = new FPPoint(curve.Curve, 
