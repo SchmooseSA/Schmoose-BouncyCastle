@@ -770,6 +770,7 @@
     <Compile Include="crypto\parameters\DsaPrivateKeyParameters.cs" />
     <Compile Include="crypto\parameters\DsaPublicKeyParameters.cs" />
     <Compile Include="crypto\parameters\DsaValidationParameters.cs" />
+    <Compile Include="crypto\parameters\ECDHPublicKeyParameters.cs" />
     <Compile Include="crypto\parameters\ECDomainParameters.cs" />
     <Compile Include="crypto\parameters\ECKeyGenerationParameters.cs" />
     <Compile Include="crypto\parameters\ECKeyParameters.cs" />

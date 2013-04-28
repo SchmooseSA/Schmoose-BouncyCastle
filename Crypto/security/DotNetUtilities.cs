@@ -100,6 +100,8 @@ namespace Org.BouncyCastle.Security
 		}
         #endif
 
+        #if !SILVERLIGHT4
+
 		public static AsymmetricCipherKeyPair GetRsaKeyPair(
 			RSA rsa)
 		{
@@ -202,7 +204,9 @@ namespace Org.BouncyCastle.Security
 			rp.InverseQ = privKey.QInv.ToByteArrayUnsigned();
 			return rp;
 		}
-	}
+        #endif
+    }
+
 }
 
 #endif

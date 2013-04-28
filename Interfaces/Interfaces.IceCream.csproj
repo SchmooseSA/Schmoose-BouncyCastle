@@ -35,6 +35,7 @@
     <Compile Include="bcpg\IBcpgKey.cs" />
     <Compile Include="bcpg\IBcpgObject.cs" />
     <Compile Include="bcpg\IBcpgOutputStream.cs" />
+    <Compile Include="bcpg\IBcpgPublicKey.cs" />
     <Compile Include="bcpg\IContainedPacket.cs" />
     <Compile Include="bcpg\IPacket.cs" />
     <Compile Include="bcpg\IPublicKeyPacket.cs" />
