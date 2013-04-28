@@ -33,7 +33,7 @@ namespace Org.BouncyCastle.Crypto.Signers
 		private IDigest digest;
 		private IAsymmetricBlockCipher cipher;
 
-		private SecureRandom random;
+		private ISecureRandom random;
 		private byte[] standardSalt;
 
 		private int hLen;
@@ -127,15 +127,15 @@ namespace Org.BouncyCastle.Crypto.Signers
 			ICipherParameters	parameters)
 		{
 			RsaKeyParameters kParam;
-			if (parameters is ParametersWithRandom)
-			{
-				ParametersWithRandom p = (ParametersWithRandom) parameters;
 
-				kParam = (RsaKeyParameters) p.Parameters;
+		    var rParam = parameters as ParametersWithRandom;
+            if (rParam != null)
+			{
+                kParam = (RsaKeyParameters)rParam.Parameters;
 
 				if (forSigning)
 				{
-					random = p.Random;
+                    random = rParam.Random;
 				}
 			}
 			else if (parameters is ParametersWithSalt)

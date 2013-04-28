@@ -254,6 +254,7 @@
     <Compile Include="ocsp\test\OCSPTestUtil.cs" />
     <Compile Include="openpgp\examples\ByteArrayHandler.cs" />
     <Compile Include="openpgp\examples\ClearSignedFileProcessor.cs" />
+    <Compile Include="openpgp\examples\EcKeyRingGenerator.cs" />
     <Compile Include="openpgp\examples\PrivateKeyRingDump.cs" />
     <Compile Include="openpgp\examples\DetachedSignatureProcessor.cs" />
     <Compile Include="openpgp\examples\DirectKeySignature.cs" />

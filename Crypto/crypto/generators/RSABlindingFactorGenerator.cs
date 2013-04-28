@@ -14,7 +14,7 @@ namespace Org.BouncyCastle.Crypto.Generators
 	public class RsaBlindingFactorGenerator
 	{
 		private RsaKeyParameters key;
-		private SecureRandom random;
+        private ISecureRandom random;
 
 		/**
 		* Initialise the factor generator

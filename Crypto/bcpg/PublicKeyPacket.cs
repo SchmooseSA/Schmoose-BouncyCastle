@@ -12,7 +12,7 @@ namespace Org.BouncyCastle.Bcpg
         private readonly long _time;
         private readonly int _validDays;
         private readonly PublicKeyAlgorithmTag _algorithm;
-        private readonly IBcpgKey _key;
+        private readonly IBcpgPublicKey _key;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PublicKeyPacket"/> class.
@@ -66,7 +66,7 @@ namespace Org.BouncyCastle.Bcpg
         /// <param name="algorithm">The algorithm.</param>
         /// <param name="time">The time.</param>
         /// <param name="key">The key.</param>
-        public PublicKeyPacket(PublicKeyAlgorithmTag algorithm, DateTime time, IBcpgKey key)
+        public PublicKeyPacket(PublicKeyAlgorithmTag algorithm, DateTime time, IBcpgPublicKey key)
         {
             _version = 4;
             _time = DateTimeUtilities.DateTimeToUnixMs(time) / 1000L;
@@ -122,7 +122,7 @@ namespace Org.BouncyCastle.Bcpg
         /// <value>
         /// The key.
         /// </value>
-        public IBcpgKey Key
+        public IBcpgPublicKey Key
         {
             get { return _key; }
         }

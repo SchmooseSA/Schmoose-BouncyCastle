@@ -23,7 +23,7 @@ namespace Org.BouncyCastle.Crypto.Paddings
         /// </summary>
         /// <param name="random">- a SecureRandom if available.
         /// </param>
-        public void Init(SecureRandom random)
+        public void Init(ISecureRandom random)
         {
             // nothing to do.
         }

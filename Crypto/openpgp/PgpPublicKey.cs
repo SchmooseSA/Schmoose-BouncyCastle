@@ -89,22 +89,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                     | ((ulong)_fingerprint[_fingerprint.Length - 2] << 8)
                     | (ulong)_fingerprint[_fingerprint.Length - 1]);
 
-                if (key is RsaPublicBcpgKey)
-                {
-                    BitStrength = ((RsaPublicBcpgKey)key).Modulus.BitLength;
-                }
-                else if (key is DsaPublicBcpgKey)
-                {
-                    BitStrength = ((DsaPublicBcpgKey)key).P.BitLength;
-                }
-                else if (key is ElGamalPublicBcpgKey)
-                {
-                    BitStrength = ((ElGamalPublicBcpgKey)key).P.BitLength;
-                }
-                else if (key is EcPublicBcpgKey)
-                {
-                    BitStrength = ((EcPublicBcpgKey) key).BitStrength;
-                }
+                BitStrength = key.BitStrength;
             }
         }
 
@@ -120,15 +105,13 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <param name="time">Date of creation.</param>
         /// <exception cref="ArgumentException">If <c>pubKey</c> is not public.</exception>
         /// <exception cref="PgpException">On key creation problem.</exception>
-        public PgpPublicKey(
-            PublicKeyAlgorithmTag algorithm,
-            IAsymmetricKeyParameter pubKey,
-            DateTime time)
+        public PgpPublicKey(PublicKeyAlgorithmTag algorithm, IAsymmetricKeyParameter pubKey, DateTime time)
         {
             if (pubKey.IsPrivate)
                 throw new ArgumentException("Expected a public key", "pubKey");
 
-            IBcpgKey bcpgKey;
+            IBcpgPublicKey bcpgKey;
+
             if (pubKey is RsaKeyParameters)
             {
                 var rK = (RsaKeyParameters)pubKey;
@@ -148,6 +131,17 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 var eS = eK.Parameters;
 
                 bcpgKey = new ElGamalPublicBcpgKey(eS.P, eS.G, eK.Y);
+            }
+            else if (pubKey is ECDHPublicKeyParameters)
+            {
+                var ecdh = (ECDHPublicKeyParameters) pubKey;
+                 
+                bcpgKey = new EcdhPublicBcpgKey(ecdh.Q, ecdh.PublicKeyParamSet, ecdh.HashAlgorithm, ecdh.SymmetricKeyAlgorithm);
+            }
+            else if (pubKey is ECPublicKeyParameters)
+            {
+                var ecdsa = (ECPublicKeyParameters)pubKey;
+                bcpgKey = new EcdsaPublicBcpgKey(ecdsa.Q, ecdsa.PublicKeyParamSet);
             }
             else
             {
@@ -559,24 +553,23 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
                 for (var i = 0; i != Ids.Count; i++)
                 {
-                    if (Ids[i] is string)
+                    var id = this.Ids[i] as string;
+                    if (id != null)
                     {
-                        var id = (string)Ids[i];
-
                         bcpgOut.WritePacket(new UserIdPacket(id));
                     }
                     else
                     {
-                        var v = (PgpUserAttributeSubpacketVector)Ids[i];
+                        var v = (PgpUserAttributeSubpacketVector)this.Ids[i];
                         bcpgOut.WritePacket(new UserAttributePacket(v.ToSubpacketArray()));
                     }
 
-                    if (IdTrusts[i] != null)
+                    if (this.IdTrusts[i] != null)
                     {
-                        bcpgOut.WritePacket((ContainedPacket)IdTrusts[i]);
+                        bcpgOut.WritePacket((ContainedPacket)this.IdTrusts[i]);
                     }
 
-                    foreach (PgpSignature sig in (IList)IdSigs[i])
+                    foreach (PgpSignature sig in (IList)this.IdSigs[i])
                     {
                         sig.Encode(bcpgOut);
                     }

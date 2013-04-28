@@ -1,6 +1,5 @@
-﻿using Org.BouncyCastle.Asn1;
-using Org.BouncyCastle.Asn1.Sec;
-using Org.BouncyCastle.Asn1.X9;
+﻿using System;
+using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Bcpg.OpenPgp;
 using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Math;
@@ -8,7 +7,7 @@ using Org.BouncyCastle.Math.EC;
 
 namespace Org.BouncyCastle.Bcpg
 {
-    public abstract class EcPublicBcpgKey : BcpgObject, IBcpgKey
+    public abstract class EcPublicBcpgKey : BcpgObject, IBcpgPublicKey
     {
         public static readonly byte[] NistCurveP256Oid = new byte[] { 0x2A, 0x86, 0x48, 0xCE, 0x3D, 0x03, 0x01, 0x07 };
         public static readonly byte[] NistCurveP384Oid = new byte[] { 0x2B, 0x81, 0x04, 0x00, 0x22 };
@@ -16,7 +15,7 @@ namespace Org.BouncyCastle.Bcpg
 
         private readonly MPInteger _point;
         private readonly DerObjectIdentifier _oid;
-        
+
         /// <summary>
         /// Initializes a new instance of the <see cref="EcPublicBcpgKey"/> class.
         /// </summary>
@@ -25,6 +24,28 @@ namespace Org.BouncyCastle.Bcpg
         {
             _oid = new DerObjectIdentifier(this.ReadBytesOfEncodedLength(bcpgIn));
             _point = new MPInteger(bcpgIn);
+
+            this.Initialize();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EcPublicBcpgKey"/> class.
+        /// </summary>
+        /// <param name="point">The point.</param>
+        /// <param name="oid">The oid.</param>
+        /// <exception cref="Org.BouncyCastle.Bcpg.OpenPgp.PgpException">Only FPCurves are supported.</exception>
+        protected EcPublicBcpgKey(ECPoint point, DerObjectIdentifier oid)
+        {
+            _oid = oid;
+
+            var x = point.X.ToBigInteger().ToByteArrayUnsigned();
+            var y = point.Y.ToBigInteger().ToByteArrayUnsigned();
+
+            var bytes = new byte[1 + x.Length + y.Length];
+            bytes[0] = 4;
+            Buffer.BlockCopy(x, 0, bytes, 1, x.Length);
+            Buffer.BlockCopy(y, 0, bytes, 1 + x.Length, y.Length);
+            _point = new MPInteger(new BigInteger(bytes));
 
             this.Initialize();
         }
@@ -47,7 +68,7 @@ namespace Org.BouncyCastle.Bcpg
         {
             get { return "PGP"; }
         }
-        
+
         /// <summary>
         /// Gets the curve oid.
         /// </summary>
@@ -92,42 +113,25 @@ namespace Org.BouncyCastle.Bcpg
 
         private void Initialize()
         {
-            int len;
-            if (this.Oid.Equals(X9ObjectIdentifiers.Prime256v1))
-            {
-                this.BitStrength = 256;
-                len = 32;                
-            }
-            else if (this.Oid.Equals(SecObjectIdentifiers.SecP384r1))
-            {
-                this.BitStrength = 384;
-                len = 48;            
-            }
-            else if (this.Oid.Equals(SecObjectIdentifiers.SecP521r1))
-            {
-                this.BitStrength = 521;
-                len = 66;                
-            }
-            else
-            {
-                throw new PgpException("Oid not supported.");
-            }
+            var curve = ECKeyPairGenerator.FindECCurveByOid(this.Oid);
+            if (curve == null)
+                throw new PgpException(this.Oid.Id + " does not match any known curve.");
+            if (!(curve.Curve is FPCurve))
+                throw new PgpException("Only FPCurves are supported.");
+
+            this.BitStrength = curve.Curve.FieldSize;
+
+            var len = (this.BitStrength + 8 - 1) / 8; // fast ceiling
 
             var bytes = _point.Value.ToByteArrayUnsigned();
             if (bytes.Length - 1 == len)
-            {
                 throw new PgpException("Compressed ec points are not yet supported.");
-            }
-            if (bytes.Length - 1 != 2*len)
-            {
+            if (bytes.Length - 1 != 2 * len)
                 throw new PgpException("Invalid data length.");
-            }
             if (bytes[0] != 4)
                 throw new PgpException("4 was expected for w but was " + bytes[0]);
-
-            var curve = ECKeyPairGenerator.FindECCurveByOid(this.Oid);
-            this.Point = new FPPoint(curve.Curve, 
-                new FPFieldElement(curve.N, new BigInteger(bytes, 1, len)), 
+            this.Point = new FPPoint(curve.Curve,
+                new FPFieldElement(curve.N, new BigInteger(bytes, 1, len)),
                 new FPFieldElement(curve.N, new BigInteger(bytes, 1 + len, len)));
         }
     }

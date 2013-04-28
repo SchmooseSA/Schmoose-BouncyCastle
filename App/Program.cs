@@ -6,7 +6,7 @@ namespace App
     {
         static void Main(string[] args)
         {
-            PrivateKeyRingDump.Main(args);
+            EcKeyRingGenerator.Main(args);
         }
     }
 }

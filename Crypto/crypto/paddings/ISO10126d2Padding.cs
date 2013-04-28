@@ -11,18 +11,17 @@ namespace Org.BouncyCastle.Crypto.Paddings
     */
     public class ISO10126d2Padding: IBlockCipherPadding
     {
-        private SecureRandom random;
+        private ISecureRandom _random;
 
         /**
         * Initialise the padder.
         *
         * @param random a SecureRandom if available.
         */
-        public void Init(
-			SecureRandom random)
+        public void Init(ISecureRandom random)
             //throws ArgumentException
         {
-			this.random = (random != null) ? random : new SecureRandom();
+			_random = random ?? new SecureRandom();
         }
 
 		/**
@@ -43,11 +42,11 @@ namespace Org.BouncyCastle.Crypto.Paddings
             byte[]	input,
             int		inOff)
         {
-            byte code = (byte)(input.Length - inOff);
+            var code = (byte)(input.Length - inOff);
 
             while (inOff < (input.Length - 1))
             {
-                input[inOff] = (byte)random.NextInt();
+                input[inOff] = (byte)_random.NextInt();
                 inOff++;
             }
 
@@ -62,7 +61,7 @@ namespace Org.BouncyCastle.Crypto.Paddings
         public int PadCount(byte[] input)
             //throws InvalidCipherTextException
         {
-            int count = input[input.Length - 1] & 0xff;
+            var count = input[input.Length - 1] & 0xff;
 
             if (count > input.Length)
             {

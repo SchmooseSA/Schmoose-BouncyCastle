@@ -517,9 +517,7 @@ namespace Org.BouncyCastle.Math
             }
         }
 
-        public BigInteger(
-            int sizeInBits,
-            IRandom random)
+        public BigInteger(int sizeInBits, IRandom random)
         {
             if (sizeInBits < 0)
                 throw new ArgumentException("sizeInBits must be non-negative");

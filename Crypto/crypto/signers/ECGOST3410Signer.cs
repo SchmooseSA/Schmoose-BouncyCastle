@@ -15,7 +15,7 @@ namespace Org.BouncyCastle.Crypto.Signers
 		: IDsa
 	{
 		private ECKeyParameters key;
-		private SecureRandom random;
+		private ISecureRandom random;
 
 		public string AlgorithmName
 		{

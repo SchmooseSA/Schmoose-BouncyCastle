@@ -1,10 +1,9 @@
-using System;
 using Org.BouncyCastle.Math;
 
 namespace Org.BouncyCastle.Bcpg
 {
     /// <remarks>Base class for an RSA public key.</remarks>
-    public class RsaPublicBcpgKey : BcpgObject, IBcpgKey
+    public class RsaPublicBcpgKey : BcpgObject, IBcpgPublicKey
     {
         private readonly MPInteger _n, _e;
 
@@ -21,6 +20,11 @@ namespace Org.BouncyCastle.Bcpg
         {
             _n = new MPInteger(n);
             _e = new MPInteger(e);
+        }
+
+        public int BitStrength
+        {
+            get { return this.Modulus.BitLength; }
         }
 
         public IBigInteger PublicExponent
@@ -42,6 +46,6 @@ namespace Org.BouncyCastle.Bcpg
         public override void Encode(IBcpgOutputStream bcpgOut)
         {
             bcpgOut.WriteObjects(_n, _e);
-        }
+        }        
     }
 }

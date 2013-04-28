@@ -8,16 +8,14 @@ namespace Org.BouncyCastle.Crypto.Paddings
     /**
     * A padder that adds Pkcs7/Pkcs5 padding to a block.
     */
-    public class Pkcs7Padding
-		: IBlockCipherPadding
+    public class Pkcs7Padding : IBlockCipherPadding
     {
         /**
         * Initialise the padder.
         *
         * @param random - a SecureRandom if available.
         */
-        public void Init(
-			SecureRandom random)
+        public void Init(ISecureRandom random)
         {
             // nothing to do.
         }
@@ -32,13 +30,13 @@ namespace Org.BouncyCastle.Crypto.Paddings
             get { return "PKCS7"; }
         }
 
-		/**
+        /**
         * add the pad bytes to the passed in block, returning the
         * number of bytes added.
         */
         public int AddPadding(
-            byte[]  input,
-            int     inOff)
+            byte[] input,
+            int inOff)
         {
             byte code = (byte)(input.Length - inOff);
 
@@ -55,16 +53,16 @@ namespace Org.BouncyCastle.Crypto.Paddings
         * return the number of pad bytes present in the block.
         */
         public int PadCount(
-			byte[] input)
+            byte[] input)
         {
-            int count = (int) input[input.Length - 1];
+            int count = (int)input[input.Length - 1];
 
-			if (count < 1 || count > input.Length)
+            if (count < 1 || count > input.Length)
             {
                 throw new InvalidCipherTextException("pad block corrupted");
             }
 
-			for (int i = 1; i <= count; i++)
+            for (int i = 1; i <= count; i++)
             {
                 if (input[input.Length - i] != count)
                 {

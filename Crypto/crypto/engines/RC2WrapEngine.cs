@@ -29,7 +29,7 @@ namespace Org.BouncyCastle.Crypto.Engines
 		/** Field forWrapping */
 		private bool forWrapping;
 
-		private SecureRandom sr;
+        private ISecureRandom sr;
 
 		/** Field IV2           */
 		private static readonly byte[] IV2 =

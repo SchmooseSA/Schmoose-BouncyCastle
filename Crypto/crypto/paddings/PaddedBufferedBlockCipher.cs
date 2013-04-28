@@ -59,7 +59,7 @@ namespace Org.BouncyCastle.Crypto.Paddings
 		{
 			this.forEncryption = forEncryption;
 
-			SecureRandom initRandom = null;
+			ISecureRandom initRandom = null;
 			if (parameters is ParametersWithRandom)
 			{
 				ParametersWithRandom p = (ParametersWithRandom)parameters;

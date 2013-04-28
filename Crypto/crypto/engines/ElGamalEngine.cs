@@ -13,7 +13,7 @@ namespace Org.BouncyCastle.Crypto.Engines
 		: IAsymmetricBlockCipher
 	{
 		private ElGamalKeyParameters key;
-		private SecureRandom random;
+        private ISecureRandom random;
 		private bool forEncryption;
 		private int bitSize;
 

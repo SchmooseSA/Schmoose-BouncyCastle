@@ -12,12 +12,11 @@ namespace Org.BouncyCastle.Crypto.Signers
 	/**
 	 * EC-NR as described in IEEE 1363-2000
 	 */
-	public class ECNRSigner
-		: IDsa
+	public class ECNRSigner : IDsa
 	{
-		private bool			forSigning;
-		private ECKeyParameters	key;
-		private SecureRandom	random;
+		private bool			_forSigning;
+		private ECKeyParameters	_key;
+		private ISecureRandom	_random;
 
 		public string AlgorithmName
 		{
@@ -28,7 +27,7 @@ namespace Org.BouncyCastle.Crypto.Signers
 			bool				forSigning,
 			ICipherParameters	parameters)
 		{
-			this.forSigning = forSigning;
+			this._forSigning = forSigning;
 
 			if (forSigning)
 			{
@@ -36,25 +35,25 @@ namespace Org.BouncyCastle.Crypto.Signers
 				{
 					ParametersWithRandom rParam = (ParametersWithRandom) parameters;
 
-					this.random = rParam.Random;
+					this._random = rParam.Random;
 					parameters = rParam.Parameters;
 				}
 				else
 				{
-					this.random = new SecureRandom();
+					this._random = new SecureRandom();
 				}
 
 				if (!(parameters is ECPrivateKeyParameters))
 					throw new InvalidKeyException("EC private key required for signing");
 
-				this.key = (ECPrivateKeyParameters) parameters;
+				this._key = (ECPrivateKeyParameters) parameters;
 			}
 			else
 			{
 				if (!(parameters is ECPublicKeyParameters))
 					throw new InvalidKeyException("EC public key required for verification");
 
-				this.key = (ECPublicKeyParameters) parameters;
+				this._key = (ECPublicKeyParameters) parameters;
 			}
 		}
 
@@ -71,19 +70,19 @@ namespace Org.BouncyCastle.Crypto.Signers
         public IBigInteger[] GenerateSignature(
 			byte[] message)
 		{
-			if (!this.forSigning)
+			if (!this._forSigning)
 			{
 				// not properly initilaized... deal with it
 				throw new InvalidOperationException("not initialised for signing");
 			}
 
-            IBigInteger n = ((ECPrivateKeyParameters)this.key).Parameters.N;
+            IBigInteger n = ((ECPrivateKeyParameters)this._key).Parameters.N;
 			int nBitLength = n.BitLength;
 
             IBigInteger e = new BigInteger(1, message);
 			int eBitLength = e.BitLength;
 
-			ECPrivateKeyParameters  privKey = (ECPrivateKeyParameters)key;
+			ECPrivateKeyParameters  privKey = (ECPrivateKeyParameters)_key;
 
 			if (eBitLength > nBitLength)
 			{
@@ -100,7 +99,7 @@ namespace Org.BouncyCastle.Crypto.Signers
 				// the same EC parameters
 				ECKeyPairGenerator keyGen = new ECKeyPairGenerator();
 
-				keyGen.Init(new ECKeyGenerationParameters(privKey.Parameters, this.random));
+				keyGen.Init(new ECKeyGenerationParameters(privKey.Parameters, _random));
 
 				tempPair = keyGen.GenerateKeyPair();
 
@@ -139,13 +138,13 @@ namespace Org.BouncyCastle.Crypto.Signers
             IBigInteger r,
             IBigInteger s)
 		{
-			if (this.forSigning)
+			if (this._forSigning)
 			{
 				// not properly initilaized... deal with it
 				throw new InvalidOperationException("not initialised for verifying");
 			}
 
-			ECPublicKeyParameters pubKey = (ECPublicKeyParameters)key;
+			ECPublicKeyParameters pubKey = (ECPublicKeyParameters)_key;
 			IBigInteger n = pubKey.Parameters.N;
 			int nBitLength = n.BitLength;
 

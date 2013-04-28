@@ -16,7 +16,7 @@ namespace Org.BouncyCastle.Crypto.Engines
 		private CbcBlockCipher		engine;
 		private ParametersWithIV	param;
 		private bool				forWrapping;
-		private SecureRandom		rand;
+        private ISecureRandom rand;
 
 		public Rfc3211WrapEngine(
 			IBlockCipher engine)

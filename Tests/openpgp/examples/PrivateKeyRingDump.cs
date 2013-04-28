@@ -1,4 +1,6 @@
+using System;
 using System.IO;
+using Org.BouncyCastle.Utilities.Encoders;
 
 namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
 {
@@ -44,10 +46,33 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
                 secRings = new PgpSecretKeyRing(PgpUtilities.GetDecoderStream(fs));
 		    }
 
+            var first = true;
             foreach (PgpSecretKey pgpSec in secRings.GetSecretKeys())
             {
-                var privateKey = pgpSec.ExtractPrivateKey((args.Length > 1 ? args[1] : "").ToCharArray());
+                try
+                {
+                    var privateKey = pgpSec.ExtractPrivateKey((args.Length > 1 ? args[1] : "").ToCharArray());
+                    if(privateKey == null)
+                        Console.Error.WriteLine("No private key detected.");
+                }
+                catch (PgpException e)
+                {
+                    Console.Error.WriteLine("Failed to extract private key: " + e.Message);                    
+                }
                 
+                if (first)
+                {
+                    Console.WriteLine("Key ID: " + pgpSec.KeyId.ToString("X"));
+                    first = false;
+                }
+                else
+                {
+                    Console.WriteLine("Key ID: " + pgpSec.KeyId.ToString("X") + " (subkey)");
+                }
+                
+
+                Console.WriteLine("            Algorithm: " + GetAlgorithm(pgpSec.PublicKey.Algorithm));
+                Console.WriteLine("            Fingerprint: " + Hex.ToHexString(pgpSec.PublicKey.GetFingerprint()));
             }
         }
     }

@@ -1,5 +1,3 @@
-using System;
-using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Security;
 
 namespace Org.BouncyCastle.Crypto.Paddings
@@ -11,8 +9,7 @@ namespace Org.BouncyCastle.Crypto.Paddings
     /// of the plain text.
     /// </p>
     /// </summary>
-    public class TbcPadding
-		: IBlockCipherPadding
+    public class TbcPadding : IBlockCipherPadding
     {
         /// <summary> Return the name of the algorithm the cipher implements.</summary>
         /// <returns> the name of the algorithm the cipher implements.
@@ -25,7 +22,7 @@ namespace Org.BouncyCastle.Crypto.Paddings
 		/// <summary> Initialise the padder.</summary>
         /// <param name="random">- a SecureRandom if available.
         /// </param>
-        public virtual void Init(SecureRandom random)
+        public virtual void Init(ISecureRandom random)
         {
             // nothing to do.
         }
@@ -41,7 +38,7 @@ namespace Org.BouncyCastle.Crypto.Paddings
         /// </summary>
         public virtual int AddPadding(byte[] input, int inOff)
         {
-            int count = input.Length - inOff;
+            var count = input.Length - inOff;
             byte code;
 
             if (inOff > 0)
@@ -65,9 +62,9 @@ namespace Org.BouncyCastle.Crypto.Paddings
         /// <summary> return the number of pad bytes present in the block.</summary>
         public virtual int PadCount(byte[] input)
         {
-            byte code = input[input.Length - 1];
+            var code = input[input.Length - 1];
 
-            int index = input.Length - 1;
+            var index = input.Length - 1;
             while (index > 0 && input[index - 1] == code)
             {
                 index--;

@@ -1,6 +1,3 @@
-using System;
-
-using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Security;
 
 namespace Org.BouncyCastle.Crypto.Paddings
@@ -9,23 +6,21 @@ namespace Org.BouncyCastle.Crypto.Paddings
     * A padder that adds X9.23 padding to a block - if a SecureRandom is
     * passed in random padding is assumed, otherwise padding with zeros is used.
     */
-    public class X923Padding
-		: IBlockCipherPadding
+    public class X923Padding : IBlockCipherPadding
     {
-        private SecureRandom random;
+        private ISecureRandom _random;
 
-		/**
+        /**
         * Initialise the padder.
         *
         * @param random a SecureRandom if one is available.
         */
-        public void Init(
-			SecureRandom random)
+        public void Init(ISecureRandom random)
         {
-            this.random = random;
+            _random = random;
         }
 
-		/**
+        /**
         * Return the name of the algorithm the cipher implements.
         *
         * @return the name of the algorithm the cipher implements.
@@ -35,25 +30,23 @@ namespace Org.BouncyCastle.Crypto.Paddings
             get { return "X9.23"; }
         }
 
-		/**
+        /**
         * add the pad bytes to the passed in block, returning the
         * number of bytes added.
         */
-        public int AddPadding(
-            byte[]  input,
-            int     inOff)
+        public int AddPadding(byte[] input, int inOff)
         {
-            byte code = (byte)(input.Length - inOff);
+            var code = (byte)(input.Length - inOff);
 
             while (inOff < input.Length - 1)
             {
-                if (random == null)
+                if (_random == null)
                 {
                     input[inOff] = 0;
                 }
                 else
                 {
-                    input[inOff] = (byte)random.NextInt();
+                    input[inOff] = (byte)_random.NextInt();
                 }
                 inOff++;
             }
@@ -67,9 +60,9 @@ namespace Org.BouncyCastle.Crypto.Paddings
         * return the number of pad bytes present in the block.
         */
         public int PadCount(
-			byte[] input)
+            byte[] input)
         {
-            int count = input[input.Length - 1] & 0xff;
+            var count = input[input.Length - 1] & 0xff;
 
             if (count > input.Length)
             {

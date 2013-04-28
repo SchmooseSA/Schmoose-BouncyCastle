@@ -14,29 +14,17 @@ namespace Org.BouncyCastle.Crypto.Parameters
         private readonly IBigInteger _n;
         private readonly IBigInteger _h;
 
-        public ECDomainParameters(
-            ECCurve curve,
-            ECPoint g,
-            IBigInteger n)
+        public ECDomainParameters(ECCurve curve, ECPoint g, IBigInteger n)
             : this(curve, g, n, BigInteger.One)
         {
         }
 
-        public ECDomainParameters(
-            ECCurve curve,
-            ECPoint g,
-            IBigInteger n,
-            IBigInteger h)
+        public ECDomainParameters(ECCurve curve, ECPoint g, IBigInteger n, IBigInteger h)
             : this(curve, g, n, h, null)
         {
         }
 
-        public ECDomainParameters(
-            ECCurve curve,
-            ECPoint g,
-            IBigInteger n,
-            IBigInteger h,
-            byte[] seed)
+        public ECDomainParameters(ECCurve curve, ECPoint g, IBigInteger n, IBigInteger h, byte[] seed)
         {
             if (curve == null)
                 throw new ArgumentNullException("curve");
@@ -106,5 +94,4 @@ namespace Org.BouncyCastle.Crypto.Parameters
                 ^ Arrays.GetHashCode(_seed);
         }
     }
-
 }

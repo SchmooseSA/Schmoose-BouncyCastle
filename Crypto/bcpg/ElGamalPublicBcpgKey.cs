@@ -3,7 +3,7 @@ using Org.BouncyCastle.Math;
 namespace Org.BouncyCastle.Bcpg
 {
 	/// <remarks>Base class for an ElGamal public key.</remarks>
-	public class ElGamalPublicBcpgKey : BcpgObject, IBcpgKey
+    public class ElGamalPublicBcpgKey : BcpgObject, IBcpgPublicKey
 	{
 		private readonly MPInteger _p, _g, _y;
 
@@ -20,6 +20,11 @@ namespace Org.BouncyCastle.Bcpg
 			_g = new MPInteger(g);
 			_y = new MPInteger(y);
 		}
+
+        public int BitStrength
+        {
+            get { return this.P.BitLength; }
+        }
 
 		/// <summary>The format, as a string, always "PGP".</summary>
 		public string Format

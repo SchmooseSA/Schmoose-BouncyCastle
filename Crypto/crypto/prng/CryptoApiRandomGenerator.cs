@@ -8,14 +8,13 @@ namespace Org.BouncyCastle.Crypto.Prng
 	/// <summary>
 	/// Uses Microsoft's RNGCryptoServiceProvider
 	/// </summary>
-	public class CryptoApiRandomGenerator
-		: IRandomGenerator
+	public class CryptoApiRandomGenerator : IRandomGenerator
 	{
-		private readonly RNGCryptoServiceProvider rndProv;
+		private readonly RNGCryptoServiceProvider _rndProv;
 
 		public CryptoApiRandomGenerator()
 		{
-			rndProv = new RNGCryptoServiceProvider();
+			_rndProv = new RNGCryptoServiceProvider();
 		}
 
 		#region IRandomGenerator Members
@@ -32,7 +31,7 @@ namespace Org.BouncyCastle.Crypto.Prng
 
 		public virtual void NextBytes(byte[] bytes)
 		{
-			rndProv.GetBytes(bytes);
+			_rndProv.GetNonZeroBytes(bytes);
 		}
 
 		public virtual void NextBytes(byte[] bytes, int start, int len)
@@ -48,8 +47,8 @@ namespace Org.BouncyCastle.Crypto.Prng
 			}
 			else 
 			{
-				byte[] tmpBuf = new byte[len];
-				rndProv.GetBytes(tmpBuf);
+				var tmpBuf = new byte[len];
+                _rndProv.GetNonZeroBytes(tmpBuf);
 				Array.Copy(tmpBuf, 0, bytes, start, len);
 			}
 		}

@@ -6,340 +6,294 @@ using Org.BouncyCastle.Security;
 
 namespace Org.BouncyCastle.Crypto.Encodings
 {
-	/**
-	* Optimal Asymmetric Encryption Padding (OAEP) - see PKCS 1 V 2.
-	*/
-	public class OaepEncoding
-		: IAsymmetricBlockCipher
-	{
-		private byte[] defHash;
-		private IDigest hash;
-		private IDigest mgf1Hash;
+    /**
+    * Optimal Asymmetric Encryption Padding (OAEP) - see PKCS 1 V 2.
+    */
+    public class OaepEncoding : IAsymmetricBlockCipher
+    {
+        private readonly byte[] _defHash;
+        private readonly IDigest _hash;
+        private readonly IDigest _mgf1Hash;
 
-		private IAsymmetricBlockCipher engine;
-		private SecureRandom random;
-		private bool forEncryption;
+        private readonly IAsymmetricBlockCipher _engine;
+        private ISecureRandom _random;
+        private bool _forEncryption;
 
-		public OaepEncoding(
-			IAsymmetricBlockCipher cipher)
-			: this(cipher, new Sha1Digest(), null)
-		{
-		}
+        public OaepEncoding(IAsymmetricBlockCipher cipher)
+            : this(cipher, new Sha1Digest(), null)
+        {
+        }
 
-		public OaepEncoding(
-			IAsymmetricBlockCipher	cipher,
-			IDigest					hash)
-			: this(cipher, hash, null)
-		{
-		}
+        public OaepEncoding(IAsymmetricBlockCipher cipher, IDigest hash)
+            : this(cipher, hash, null)
+        {
+        }
 
-		public OaepEncoding(
-			IAsymmetricBlockCipher	cipher,
-			IDigest					hash,
-			byte[]					encodingParams)
-			: this(cipher, hash, hash, encodingParams)
-		{
-		}
+        public OaepEncoding(IAsymmetricBlockCipher cipher, IDigest hash, byte[] encodingParams)
+            : this(cipher, hash, hash, encodingParams)
+        {
+        }
 
-		public OaepEncoding(
-			IAsymmetricBlockCipher	cipher,
-			IDigest					hash,
-			IDigest					mgf1Hash,
-			byte[]					encodingParams)
-		{
-			this.engine = cipher;
-			this.hash = hash;
-			this.mgf1Hash = mgf1Hash;
-			this.defHash = new byte[hash.GetDigestSize()];
+        public OaepEncoding(IAsymmetricBlockCipher cipher, IDigest hash, IDigest mgf1Hash, byte[] encodingParams)
+        {
+            _engine = cipher;
+            _hash = hash;
+            _mgf1Hash = mgf1Hash;
+            _defHash = new byte[hash.GetDigestSize()];
 
-			if (encodingParams != null)
-			{
-				hash.BlockUpdate(encodingParams, 0, encodingParams.Length);
-			}
+            if (encodingParams != null)
+            {
+                hash.BlockUpdate(encodingParams, 0, encodingParams.Length);
+            }
 
-			hash.DoFinal(defHash, 0);
-		}
+            hash.DoFinal(_defHash, 0);
+        }
 
-		public IAsymmetricBlockCipher GetUnderlyingCipher()
-		{
-			return engine;
-		}
+        public IAsymmetricBlockCipher GetUnderlyingCipher()
+        {
+            return _engine;
+        }
 
-		public string AlgorithmName
-		{
-			get { return engine.AlgorithmName + "/OAEPPadding"; }
-		}
+        public string AlgorithmName
+        {
+            get { return _engine.AlgorithmName + "/OAEPPadding"; }
+        }
 
-		public void Init(
-			bool				forEncryption,
-			ICipherParameters	param)
-		{
-			if (param is ParametersWithRandom)
-			{
-				ParametersWithRandom rParam = (ParametersWithRandom)param;
-				this.random = rParam.Random;
-			}
-			else
-			{
-				this.random = new SecureRandom();
-			}
+        public void Init(bool forEncryption, ICipherParameters param)
+        {
+            var rParam = param as ParametersWithRandom;
 
-			engine.Init(forEncryption, param);
+            _random = rParam != null ? rParam.Random : new SecureRandom();
+            _engine.Init(forEncryption, param);
+            _forEncryption = forEncryption;
+        }
 
-			this.forEncryption = forEncryption;
-		}
+        public int GetInputBlockSize()
+        {
+            var baseBlockSize = _engine.GetInputBlockSize();
 
-		public int GetInputBlockSize()
-		{
-			int baseBlockSize = engine.GetInputBlockSize();
+            if (_forEncryption)
+            {
+                return baseBlockSize - 1 - 2 * _defHash.Length;
+            }
+            return baseBlockSize;
+        }
 
-			if (forEncryption)
-			{
-				return baseBlockSize - 1 - 2 * defHash.Length;
-			}
-			else
-			{
-				return baseBlockSize;
-			}
-		}
+        public int GetOutputBlockSize()
+        {
+            var baseBlockSize = _engine.GetOutputBlockSize();
 
-		public int GetOutputBlockSize()
-		{
-			int baseBlockSize = engine.GetOutputBlockSize();
+            if (_forEncryption)
+            {
+                return baseBlockSize;
+            }
+            return baseBlockSize - 1 - 2 * _defHash.Length;
+        }
 
-			if (forEncryption)
-			{
-				return baseBlockSize;
-			}
-			else
-			{
-				return baseBlockSize - 1 - 2 * defHash.Length;
-			}
-		}
+        public byte[] ProcessBlock(
+            byte[] inBytes,
+            int inOff,
+            int inLen)
+        {
+            return _forEncryption ? EncodeBlock(inBytes, inOff, inLen) : DecodeBlock(inBytes, inOff, inLen);
+        }
 
-		public byte[] ProcessBlock(
-			byte[]	inBytes,
-			int		inOff,
-			int		inLen)
-		{
-			if (forEncryption)
-			{
-				return encodeBlock(inBytes, inOff, inLen);
-			}
-			else
-			{
-				return decodeBlock(inBytes, inOff, inLen);
-			}
-		}
+        private byte[] EncodeBlock(byte[] inBytes, int inOff, int inLen)
+        {
+            var block = new byte[GetInputBlockSize() + 1 + 2 * _defHash.Length];
 
-		private byte[] encodeBlock(
-			byte[]	inBytes,
-			int		inOff,
-			int		inLen)
-		{
-			byte[] block = new byte[GetInputBlockSize() + 1 + 2 * defHash.Length];
+            //
+            // copy in the message
+            //
+            Array.Copy(inBytes, inOff, block, block.Length - inLen, inLen);
 
-			//
-			// copy in the message
-			//
-			Array.Copy(inBytes, inOff, block, block.Length - inLen, inLen);
+            //
+            // add sentinel
+            //
+            block[block.Length - inLen - 1] = 0x01;
 
-			//
-			// add sentinel
-			//
-			block[block.Length - inLen - 1] = 0x01;
+            //
+            // as the block is already zeroed - there's no need to add PS (the >= 0 pad of 0)
+            //
 
-			//
-			// as the block is already zeroed - there's no need to add PS (the >= 0 pad of 0)
-			//
+            //
+            // add the hash of the encoding params.
+            //
+            Array.Copy(_defHash, 0, block, _defHash.Length, _defHash.Length);
 
-			//
-			// add the hash of the encoding params.
-			//
-			Array.Copy(defHash, 0, block, defHash.Length, defHash.Length);
+            //
+            // generate the seed.
+            //
+            var seed = _random.GenerateSeed(_defHash.Length);
 
-			//
-			// generate the seed.
-			//
-			byte[] seed = random.GenerateSeed(defHash.Length);
+            //
+            // mask the message block.
+            //
+            var mask = MaskGeneratorFunction1(seed, 0, seed.Length, block.Length - _defHash.Length);
 
-			//
-			// mask the message block.
-			//
-			byte[] mask = maskGeneratorFunction1(seed, 0, seed.Length, block.Length - defHash.Length);
+            for (var i = _defHash.Length; i != block.Length; i++)
+            {
+                block[i] ^= mask[i - _defHash.Length];
+            }
 
-			for (int i = defHash.Length; i != block.Length; i++)
-			{
-				block[i] ^= mask[i - defHash.Length];
-			}
+            //
+            // add in the seed
+            //
+            Array.Copy(seed, 0, block, 0, _defHash.Length);
 
-			//
-			// add in the seed
-			//
-			Array.Copy(seed, 0, block, 0, defHash.Length);
+            //
+            // mask the seed.
+            //
+            mask = MaskGeneratorFunction1(
+                block, _defHash.Length, block.Length - _defHash.Length, _defHash.Length);
 
-			//
-			// mask the seed.
-			//
-			mask = maskGeneratorFunction1(
-				block, defHash.Length, block.Length - defHash.Length, defHash.Length);
+            for (var i = 0; i != _defHash.Length; i++)
+            {
+                block[i] ^= mask[i];
+            }
 
-			for (int i = 0; i != defHash.Length; i++)
-			{
-				block[i] ^= mask[i];
-			}
+            return _engine.ProcessBlock(block, 0, block.Length);
+        }
 
-			return engine.ProcessBlock(block, 0, block.Length);
-		}
+        /**
+        * @exception InvalidCipherTextException if the decrypted block turns out to
+        * be badly formatted.
+        */
+        private byte[] DecodeBlock(byte[] inBytes, int inOff, int inLen)
+        {
+            var data = _engine.ProcessBlock(inBytes, inOff, inLen);
+            byte[] block;
 
-		/**
-		* @exception InvalidCipherTextException if the decrypted block turns out to
-		* be badly formatted.
-		*/
-		private byte[] decodeBlock(
-			byte[]	inBytes,
-			int		inOff,
-			int		inLen)
-		{
-			byte[] data = engine.ProcessBlock(inBytes, inOff, inLen);
-			byte[] block;
+            //
+            // as we may have zeros in our leading bytes for the block we produced
+            // on encryption, we need to make sure our decrypted block comes back
+            // the same size.
+            //
+            if (data.Length < _engine.GetOutputBlockSize())
+            {
+                block = new byte[_engine.GetOutputBlockSize()];
 
-			//
-			// as we may have zeros in our leading bytes for the block we produced
-			// on encryption, we need to make sure our decrypted block comes back
-			// the same size.
-			//
-			if (data.Length < engine.GetOutputBlockSize())
-			{
-				block = new byte[engine.GetOutputBlockSize()];
+                Array.Copy(data, 0, block, block.Length - data.Length, data.Length);
+            }
+            else
+            {
+                block = data;
+            }
 
-				Array.Copy(data, 0, block, block.Length - data.Length, data.Length);
-			}
-			else
-			{
-				block = data;
-			}
+            if (block.Length < (2 * _defHash.Length) + 1)
+            {
+                throw new InvalidCipherTextException("data too short");
+            }
 
-			if (block.Length < (2 * defHash.Length) + 1)
-			{
-				throw new InvalidCipherTextException("data too short");
-			}
+            //
+            // unmask the seed.
+            //
+            var mask = MaskGeneratorFunction1(
+                block, _defHash.Length, block.Length - _defHash.Length, _defHash.Length);
 
-			//
-			// unmask the seed.
-			//
-			byte[] mask = maskGeneratorFunction1(
-				block, defHash.Length, block.Length - defHash.Length, defHash.Length);
+            for (var i = 0; i != _defHash.Length; i++)
+            {
+                block[i] ^= mask[i];
+            }
 
-			for (int i = 0; i != defHash.Length; i++)
-			{
-				block[i] ^= mask[i];
-			}
+            //
+            // unmask the message block.
+            //
+            mask = MaskGeneratorFunction1(block, 0, _defHash.Length, block.Length - _defHash.Length);
 
-			//
-			// unmask the message block.
-			//
-			mask = maskGeneratorFunction1(block, 0, defHash.Length, block.Length - defHash.Length);
+            for (var i = _defHash.Length; i != block.Length; i++)
+            {
+                block[i] ^= mask[i - _defHash.Length];
+            }
 
-			for (int i = defHash.Length; i != block.Length; i++)
-			{
-				block[i] ^= mask[i - defHash.Length];
-			}
+            //
+            // check the hash of the encoding params.
+            //
+            for (var i = 0; i != _defHash.Length; i++)
+            {
+                if (_defHash[i] != block[_defHash.Length + i])
+                {
+                    throw new InvalidCipherTextException("data hash wrong");
+                }
+            }
 
-			//
-			// check the hash of the encoding params.
-			//
-			for (int i = 0; i != defHash.Length; i++)
-			{
-				if (defHash[i] != block[defHash.Length + i])
-				{
-					throw new InvalidCipherTextException("data hash wrong");
-				}
-			}
+            //
+            // find the data block
+            //
+            int start;
+            for (start = 2 * _defHash.Length; start != block.Length; start++)
+            {
+                if (block[start] != 0)
+                {
+                    break;
+                }
+            }
 
-			//
-			// find the data block
-			//
-			int start;
-			for (start = 2 * defHash.Length; start != block.Length; start++)
-			{
-				if (block[start] != 0)
-				{
-					break;
-				}
-			}
+            if (start >= (block.Length - 1) || block[start] != 1)
+            {
+                throw new InvalidCipherTextException("data start wrong " + start);
+            }
 
-			if (start >= (block.Length - 1) || block[start] != 1)
-			{
-				throw new InvalidCipherTextException("data start wrong " + start);
-			}
+            start++;
 
-			start++;
+            //
+            // extract the data block
+            //
+            var output = new byte[block.Length - start];
 
-			//
-			// extract the data block
-			//
-			byte[] output = new byte[block.Length - start];
+            Array.Copy(block, start, output, 0, output.Length);
 
-			Array.Copy(block, start, output, 0, output.Length);
+            return output;
+        }
 
-			return output;
-		}
+        /**
+        * int to octet string.
+        */
+        private static void ItoOsp(int i, byte[] sp)
+        {
+            sp[0] = (byte)((uint)i >> 24);
+            sp[1] = (byte)((uint)i >> 16);
+            sp[2] = (byte)((uint)i >> 8);
+            sp[3] = (byte)((uint)i >> 0);
+        }
 
-		/**
-		* int to octet string.
-		*/
-		private void ItoOSP(
-			int		i,
-			byte[]	sp)
-		{
-			sp[0] = (byte)((uint)i >> 24);
-			sp[1] = (byte)((uint)i >> 16);
-			sp[2] = (byte)((uint)i >> 8);
-			sp[3] = (byte)((uint)i >> 0);
-		}
+        /**
+        * mask generator function, as described in PKCS1v2.
+        */
+        private byte[] MaskGeneratorFunction1(byte[] z,int zOff,int zLen,int length)
+        {
+            var mask = new byte[length];
+            var hashBuf = new byte[_mgf1Hash.GetDigestSize()];
+            var C = new byte[4];
+            var counter = 0;
 
-		/**
-		* mask generator function, as described in PKCS1v2.
-		*/
-		private byte[] maskGeneratorFunction1(
-			byte[]	Z,
-			int		zOff,
-			int		zLen,
-			int		length)
-		{
-			byte[] mask = new byte[length];
-			byte[] hashBuf = new byte[mgf1Hash.GetDigestSize()];
-			byte[] C = new byte[4];
-			int counter = 0;
+            _hash.Reset();
 
-			hash.Reset();
+            do
+            {
+                ItoOsp(counter, C);
 
-			do
-			{
-				ItoOSP(counter, C);
+                _mgf1Hash.BlockUpdate(z, zOff, zLen);
+                _mgf1Hash.BlockUpdate(C, 0, C.Length);
+                _mgf1Hash.DoFinal(hashBuf, 0);
 
-				mgf1Hash.BlockUpdate(Z, zOff, zLen);
-				mgf1Hash.BlockUpdate(C, 0, C.Length);
-				mgf1Hash.DoFinal(hashBuf, 0);
+                Array.Copy(hashBuf, 0, mask, counter * hashBuf.Length, hashBuf.Length);
+            }
+            while (++counter < (length / hashBuf.Length));
 
-				Array.Copy(hashBuf, 0, mask, counter * hashBuf.Length, hashBuf.Length);
-			}
-			while (++counter < (length / hashBuf.Length));
+            if ((counter * hashBuf.Length) < length)
+            {
+                ItoOsp(counter, C);
 
-			if ((counter * hashBuf.Length) < length)
-			{
-				ItoOSP(counter, C);
+                _mgf1Hash.BlockUpdate(z, zOff, zLen);
+                _mgf1Hash.BlockUpdate(C, 0, C.Length);
+                _mgf1Hash.DoFinal(hashBuf, 0);
 
-				mgf1Hash.BlockUpdate(Z, zOff, zLen);
-				mgf1Hash.BlockUpdate(C, 0, C.Length);
-				mgf1Hash.DoFinal(hashBuf, 0);
+                Array.Copy(hashBuf, 0, mask, counter * hashBuf.Length, mask.Length - (counter * hashBuf.Length));
+            }
 
-				Array.Copy(hashBuf, 0, mask, counter * hashBuf.Length, mask.Length - (counter * hashBuf.Length));
-			}
-
-			return mask;
-		}
-	}
+            return mask;
+        }
+    }
 }
 

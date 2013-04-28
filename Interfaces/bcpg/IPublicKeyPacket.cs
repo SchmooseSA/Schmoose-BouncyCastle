@@ -7,7 +7,7 @@ namespace Org.BouncyCastle.Bcpg
         int Version { get; }
         PublicKeyAlgorithmTag Algorithm { get; }
         int ValidDays { get; }
-        IBcpgKey Key { get; }
+        IBcpgPublicKey Key { get; }
         DateTime GetTime();
         byte[] GetEncodedContents();
     }

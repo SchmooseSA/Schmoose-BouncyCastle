@@ -1,31 +1,25 @@
-using System;
-
 using Org.BouncyCastle.Security;
 
 namespace Org.BouncyCastle.Crypto.Parameters
 {
-    public class DHKeyGenerationParameters
-		: KeyGenerationParameters
+    public class DHKeyGenerationParameters : KeyGenerationParameters
     {
-        private readonly DHParameters parameters;
+        private readonly DHParameters _parameters;
 
-		public DHKeyGenerationParameters(
-            SecureRandom	random,
-            DHParameters	parameters)
-			: base(random, GetStrength(parameters))
+        public DHKeyGenerationParameters(ISecureRandom random, DHParameters parameters)
+            : base(random, GetStrength(parameters))
         {
-            this.parameters = parameters;
+            _parameters = parameters;
         }
 
-		public DHParameters Parameters
+        public DHParameters Parameters
         {
-            get { return parameters; }
+            get { return _parameters; }
         }
 
-		internal static int GetStrength(
-			DHParameters parameters)
-		{
-			return parameters.L != 0 ? parameters.L : parameters.P.BitLength;
-		}
+        internal static int GetStrength(DHParameters parameters)
+        {
+            return parameters.L != 0 ? parameters.L : parameters.P.BitLength;
+        }
     }
 }

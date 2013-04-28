@@ -53,12 +53,12 @@ namespace Org.BouncyCastle.Crypto.Parameters
                 return true;
 
             var other = obj as ECPublicKeyParameters;
-            return other != null && Equals(other);
+            return other != null && this.Equals(other);
         }
 
         protected bool Equals(ECPublicKeyParameters other)
         {
-            return _q.Equals(other._q) && base.Equals(other);
+            return _q.Equals(other.Q) && base.Equals(other);
         }
 
         public override int GetHashCode()

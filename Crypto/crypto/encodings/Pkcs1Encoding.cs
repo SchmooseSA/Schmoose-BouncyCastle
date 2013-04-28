@@ -7,226 +7,212 @@ using Org.BouncyCastle.Utilities;
 
 namespace Org.BouncyCastle.Crypto.Encodings
 {
-	/**
-	* this does your basic Pkcs 1 v1.5 padding - whether or not you should be using this
-	* depends on your application - see Pkcs1 Version 2 for details.
-	*/
-	public class Pkcs1Encoding
-		: IAsymmetricBlockCipher
-	{
-		/**
-		 * some providers fail to include the leading zero in PKCS1 encoded blocks. If you need to
-		 * work with one of these set the system property Org.BouncyCastle.Pkcs1.Strict to false.
-		 */
-		public const string StrictLengthEnabledProperty = "Org.BouncyCastle.Pkcs1.Strict";
+    /**
+    * this does your basic Pkcs 1 v1.5 padding - whether or not you should be using this
+    * depends on your application - see Pkcs1 Version 2 for details.
+    */
+    public class Pkcs1Encoding : IAsymmetricBlockCipher
+    {
+        /**
+         * some providers fail to include the leading zero in PKCS1 encoded blocks. If you need to
+         * work with one of these set the system property Org.BouncyCastle.Pkcs1.Strict to false.
+         */
+        public const string StrictLengthEnabledProperty = "Org.BouncyCastle.Pkcs1.Strict";
 
-		private const int HeaderLength = 10;
+        private const int HeaderLength = 10;
 
-		/**
-		 * The same effect can be achieved by setting the static property directly
-		 * <p>
-		 * The static property is checked during construction of the encoding object, it is set to
-		 * true by default.
-		 * </p>
-		 */
-		public static bool StrictLengthEnabled
-		{
-			get { return strictLengthEnabled[0]; }
-			set { strictLengthEnabled[0] = value; }
-		}
+        /**
+         * The same effect can be achieved by setting the static property directly
+         * <p>
+         * The static property is checked during construction of the encoding object, it is set to
+         * true by default.
+         * </p>
+         */
+        public static bool StrictLengthEnabled
+        {
+            get { return _strictLengthEnabled[0]; }
+            set { _strictLengthEnabled[0] = value; }
+        }
 
-		private static readonly bool[] strictLengthEnabled;
+        private static readonly bool[] _strictLengthEnabled;
 
-		static Pkcs1Encoding()
-		{
-			string strictProperty = Platform.GetEnvironmentVariable(StrictLengthEnabledProperty);
+        static Pkcs1Encoding()
+        {
+            var strictProperty = Platform.GetEnvironmentVariable(StrictLengthEnabledProperty);
 
-			strictLengthEnabled = new bool[]{ strictProperty == null || strictProperty.Equals("true")};
-		}
+            _strictLengthEnabled = new[] { strictProperty == null || strictProperty.Equals("true") };
+        }
 
 
-		private SecureRandom			random;
-		private IAsymmetricBlockCipher	engine;
-		private bool					forEncryption;
-		private bool					forPrivateKey;
-		private bool					useStrictLength;
+        private ISecureRandom _random;
+        private readonly IAsymmetricBlockCipher _engine;
+        private bool _forEncryption;
+        private bool _forPrivateKey;
+        private readonly bool _useStrictLength;
 
-		/**
-		 * Basic constructor.
-		 * @param cipher
-		 */
-		public Pkcs1Encoding(
-			IAsymmetricBlockCipher cipher)
-		{
-			this.engine = cipher;
-			this.useStrictLength = StrictLengthEnabled;
-		}
+        /**
+         * Basic constructor.
+         * @param cipher
+         */
+        public Pkcs1Encoding(IAsymmetricBlockCipher cipher)
+        {
+            _engine = cipher;
+            _useStrictLength = StrictLengthEnabled;
+        }
 
-		public IAsymmetricBlockCipher GetUnderlyingCipher()
-		{
-			return engine;
-		}
+        public IAsymmetricBlockCipher GetUnderlyingCipher()
+        {
+            return _engine;
+        }
 
-		public string AlgorithmName
-		{
-			get { return engine.AlgorithmName + "/PKCS1Padding"; }
-		}
+        public string AlgorithmName
+        {
+            get { return _engine.AlgorithmName + "/PKCS1Padding"; }
+        }
 
-		public void Init(
-			bool				forEncryption,
-			ICipherParameters	parameters)
-		{
-			IAsymmetricKeyParameter kParam;
-			if (parameters is ParametersWithRandom)
-			{
-				ParametersWithRandom rParam = (ParametersWithRandom)parameters;
+        public void Init(bool forEncryption, ICipherParameters parameters)
+        {
+            IAsymmetricKeyParameter kParam;
 
-				this.random = rParam.Random;
-				kParam = (AsymmetricKeyParameter)rParam.Parameters;
-			}
-			else
-			{
-				this.random = new SecureRandom();
-				kParam = (AsymmetricKeyParameter)parameters;
-			}
+            var rParam = parameters as ParametersWithRandom;
+            if (rParam != null)
+            {
+                _random = rParam.Random;
+                kParam = (AsymmetricKeyParameter)rParam.Parameters;
+            }
+            else
+            {
+                _random = new SecureRandom();
+                kParam = (AsymmetricKeyParameter)parameters;
+            }
 
-			engine.Init(forEncryption, parameters);
+            _engine.Init(forEncryption, parameters);
+            _forPrivateKey = kParam.IsPrivate;
+            _forEncryption = forEncryption;
+        }
 
-			this.forPrivateKey = kParam.IsPrivate;
-			this.forEncryption = forEncryption;
-		}
+        public int GetInputBlockSize()
+        {
+            var baseBlockSize = _engine.GetInputBlockSize();
 
-		public int GetInputBlockSize()
-		{
-			int baseBlockSize = engine.GetInputBlockSize();
+            return _forEncryption
+                ? baseBlockSize - HeaderLength
+                : baseBlockSize;
+        }
 
-			return forEncryption
-				?	baseBlockSize - HeaderLength
-				:	baseBlockSize;
-		}
+        public int GetOutputBlockSize()
+        {
+            var baseBlockSize = _engine.GetOutputBlockSize();
 
-		public int GetOutputBlockSize()
-		{
-			int baseBlockSize = engine.GetOutputBlockSize();
+            return _forEncryption
+                ? baseBlockSize
+                : baseBlockSize - HeaderLength;
+        }
 
-			return forEncryption
-				?	baseBlockSize
-				:	baseBlockSize - HeaderLength;
-		}
+        public byte[] ProcessBlock(byte[] input, int inOff, int length)
+        {
+            return _forEncryption
+                ? EncodeBlock(input, inOff, length)
+                : DecodeBlock(input, inOff, length);
+        }
 
-		public byte[] ProcessBlock(
-			byte[]	input,
-			int		inOff,
-			int		length)
-		{
-			return forEncryption
-				?	EncodeBlock(input, inOff, length)
-				:	DecodeBlock(input, inOff, length);
-		}
+        private byte[] EncodeBlock(byte[] input, int inOff, int inLen)
+        {
+            if (inLen > GetInputBlockSize())
+                throw new ArgumentException("input data too large", "inLen");
 
-		private byte[] EncodeBlock(
-			byte[]	input,
-			int		inOff,
-			int		inLen)
-		{
-	        if (inLen > GetInputBlockSize())
-	            throw new ArgumentException("input data too large", "inLen");
+            var block = new byte[_engine.GetInputBlockSize()];
 
-	        byte[] block = new byte[engine.GetInputBlockSize()];
+            if (_forPrivateKey)
+            {
+                block[0] = 0x01;                        // type code 1
 
-			if (forPrivateKey)
-			{
-				block[0] = 0x01;                        // type code 1
+                for (var i = 1; i != block.Length - inLen - 1; i++)
+                {
+                    block[i] = (byte)0xFF;
+                }
+            }
+            else
+            {
+                _random.NextBytes(block);                // random fill
 
-				for (int i = 1; i != block.Length - inLen - 1; i++)
-				{
-					block[i] = (byte)0xFF;
-				}
-			}
-			else
-			{
-				random.NextBytes(block);                // random fill
+                block[0] = 0x02;                        // type code 2
 
-				block[0] = 0x02;                        // type code 2
+                //
+                // a zero byte marks the end of the padding, so all
+                // the pad bytes must be non-zero.
+                //
+                for (var i = 1; i != block.Length - inLen - 1; i++)
+                {
+                    while (block[i] == 0)
+                    {
+                        block[i] = (byte)_random.NextInt();
+                    }
+                }
+            }
 
-				//
-				// a zero byte marks the end of the padding, so all
-				// the pad bytes must be non-zero.
-				//
-				for (int i = 1; i != block.Length - inLen - 1; i++)
-				{
-					while (block[i] == 0)
-					{
-						block[i] = (byte)random.NextInt();
-					}
-				}
-			}
+            block[block.Length - inLen - 1] = 0x00;       // mark the end of the padding
+            Array.Copy(input, inOff, block, block.Length - inLen, inLen);
 
-			block[block.Length - inLen - 1] = 0x00;       // mark the end of the padding
-			Array.Copy(input, inOff, block, block.Length - inLen, inLen);
+            return _engine.ProcessBlock(block, 0, block.Length);
+        }
 
-			return engine.ProcessBlock(block, 0, block.Length);
-		}
+        /**
+        * @exception InvalidCipherTextException if the decrypted block is not in Pkcs1 format.
+        */
+        private byte[] DecodeBlock(byte[] input, int inOff, int inLen)
+        {
+            var block = _engine.ProcessBlock(input, inOff, inLen);
 
-		/**
-		* @exception InvalidCipherTextException if the decrypted block is not in Pkcs1 format.
-		*/
-		private byte[] DecodeBlock(
-			byte[]	input,
-			int		inOff,
-			int		inLen)
-		{
-			byte[] block = engine.ProcessBlock(input, inOff, inLen);
+            if (block.Length < GetOutputBlockSize())
+            {
+                throw new InvalidCipherTextException("block truncated");
+            }
 
-			if (block.Length < GetOutputBlockSize())
-			{
-				throw new InvalidCipherTextException("block truncated");
-			}
+            var type = block[0];
 
-			byte type = block[0];
+            if (type != 1 && type != 2)
+            {
+                throw new InvalidCipherTextException("unknown block type");
+            }
 
-			if (type != 1 && type != 2)
-			{
-				throw new InvalidCipherTextException("unknown block type");
-			}
+            if (_useStrictLength && block.Length != _engine.GetOutputBlockSize())
+            {
+                throw new InvalidCipherTextException("block incorrect size");
+            }
 
-			if (useStrictLength && block.Length != engine.GetOutputBlockSize())
-			{
-				throw new InvalidCipherTextException("block incorrect size");
-			}
+            //
+            // find and extract the message block.
+            //
+            int start;
+            for (start = 1; start != block.Length; start++)
+            {
+                var pad = block[start];
 
-			//
-			// find and extract the message block.
-			//
-			int start;
-			for (start = 1; start != block.Length; start++)
-			{
-				byte pad = block[start];
+                if (pad == 0)
+                {
+                    break;
+                }
 
-				if (pad == 0)
-				{
-					break;
-				}
+                if (type == 1 && pad != (byte)0xff)
+                {
+                    throw new InvalidCipherTextException("block padding incorrect");
+                }
+            }
 
-				if (type == 1 && pad != (byte)0xff)
-				{
-					throw new InvalidCipherTextException("block padding incorrect");
-				}
-			}
+            start++;           // data should start at the next byte
 
-			start++;           // data should start at the next byte
+            if (start > block.Length || start < HeaderLength)
+            {
+                throw new InvalidCipherTextException("no data in block");
+            }
 
-			if (start > block.Length || start < HeaderLength)
-			{
-				throw new InvalidCipherTextException("no data in block");
-			}
+            var result = new byte[block.Length - start];
 
-			byte[] result = new byte[block.Length - start];
+            Array.Copy(block, start, result, 0, result.Length);
 
-			Array.Copy(block, start, result, 0, result.Length);
-
-			return result;
-		}
-	}
+            return result;
+        }
+    }
 
 }

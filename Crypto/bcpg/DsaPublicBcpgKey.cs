@@ -3,7 +3,7 @@ using Org.BouncyCastle.Math;
 namespace Org.BouncyCastle.Bcpg
 {
 	/// <remarks>Base class for a DSA public key.</remarks>
-	public class DsaPublicBcpgKey : BcpgObject, IBcpgKey
+    public class DsaPublicBcpgKey : BcpgObject, IBcpgPublicKey
     {
         private readonly MPInteger _p, _q, _g, _y;
 
@@ -24,7 +24,18 @@ namespace Org.BouncyCastle.Bcpg
 			_y = new MPInteger(y);
 		}
 
-		/// <summary>The format, as a string, always "PGP".</summary>
+        /// <summary>
+        /// Gets the bit strength.
+        /// </summary>
+        /// <value>
+        /// The bit strength.
+        /// </value>
+	    public int BitStrength 
+        {
+            get { return this.P.BitLength; }
+        }
+
+	    /// <summary>The format, as a string, always "PGP".</summary>
 		public string Format
 		{
 			get { return "PGP"; }

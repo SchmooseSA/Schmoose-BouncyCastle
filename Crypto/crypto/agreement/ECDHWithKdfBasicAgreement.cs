@@ -7,8 +7,7 @@ using Org.BouncyCastle.Security;
 
 namespace Org.BouncyCastle.Crypto.Agreement
 {
-    public class EcdhWithKdfBasicAgreement
-        : EcdhBasicAgreement
+    public class EcdhWithKdfBasicAgreement : EcdhBasicAgreement
     {
         private readonly string _algorithm;
         private readonly IDerivationFunction _kdf;

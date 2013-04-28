@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.IO;
-using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Security;
@@ -26,7 +25,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             SymmetricKeyAlgorithmTag encAlgorithm,
             char[] passPhrase,
             bool useSha1,
-            SecureRandom rand)
+            ISecureRandom rand)
             : this(privKey, pubKey, encAlgorithm, passPhrase, useSha1, rand, false)
         {
         }
@@ -37,7 +36,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             SymmetricKeyAlgorithmTag encAlgorithm,
             char[] passPhrase,
             bool useSha1,
-            SecureRandom rand,
+            ISecureRandom rand,
             bool isMasterKey)
         {
             BcpgObject secKey;
@@ -61,6 +60,13 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                     var esK = (ElGamalPrivateKeyParameters)privKey.Key;
                     secKey = new ElGamalSecretBcpgKey(esK.X);
                     break;
+
+                case PublicKeyAlgorithmTag.Ecdh:
+                case PublicKeyAlgorithmTag.Ecdsa:
+                    var ecK = (ECPrivateKeyParameters) privKey.Key;
+                    secKey = new EcSecretBcpgKey(ecK.D);
+                    break;
+                
                 default:
                     throw new PgpException("unknown key class");
             }
@@ -120,7 +126,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             char[] passPhrase,
             PgpSignatureSubpacketVector hashedPackets,
             PgpSignatureSubpacketVector unhashedPackets,
-            SecureRandom rand)
+            ISecureRandom rand)
             : this(certificationLevel, keyPair, id, encAlgorithm, passPhrase, false, hashedPackets, unhashedPackets, rand)
         {
         }
@@ -134,7 +140,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             bool useSha1,
             PgpSignatureSubpacketVector hashedPackets,
             PgpSignatureSubpacketVector unhashedPackets,
-            SecureRandom rand)
+            ISecureRandom rand)
             : this(keyPair.PrivateKey, CertifiedPublicKey(certificationLevel, keyPair, id, hashedPackets, unhashedPackets), encAlgorithm, passPhrase, useSha1, rand, true)
         {
         }
@@ -642,7 +648,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             byte[] rawKeyData,
             SymmetricKeyAlgorithmTag encAlgorithm,
             char[] passPhrase,
-            SecureRandom random,
+            ISecureRandom random,
             out S2k s2K,
             out byte[] iv)
         {

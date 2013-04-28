@@ -6,6 +6,7 @@ using Org.BouncyCastle.Asn1.Nist;
 using Org.BouncyCastle.Asn1.Sec;
 using Org.BouncyCastle.Asn1.TeleTrust;
 using Org.BouncyCastle.Asn1.X9;
+using Org.BouncyCastle.Bcpg;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Security;
@@ -19,6 +20,8 @@ namespace Org.BouncyCastle.Crypto.Generators
 		private ECDomainParameters _parameters;
 		private DerObjectIdentifier _publicKeyParamSet;
         private ISecureRandom _random;
+        private HashAlgorithmTag _hashAlgorithm;
+        private SymmetricKeyAlgorithmTag _symmetricKeyAlgorithm;
 
 		public ECKeyPairGenerator()
 			: this("EC")
@@ -40,6 +43,8 @@ namespace Org.BouncyCastle.Crypto.Generators
 			{
 				_publicKeyParamSet = ecKeyGenerationParameters.PublicKeyParamSet;
                 _parameters = ecKeyGenerationParameters.DomainParameters;
+			    _hashAlgorithm = ecKeyGenerationParameters.HashAlgorithm;
+			    _symmetricKeyAlgorithm = ecKeyGenerationParameters.SymmetricKeyAlgorithm;
 			}
 			else
 			{
@@ -69,8 +74,9 @@ namespace Org.BouncyCastle.Crypto.Generators
 				}
 
 				var ecps = FindECCurveByOid(oid);
-
 				_parameters = new ECDomainParameters(ecps.Curve, ecps.G, ecps.N, ecps.H, ecps.GetSeed());
+                _hashAlgorithm = HashAlgorithmTag.Sha512;
+                _symmetricKeyAlgorithm = SymmetricKeyAlgorithmTag.Aes256;
 			}
 
 			_random = parameters.Random;
@@ -90,16 +96,21 @@ namespace Org.BouncyCastle.Crypto.Generators
             }
             while (d.SignValue == 0 || (d.CompareTo(n) >= 0));
 
+            var isEcdh = _algorithm == "ECDH";
+
             var q = _parameters.G.Multiply(d);
 			if (_publicKeyParamSet != null)
 			{
-				return new AsymmetricCipherKeyPair(
-					new ECPublicKeyParameters(_algorithm, q, _publicKeyParamSet),
-					new ECPrivateKeyParameters(_algorithm, d, _publicKeyParamSet));
+			    return new AsymmetricCipherKeyPair(
+                    isEcdh 
+                        ? new ECDHPublicKeyParameters(q, _publicKeyParamSet, _hashAlgorithm, _symmetricKeyAlgorithm) 
+                        : new ECPublicKeyParameters(_algorithm, q, _publicKeyParamSet), 
+                    new ECPrivateKeyParameters(_algorithm, d, _publicKeyParamSet));
 			}
-
-			return new AsymmetricCipherKeyPair(
-				new ECPublicKeyParameters(_algorithm, q, _parameters),
+            return new AsymmetricCipherKeyPair(
+				isEcdh
+				    ? new ECDHPublicKeyParameters(q, _parameters, _hashAlgorithm, _symmetricKeyAlgorithm)
+				    : new ECPublicKeyParameters(_algorithm, q, _parameters),
 				new ECPrivateKeyParameters(_algorithm, d, _parameters));
 		}
 

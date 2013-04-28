@@ -24,7 +24,7 @@ namespace Org.BouncyCastle.Crypto.Agreement
         private DHPrivateKeyParameters _key;
         private DHParameters _dhParams;
         private IBigInteger _privateValue;
-        private SecureRandom _random;
+        private ISecureRandom _random;
 
         public void Init(ICipherParameters parameters)
         {

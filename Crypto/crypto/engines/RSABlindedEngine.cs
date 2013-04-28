@@ -15,7 +15,7 @@ namespace Org.BouncyCastle.Crypto.Engines
 	{
 		private readonly RsaCoreEngine core = new RsaCoreEngine();
 		private RsaKeyParameters key;
-		private SecureRandom random;
+        private ISecureRandom random;
 
 		public string AlgorithmName
 		{

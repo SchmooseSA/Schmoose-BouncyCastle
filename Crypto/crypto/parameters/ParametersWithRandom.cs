@@ -4,45 +4,41 @@ using Org.BouncyCastle.Security;
 
 namespace Org.BouncyCastle.Crypto.Parameters
 {
-    public class ParametersWithRandom
-		: ICipherParameters
+    public class ParametersWithRandom : ICipherParameters
     {
-        private readonly ICipherParameters	parameters;
-		private readonly SecureRandom		random;
+        private readonly ICipherParameters _parameters;
+        private readonly ISecureRandom _random;
 
-		public ParametersWithRandom(
-            ICipherParameters	parameters,
-            SecureRandom		random)
+        public ParametersWithRandom(ICipherParameters parameters, ISecureRandom random)
         {
-			if (parameters == null)
-				throw new ArgumentNullException("random");
-			if (random == null)
-				throw new ArgumentNullException("random");
+            if (parameters == null)
+                throw new ArgumentNullException("random");
+            if (random == null)
+                throw new ArgumentNullException("random");
 
-			this.parameters = parameters;
-			this.random = random;
-		}
-
-		public ParametersWithRandom(
-            ICipherParameters parameters)
-			: this(parameters, new SecureRandom())
-        {
-		}
-
-		[Obsolete("Use Random property instead")]
-		public SecureRandom GetRandom()
-		{
-			return Random;
-		}
-
-		public SecureRandom Random
-        {
-			get { return random; }
+           _parameters = parameters;
+           _random = random;
         }
 
-		public ICipherParameters Parameters
+        public ParametersWithRandom(ICipherParameters parameters)
+            : this(parameters, new SecureRandom())
         {
-            get { return parameters; }
+        }
+
+        [Obsolete("Use Random property instead")]
+        public ISecureRandom GetRandom()
+        {
+            return Random;
+        }
+
+        public ISecureRandom Random
+        {
+            get { return _random; }
+        }
+
+        public ICipherParameters Parameters
+        {
+            get { return _parameters; }
         }
     }
 }

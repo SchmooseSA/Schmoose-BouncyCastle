@@ -20,7 +20,9 @@ namespace Org.BouncyCastle.Bcpg
             _x = new MPInteger(x);
 		}
 
-		/// <summary>The format, as a string, always "PGP".</summary>
+	    public int BitStrength { get; private set; }
+
+	    /// <summary>The format, as a string, always "PGP".</summary>
 		public string Format
 		{
 			get { return "PGP"; }
