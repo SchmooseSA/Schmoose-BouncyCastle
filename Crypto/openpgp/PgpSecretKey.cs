@@ -63,10 +63,10 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
                 case PublicKeyAlgorithmTag.Ecdh:
                 case PublicKeyAlgorithmTag.Ecdsa:
-                    var ecK = (ECPrivateKeyParameters) privKey.Key;
+                    var ecK = (ECPrivateKeyParameters)privKey.Key;
                     secKey = new EcSecretBcpgKey(ecK.D);
                     break;
-                
+
                 default:
                     throw new PgpException("unknown key class");
             }
@@ -141,21 +141,35 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             PgpSignatureSubpacketVector hashedPackets,
             PgpSignatureSubpacketVector unhashedPackets,
             ISecureRandom rand)
-            : this(keyPair.PrivateKey, CertifiedPublicKey(certificationLevel, keyPair, id, hashedPackets, unhashedPackets), encAlgorithm, passPhrase, useSha1, rand, true)
+            : this(certificationLevel, keyPair, id, encAlgorithm, HashAlgorithmTag.Sha1, passPhrase, useSha1, hashedPackets, unhashedPackets, rand) { }
+
+        public PgpSecretKey(
+            int certificationLevel,
+            PgpKeyPair keyPair,
+            string id,
+            SymmetricKeyAlgorithmTag encAlgorithm,
+            HashAlgorithmTag hashAlgorithm,
+            char[] passPhrase,
+            bool useSha1,
+            PgpSignatureSubpacketVector hashedPackets,
+            PgpSignatureSubpacketVector unhashedPackets,
+            ISecureRandom rand)
+            : this(keyPair.PrivateKey, CertifiedPublicKey(certificationLevel, keyPair, id, hashedPackets, unhashedPackets, hashAlgorithm), encAlgorithm, passPhrase, useSha1, rand, true)
         {
         }
 
         private static PgpPublicKey CertifiedPublicKey(
-            int certificationLevel,
-            PgpKeyPair keyPair,
-            string id,
-            PgpSignatureSubpacketVector hashedPackets,
-            PgpSignatureSubpacketVector unhashedPackets)
+            int certificationLevel, 
+            PgpKeyPair keyPair, 
+            string id, 
+            PgpSignatureSubpacketVector hashedPackets, 
+            PgpSignatureSubpacketVector unhashedPackets, 
+            HashAlgorithmTag hashAlgorithm)
         {
             PgpSignatureGenerator sGen;
             try
             {
-                sGen = new PgpSignatureGenerator(keyPair.PublicKey.Algorithm, HashAlgorithmTag.Sha1);
+                sGen = new PgpSignatureGenerator(keyPair.PublicKey.Algorithm, hashAlgorithm);
             }
             catch (Exception e)
             {

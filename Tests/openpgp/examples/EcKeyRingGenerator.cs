@@ -36,7 +36,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
             var subKey = new PgpKeyPair(PublicKeyAlgorithmTag.Ecdh, encryptionKey, DateTime.UtcNow);
             var keyRingGenerator = new PgpKeyRingGenerator(
                 PgpSignature.PositiveCertification, masterKey, identity,
-                SymmetricKeyAlgorithmTag.Aes256, passPhrase, true, null, null, random);
+                SymmetricKeyAlgorithmTag.Aes256, HashAlgorithmTag.Sha256, passPhrase, true, null, null, random);
             keyRingGenerator.AddSubKey(subKey);
 
             keyRingGenerator.GenerateSecretKeyRing().Encode(secretOut);

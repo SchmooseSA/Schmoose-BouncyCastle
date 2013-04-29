@@ -5,13 +5,11 @@ using Org.BouncyCastle.Utilities;
 
 namespace Org.BouncyCastle.Bcpg.OpenPgp
 {
-    public abstract class PgpKeyRing
-        : PgpObject
+    public abstract class PgpKeyRing : PgpObject
     {
         internal PgpKeyRing() { }
 
-        internal static TrustPacket ReadOptionalTrustPacket(
-            BcpgInputStream bcpgInput)
+        internal static TrustPacket ReadOptionalTrustPacket(BcpgInputStream bcpgInput)
         {
             return (bcpgInput.NextPacketTag() == PacketTag.Trust)
                 ? (TrustPacket)bcpgInput.ReadPacket()
