@@ -23,19 +23,19 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         private byte[] _fingerprint;
 
-        internal PublicKeyPacket PublicPk;
-        internal TrustPacket TrustPk;
-        internal IList KeySigs = Platform.CreateArrayList();
-        internal IList Ids = Platform.CreateArrayList();
-        internal IList IdTrusts = Platform.CreateArrayList();
-        internal IList IdSigs = Platform.CreateArrayList();
-        internal IList SubSigs;
+        private IPublicKeyPacket _publicPk;
+        private readonly ITrustPacket _trustPk;
+        private readonly IList _keySigs = Platform.CreateArrayList();
+        private readonly IList _ids = Platform.CreateArrayList();
+        private readonly IList _idTrusts = Platform.CreateArrayList();
+        private readonly IList _idSigs = Platform.CreateArrayList();
+        private readonly IList _subSigs;
 
         private void Init()
         {
-            var key = PublicPk.Key;
+            var key = _publicPk.Key;
 
-            if (PublicPk.Version <= 3)
+            if (_publicPk.Version <= 3)
             {
                 var rK = (RsaPublicBcpgKey)key;
 
@@ -63,7 +63,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             }
             else
             {
-                var kBytes = PublicPk.GetEncodedContents();
+                var kBytes = _publicPk.GetEncodedContents();
 
                 try
                 {
@@ -148,9 +148,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 throw new PgpException("unknown key class");
             }
 
-            this.PublicPk = new PublicKeyPacket(algorithm, time, bcpgKey);
-            this.Ids = Platform.CreateArrayList();
-            this.IdSigs = Platform.CreateArrayList();
+            this._publicPk = new PublicKeyPacket(algorithm, time, bcpgKey);
+            this._ids = Platform.CreateArrayList();
+            this._idSigs = Platform.CreateArrayList();
 
             try
             {
@@ -163,20 +163,20 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         }
 
         /// <summary>Constructor for a sub-key.</summary>
-        internal PgpPublicKey(PublicKeyPacket publicPk, TrustPacket trustPk, IList sigs)
+        internal PgpPublicKey(IPublicKeyPacket publicPk, TrustPacket trustPk, IList sigs)
         {
-            this.PublicPk = publicPk;
-            this.TrustPk = trustPk;
-            this.SubSigs = sigs;
+            this._publicPk = publicPk;
+            this._trustPk = trustPk;
+            this._subSigs = sigs;
 
             Init();
         }
 
         internal PgpPublicKey(PgpPublicKey key, TrustPacket trust, IList subSigs)
         {
-            this.PublicPk = key.PublicPk;
-            this.TrustPk = trust;
-            this.SubSigs = subSigs;
+            this._publicPk = key._publicPk;
+            this._trustPk = trust;
+            this._subSigs = subSigs;
 
             _fingerprint = key.GetFingerprint();
             KeyId = key.KeyId;
@@ -187,23 +187,23 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <param name="pubKey">The public key to copy.</param>
         internal PgpPublicKey(PgpPublicKey pubKey)
         {
-            this.PublicPk = pubKey.PublicPk;
+            this._publicPk = pubKey._publicPk;
 
-            this.KeySigs = Platform.CreateArrayList(pubKey.KeySigs);
-            this.Ids = Platform.CreateArrayList(pubKey.Ids);
-            this.IdTrusts = Platform.CreateArrayList(pubKey.IdTrusts);
-            this.IdSigs = Platform.CreateArrayList(pubKey.IdSigs.Count);
-            for (var i = 0; i != pubKey.IdSigs.Count; i++)
+            this._keySigs = Platform.CreateArrayList(pubKey._keySigs);
+            this._ids = Platform.CreateArrayList(pubKey._ids);
+            this._idTrusts = Platform.CreateArrayList(pubKey._idTrusts);
+            this._idSigs = Platform.CreateArrayList(pubKey._idSigs.Count);
+            for (var i = 0; i != pubKey._idSigs.Count; i++)
             {
-                this.IdSigs.Add(Platform.CreateArrayList((IList)pubKey.IdSigs[i]));
+                this._idSigs.Add(Platform.CreateArrayList((IList)pubKey._idSigs[i]));
             }
 
-            if (pubKey.SubSigs != null)
+            if (pubKey._subSigs != null)
             {
-                this.SubSigs = Platform.CreateArrayList(pubKey.SubSigs.Count);
-                for (var i = 0; i != pubKey.SubSigs.Count; i++)
+                this._subSigs = Platform.CreateArrayList(pubKey._subSigs.Count);
+                for (var i = 0; i != pubKey._subSigs.Count; i++)
                 {
-                    this.SubSigs.Add(pubKey.SubSigs[i]);
+                    this._subSigs.Add(pubKey._subSigs[i]);
                 }
             }
 
@@ -212,36 +212,36 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             BitStrength = pubKey.BitStrength;
         }
 
-        internal PgpPublicKey(PublicKeyPacket publicPk, TrustPacket trustPk, IList keySigs, IList ids, IList idTrusts, IList idSigs)
+        internal PgpPublicKey(IPublicKeyPacket publicPk, TrustPacket trustPk, IList keySigs, IList ids, IList idTrusts, IList idSigs)
         {
-            this.PublicPk = publicPk;
-            this.TrustPk = trustPk;
-            this.KeySigs = keySigs;
-            this.Ids = ids;
-            this.IdTrusts = idTrusts;
-            this.IdSigs = idSigs;
+            this._publicPk = publicPk;
+            this._trustPk = trustPk;
+            this._keySigs = keySigs;
+            this._ids = ids;
+            this._idTrusts = idTrusts;
+            this._idSigs = idSigs;
 
             Init();
         }
 
-        internal PgpPublicKey(PublicKeyPacket publicPk, IList ids, IList idSigs)
+        internal PgpPublicKey(IPublicKeyPacket publicPk, IList ids, IList idSigs)
         {
-            this.PublicPk = publicPk;
-            this.Ids = ids;
-            this.IdSigs = idSigs;
+            this._publicPk = publicPk;
+            this._ids = ids;
+            this._idSigs = idSigs;
             Init();
         }
 
         /// <summary>The version of this key.</summary>
         public int Version
         {
-            get { return PublicPk.Version; }
+            get { return _publicPk.Version; }
         }
 
         /// <summary>The creation time of this key.</summary>
         public DateTime CreationTime
         {
-            get { return PublicPk.GetTime(); }
+            get { return _publicPk.GetTime(); }
         }
 
         /// <summary>The number of valid days from creation time - zero means no expiry.</summary>
@@ -249,31 +249,61 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         {
             get
             {
-                if (PublicPk.Version > 3)
+                if (_publicPk.Version > 3)
                 {
                     return (int)(GetValidSeconds() / (24 * 60 * 60));
                 }
 
-                return PublicPk.ValidDays;
+                return _publicPk.ValidDays;
             }
         }
 
         public IPublicKeyPacket PublicKeyPacket
         {
-            get { return PublicPk; }
+            get { return _publicPk; }
+            internal set { _publicPk = value; }
+        }
+
+        public ITrustPacket TrustPaket 
+        {
+            get { return _trustPk; }
+        }
+
+        public IList KeySigs 
+        {
+            get { return _keySigs; }
+        }
+        public IList Ids
+        {
+            get { return _ids; }
+        }
+
+        public IList IdTrusts
+        {
+            get { return _idTrusts; }
+        }
+
+        public IList IdSigs
+        {
+            get { return _idSigs; }
+        }
+
+        public IList SubSigs
+        {
+            get { return _subSigs; }
         }
 
         /// <summary>Return the trust data associated with the public key, if present.</summary>
         /// <returns>A byte array with trust data, null otherwise.</returns>
         public byte[] GetTrustData()
         {
-            return TrustPk == null ? null : TrustPk.GetLevelAndTrustAmount();
+            return _trustPk == null ? null : _trustPk.GetLevelAndTrustAmount();
         }
 
         /// <summary>The number of valid seconds from creation time - zero means no expiry.</summary>
         public long GetValidSeconds()
         {
-            if (PublicPk.Version > 3)
+            if (_publicPk.Version > 3)
             {
                 if (IsMasterKey)
                 {
@@ -300,7 +330,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 return 0;
             }
 
-            return (long)PublicPk.ValidDays * 24 * 60 * 60;
+            return (long)_publicPk.ValidDays * 24 * 60 * 60;
         }
 
         private long GetExpirationTimeFromSig(
@@ -342,7 +372,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         {
             get
             {
-                switch (PublicPk.Algorithm)
+                switch (_publicPk.Algorithm)
                 {
                     case PublicKeyAlgorithmTag.ElGamalEncrypt:
                     case PublicKeyAlgorithmTag.ElGamalGeneral:
@@ -358,13 +388,13 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <summary>True, if this is a master key.</summary>
         public bool IsMasterKey
         {
-            get { return SubSigs == null; }
+            get { return _subSigs == null; }
         }
 
         /// <summary>The algorithm code associated with the public key.</summary>
         public PublicKeyAlgorithmTag Algorithm
         {
-            get { return PublicPk.Algorithm; }
+            get { return _publicPk.Algorithm; }
         }
 
         /// <summary>The strength of the key in bits.</summary>
@@ -377,19 +407,19 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         {
             try
             {
-                switch (PublicPk.Algorithm)
+                switch (_publicPk.Algorithm)
                 {
                     case PublicKeyAlgorithmTag.RsaEncrypt:
                     case PublicKeyAlgorithmTag.RsaGeneral:
                     case PublicKeyAlgorithmTag.RsaSign:
-                        var rsaK = (RsaPublicBcpgKey)PublicPk.Key;
+                        var rsaK = (RsaPublicBcpgKey)_publicPk.Key;
                         return new RsaKeyParameters(false, rsaK.Modulus, rsaK.PublicExponent);
                     case PublicKeyAlgorithmTag.Dsa:
-                        var dsaK = (DsaPublicBcpgKey)PublicPk.Key;
+                        var dsaK = (DsaPublicBcpgKey)_publicPk.Key;
                         return new DsaPublicKeyParameters(dsaK.Y, new DsaParameters(dsaK.P, dsaK.Q, dsaK.G));
                     case PublicKeyAlgorithmTag.ElGamalEncrypt:
                     case PublicKeyAlgorithmTag.ElGamalGeneral:
-                        var elK = (ElGamalPublicBcpgKey)PublicPk.Key;
+                        var elK = (ElGamalPublicBcpgKey)_publicPk.Key;
                         return new ElGamalPublicKeyParameters(elK.Y, new ElGamalParameters(elK.P, elK.G));
                     default:
                         throw new PgpException("unknown public key algorithm encountered");
@@ -411,7 +441,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         {
             IList temp = Platform.CreateArrayList();
 
-            foreach (object o in Ids)
+            foreach (object o in _ids)
             {
                 if (o is string)
                 {
@@ -426,7 +456,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         {
             get
             {
-                return Ids.OfType<string>().ToArray();
+                return _ids.OfType<string>().ToArray();
             }
         }
 
@@ -436,7 +466,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         {
             IList temp = Platform.CreateArrayList();
 
-            foreach (object o in Ids)
+            foreach (object o in _ids)
             {
                 if (o is PgpUserAttributeSubpacketVector)
                 {
@@ -456,11 +486,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             if (id == null)
                 throw new ArgumentNullException("id");
 
-            for (int i = 0; i != Ids.Count; i++)
+            for (int i = 0; i != _ids.Count; i++)
             {
-                if (id.Equals(Ids[i]))
+                if (id.Equals(_ids[i]))
                 {
-                    return new EnumerableProxy((IList)IdSigs[i]);
+                    return new EnumerableProxy((IList)_idSigs[i]);
                 }
             }
 
@@ -473,11 +503,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         public IEnumerable GetSignaturesForUserAttribute(
             IPgpUserAttributeSubpacketVector userAttributes)
         {
-            for (int i = 0; i != Ids.Count; i++)
+            for (int i = 0; i != _ids.Count; i++)
             {
-                if (userAttributes.Equals(Ids[i]))
+                if (userAttributes.Equals(_ids[i]))
                 {
-                    return new EnumerableProxy((IList)IdSigs[i]);
+                    return new EnumerableProxy((IList)_idSigs[i]);
                 }
             }
 
@@ -508,15 +538,15 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         public IEnumerable GetSignatures()
         {
             IList sigs;
-            if (SubSigs != null)
+            if (_subSigs != null)
             {
-                sigs = SubSigs;
+                sigs = _subSigs;
             }
             else
             {
-                sigs = Platform.CreateArrayList(KeySigs);
+                sigs = Platform.CreateArrayList(_keySigs);
 
-                foreach (ICollection extraSigs in IdSigs)
+                foreach (ICollection extraSigs in _idSigs)
                 {
                     CollectionUtilities.AddRange(sigs, extraSigs);
                 }
@@ -538,38 +568,38 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         {
             var bcpgOut = BcpgOutputStream.Wrap(outStr);
 
-            bcpgOut.WritePacket(PublicPk);
-            if (TrustPk != null)
+            bcpgOut.WritePacket(_publicPk);
+            if (_trustPk != null)
             {
-                bcpgOut.WritePacket(TrustPk);
+                bcpgOut.WritePacket(_trustPk);
             }
 
-            if (SubSigs == null) // not a sub-key
+            if (_subSigs == null) // not a sub-key
             {
-                foreach (PgpSignature keySig in KeySigs)
+                foreach (PgpSignature keySig in _keySigs)
                 {
                     keySig.Encode(bcpgOut);
                 }
 
-                for (var i = 0; i != Ids.Count; i++)
+                for (var i = 0; i != _ids.Count; i++)
                 {
-                    var id = this.Ids[i] as string;
+                    var id = this._ids[i] as string;
                     if (id != null)
                     {
                         bcpgOut.WritePacket(new UserIdPacket(id));
                     }
                     else
                     {
-                        var v = (PgpUserAttributeSubpacketVector)this.Ids[i];
+                        var v = (PgpUserAttributeSubpacketVector)this._ids[i];
                         bcpgOut.WritePacket(new UserAttributePacket(v.ToSubpacketArray()));
                     }
 
-                    if (this.IdTrusts[i] != null)
+                    if (this._idTrusts[i] != null)
                     {
-                        bcpgOut.WritePacket((ContainedPacket)this.IdTrusts[i]);
+                        bcpgOut.WritePacket((ContainedPacket)this._idTrusts[i]);
                     }
 
-                    foreach (PgpSignature sig in (IList)this.IdSigs[i])
+                    foreach (PgpSignature sig in (IList)this._idSigs[i])
                     {
                         sig.Encode(bcpgOut);
                     }
@@ -577,7 +607,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             }
             else
             {
-                foreach (PgpSignature subSig in SubSigs)
+                foreach (PgpSignature subSig in _subSigs)
                 {
                     subSig.Encode(bcpgOut);
                 }
@@ -596,9 +626,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             var revoked = false;
             if (IsMasterKey)	// Master key
             {
-                while (!revoked && (ns < KeySigs.Count))
+                while (!revoked && (ns < _keySigs.Count))
                 {
-                    if (((PgpSignature)KeySigs[ns++]).SignatureType == PgpSignature.KeyRevocation)
+                    if (((PgpSignature)_keySigs[ns++]).SignatureType == PgpSignature.KeyRevocation)
                     {
                         revoked = true;
                     }
@@ -606,9 +636,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             }
             else	// Sub-key
             {
-                while (!revoked && (ns < SubSigs.Count))
+                while (!revoked && (ns < _subSigs.Count))
                 {
-                    if (((PgpSignature)SubSigs[ns++]).SignatureType == PgpSignature.SubkeyRevocation)
+                    if (((PgpSignature)_subSigs[ns++]).SignatureType == PgpSignature.SubkeyRevocation)
                     {
                         revoked = true;
                     }
@@ -653,11 +683,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             var returnKey = new PgpPublicKey((PgpPublicKey)key);
             IList sigList = null;
 
-            for (var i = 0; i != returnKey.Ids.Count; i++)
+            for (var i = 0; i != returnKey._ids.Count; i++)
             {
-                if (id.Equals(returnKey.Ids[i]))
+                if (id.Equals(returnKey._ids[i]))
                 {
-                    sigList = (IList)returnKey.IdSigs[i];
+                    sigList = (IList)returnKey._idSigs[i];
                 }
             }
 
@@ -669,9 +699,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             {
                 sigList = Platform.CreateArrayList();
                 sigList.Add(certification);
-                returnKey.Ids.Add(id);
-                returnKey.IdTrusts.Add(null);
-                returnKey.IdSigs.Add(sigList);
+                returnKey._ids.Add(id);
+                returnKey._idTrusts.Add(null);
+                returnKey._idSigs.Add(sigList);
             }
 
             return returnKey;
@@ -706,15 +736,15 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             var returnKey = new PgpPublicKey((PgpPublicKey)key);
             var found = false;
 
-            for (var i = 0; i < returnKey.Ids.Count; i++)
+            for (var i = 0; i < returnKey._ids.Count; i++)
             {
-                if (!id.Equals(returnKey.Ids[i]))
+                if (!id.Equals(returnKey._ids[i]))
                     continue;
 
                 found = true;
-                returnKey.Ids.RemoveAt(i);
-                returnKey.IdTrusts.RemoveAt(i);
-                returnKey.IdSigs.RemoveAt(i);
+                returnKey._ids.RemoveAt(i);
+                returnKey._idTrusts.RemoveAt(i);
+                returnKey._idSigs.RemoveAt(i);
             }
 
             return found ? returnKey : null;
@@ -745,12 +775,12 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             var returnKey = new PgpPublicKey((PgpPublicKey)key);
             var found = false;
 
-            for (var i = 0; i < returnKey.Ids.Count; i++)
+            for (var i = 0; i < returnKey._ids.Count; i++)
             {
-                if (!id.Equals(returnKey.Ids[i]))
+                if (!id.Equals(returnKey._ids[i]))
                     continue;
 
-                var certs = (IList)returnKey.IdSigs[i];
+                var certs = (IList)returnKey._idSigs[i];
                 found = certs.Contains(certification);
                 if (found)
                 {
@@ -783,13 +813,13 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             }
 
             var returnKey = new PgpPublicKey((PgpPublicKey)key);
-            if (returnKey.SubSigs != null)
+            if (returnKey._subSigs != null)
             {
-                returnKey.SubSigs.Add(certification);
+                returnKey._subSigs.Add(certification);
             }
             else
             {
-                returnKey.KeySigs.Add(certification);
+                returnKey._keySigs.Add(certification);
             }
 
             return returnKey;
@@ -802,7 +832,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         public static PgpPublicKey RemoveCertification(PgpPublicKey key, PgpSignature certification)
         {
             var returnKey = new PgpPublicKey(key);
-            var sigs = returnKey.SubSigs ?? returnKey.KeySigs;
+            var sigs = returnKey._subSigs ?? returnKey._keySigs;
 
             //			bool found = sigs.Remove(certification);
             var pos = sigs.IndexOf(certification);

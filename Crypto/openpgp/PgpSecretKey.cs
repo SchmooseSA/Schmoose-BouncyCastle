@@ -11,9 +11,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
     public class PgpSecretKey : IPgpSecretKey
     {
         private readonly SecretKeyPacket _secret;
-        private readonly PgpPublicKey _pub;
+        private readonly IPgpPublicKey _pub;
 
-        internal PgpSecretKey(SecretKeyPacket secret, PgpPublicKey pub)
+        internal PgpSecretKey(SecretKeyPacket secret, IPgpPublicKey pub)
         {
             _secret = secret;
             _pub = pub;
@@ -91,8 +91,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                         if (encAlgorithm == SymmetricKeyAlgorithmTag.Null)
                         {
                             this._secret = isMasterKey
-                                ? new SecretKeyPacket(_pub.PublicPk, encAlgorithm, null, null, bOutData)
-                                : new SecretSubkeyPacket(_pub.PublicPk, encAlgorithm, null, null, bOutData);
+                                ? new SecretKeyPacket(_pub.PublicKeyPacket, encAlgorithm, null, null, bOutData)
+                                : new SecretSubkeyPacket(_pub.PublicKeyPacket, encAlgorithm, null, null, bOutData);
                         }
                         else
                         {
@@ -102,8 +102,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
                             var s2KUsage = useSha1 ? SecretKeyPacket.UsageSha1 : SecretKeyPacket.UsageChecksum;
                             this._secret = isMasterKey
-                                ? new SecretKeyPacket(_pub.PublicPk, encAlgorithm, s2KUsage, s2K, iv, encData)
-                                : new SecretSubkeyPacket(_pub.PublicPk, encAlgorithm, s2KUsage, s2K, iv, encData);
+                                ? new SecretKeyPacket(_pub.PublicKeyPacket, encAlgorithm, s2KUsage, s2K, iv, encData)
+                                : new SecretSubkeyPacket(_pub.PublicKeyPacket, encAlgorithm, s2KUsage, s2K, iv, encData);
                         }
                     }
                 }
@@ -282,6 +282,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             get { return _pub; }
         }
 
+        public ISecretKeyPacket SecretPacket 
+        {
+            get { return _secret; }
+        }
+
         /// <summary>Allows enumeration of any user IDs associated with the key.</summary>
         /// <returns>An <c>IEnumerable</c> of <c>string</c> objects.</returns>
         public IEnumerable UserIds
@@ -296,7 +301,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             get { return _pub.GetUserAttributes(); }
         }
 
-        private byte[] ExtractKeyData(char[] passPhrase)
+        public byte[] ExtractKeyData(char[] passPhrase)
         {
             var alg = _secret.EncAlgorithm;
             var encData = _secret.GetSecretKeyData();
@@ -526,9 +531,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
 
             bcpgOut.WritePacket(_secret);
-            if (_pub.TrustPk != null)
+            if (_pub.TrustPaket != null)
             {
-                bcpgOut.WritePacket(_pub.TrustPk);
+                bcpgOut.WritePacket(_pub.TrustPaket);
             }
 
             if (_pub.SubSigs == null) // is not a sub key
@@ -583,14 +588,14 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <param name="newEncAlgorithm">The algorithm to be used for the encryption.</param>
         /// <param name="rand">Source of randomness.</param>
         public static PgpSecretKey CopyWithNewPassword(
-            PgpSecretKey key,
+            IPgpSecretKey key,
             char[] oldPassPhrase,
             char[] newPassPhrase,
             SymmetricKeyAlgorithmTag newEncAlgorithm,
             SecureRandom rand)
         {
             var rawKeyData = key.ExtractKeyData(oldPassPhrase);
-            var s2KUsage = key._secret.S2KUsage;
+            var s2KUsage = key.SecretPacket.S2KUsage;
             byte[] iv = null;
             S2k s2K = null;
             byte[] keyData;
@@ -598,7 +603,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             if (newEncAlgorithm == SymmetricKeyAlgorithmTag.Null)
             {
                 s2KUsage = SecretKeyPacket.UsageNone;
-                if (key._secret.S2KUsage == SecretKeyPacket.UsageSha1)   // SHA-1 hash, need to rewrite Checksum
+                if (key.SecretPacket.S2KUsage == SecretKeyPacket.UsageSha1)   // SHA-1 hash, need to rewrite Checksum
                 {
                     keyData = new byte[rawKeyData.Length - 18];
 
@@ -631,18 +636,18 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             }
 
             SecretKeyPacket secret;
-            if (key._secret is SecretSubkeyPacket)
+            if (key.SecretPacket is SecretSubkeyPacket)
             {
-                secret = new SecretSubkeyPacket(key._secret.PublicKeyPacket,
+                secret = new SecretSubkeyPacket(key.SecretPacket.PublicKeyPacket,
                     newEncAlgorithm, s2KUsage, s2K, iv, keyData);
             }
             else
             {
-                secret = new SecretKeyPacket(key._secret.PublicKeyPacket,
+                secret = new SecretKeyPacket(key.SecretPacket.PublicKeyPacket,
                     newEncAlgorithm, s2KUsage, s2K, iv, keyData);
             }
 
-            return new PgpSecretKey(secret, key._pub);
+            return new PgpSecretKey(secret, key.PublicKey);
         }
 
         /// <summary>Replace the passed public key on the passed in secret key.</summary>

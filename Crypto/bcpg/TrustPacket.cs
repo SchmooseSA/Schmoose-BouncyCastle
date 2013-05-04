@@ -3,8 +3,8 @@ using System.IO;
 namespace Org.BouncyCastle.Bcpg
 {
 	/// <summary>Basic type for a trust packet.</summary>
-    public class TrustPacket : ContainedPacket
-    {
+    public class TrustPacket : ContainedPacket, ITrustPacket
+	{
         private readonly byte[] _levelAndTrustAmount;
 
 		public TrustPacket(BcpgInputStream bcpgIn)

@@ -161,7 +161,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             return MakeKey(algorithm, keyBytes);
         }
 
-        public static KeyParameter MakeKeyFromPassPhrase(SymmetricKeyAlgorithmTag algorithm, S2k s2k, char[] passPhrase)
+        public static KeyParameter MakeKeyFromPassPhrase(SymmetricKeyAlgorithmTag algorithm, IS2k s2k, char[] passPhrase)
         {
             var keySize = GetKeySize(algorithm);
             var pBytes = Strings.ToByteArray(new string(passPhrase));

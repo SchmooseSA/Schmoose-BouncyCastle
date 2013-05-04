@@ -482,7 +482,6 @@
     <Compile Include="bcpg\ElGamalPublicBcpgKey.cs" />
     <Compile Include="bcpg\ElGamalSecretBcpgKey.cs" />
     <Compile Include="bcpg\ExperimentalPacket.cs" />
-    <Compile Include="bcpg\HashAlgorithmTags.cs" />
     <Compile Include="bcpg\InputStreamPacket.cs" />
     <Compile Include="bcpg\LiteralDataPacket.cs" />
     <Compile Include="bcpg\MarkerPacket.cs" />

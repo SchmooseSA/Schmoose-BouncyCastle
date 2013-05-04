@@ -93,9 +93,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
 		}
 
 		private static byte[] SignPublicKey(
-			PgpSecretKey	secretKey,
+			IPgpSecretKey	secretKey,
 			string			secretKeyPass,
-			PgpPublicKey	keyToBeSigned,
+			IPgpPublicKey	keyToBeSigned,
 			string			notationName,
 			string			notationValue,
 			bool			armor)

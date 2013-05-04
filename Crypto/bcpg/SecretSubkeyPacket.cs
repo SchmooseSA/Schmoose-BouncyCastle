@@ -22,7 +22,7 @@ namespace Org.BouncyCastle.Bcpg
         /// <param name="s2K">The s2 K.</param>
         /// <param name="iv">The iv.</param>
         /// <param name="secKeyData">The sec key data.</param>
-        public SecretSubkeyPacket(PublicKeyPacket pubKeyPacket, SymmetricKeyAlgorithmTag encAlgorithm, S2k s2K, byte[] iv, byte[] secKeyData)
+        public SecretSubkeyPacket(IPublicKeyPacket pubKeyPacket, SymmetricKeyAlgorithmTag encAlgorithm, S2k s2K, byte[] iv, byte[] secKeyData)
             : base(pubKeyPacket, encAlgorithm, s2K, iv, secKeyData)
         {
         }
@@ -36,7 +36,7 @@ namespace Org.BouncyCastle.Bcpg
         /// <param name="s2K">The s2 K.</param>
         /// <param name="iv">The iv.</param>
         /// <param name="secKeyData">The sec key data.</param>
-        public SecretSubkeyPacket(PublicKeyPacket pubKeyPacket, SymmetricKeyAlgorithmTag encAlgorithm, int s2KUsage, S2k s2K, byte[] iv, byte[] secKeyData)
+        public SecretSubkeyPacket(IPublicKeyPacket pubKeyPacket, SymmetricKeyAlgorithmTag encAlgorithm, int s2KUsage, S2k s2K, byte[] iv, byte[] secKeyData)
             : base(pubKeyPacket, encAlgorithm, s2KUsage, s2K, iv, secKeyData)
         {
         }

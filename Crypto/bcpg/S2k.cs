@@ -7,8 +7,8 @@ using Org.BouncyCastle.Utilities.IO;
 namespace Org.BouncyCastle.Bcpg
 {
 	/// <remarks>The string to key specifier class.</remarks>
-    public class S2k : BcpgObject
-    {
+    public class S2k : BcpgObject, IS2k
+	{
         private const int ExpBias = 6;
 
         public const int Simple = 0;

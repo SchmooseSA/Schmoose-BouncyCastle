@@ -5,7 +5,7 @@ using Org.BouncyCastle.Utilities;
 namespace Org.BouncyCastle.Bcpg
 {
     /// <remarks>Basic packet for a PGP secret key.</remarks>
-    public class SecretKeyPacket : ContainedPacket //, PublicKeyAlgorithmTag
+    public class SecretKeyPacket : ContainedPacket, ISecretKeyPacket //, PublicKeyAlgorithmTag
     {
         public const int UsageNone = 0x00;
         public const int UsageChecksum = 0xff;
@@ -61,7 +61,7 @@ namespace Org.BouncyCastle.Bcpg
         /// <param name="s2K">The s2 K.</param>
         /// <param name="iv">The iv.</param>
         /// <param name="secKeyData">The sec key data.</param>
-        public SecretKeyPacket(PublicKeyPacket pubKeyPacket, SymmetricKeyAlgorithmTag encAlgorithm, S2k s2K, byte[] iv, byte[] secKeyData)
+        public SecretKeyPacket(IPublicKeyPacket pubKeyPacket, SymmetricKeyAlgorithmTag encAlgorithm, S2k s2K, byte[] iv, byte[] secKeyData)
         {
             this.PublicKeyPacket = pubKeyPacket;
             this.EncAlgorithm = encAlgorithm;
@@ -82,7 +82,7 @@ namespace Org.BouncyCastle.Bcpg
         /// <param name="s2K">The s2 K.</param>
         /// <param name="iv">The iv.</param>
         /// <param name="secKeyData">The sec key data.</param>
-        public SecretKeyPacket(PublicKeyPacket pubKeyPacket, SymmetricKeyAlgorithmTag encAlgorithm, int s2KUsage, S2k s2K, byte[] iv, byte[] secKeyData)
+        public SecretKeyPacket(IPublicKeyPacket pubKeyPacket, SymmetricKeyAlgorithmTag encAlgorithm, int s2KUsage, S2k s2K, byte[] iv, byte[] secKeyData)
         {
             this.PublicKeyPacket = pubKeyPacket;
             this.EncAlgorithm = encAlgorithm;
@@ -123,7 +123,7 @@ namespace Org.BouncyCastle.Bcpg
         /// <value>
         /// The s2 K.
         /// </value>
-        public S2k S2K { get; private set; }
+        public IS2k S2K { get; private set; }
 
         /// <summary>
         /// Gets the public key packet.
@@ -131,7 +131,7 @@ namespace Org.BouncyCastle.Bcpg
         /// <value>
         /// The public key packet.
         /// </value>
-        public PublicKeyPacket PublicKeyPacket { get; private set; }
+        public IPublicKeyPacket PublicKeyPacket { get; private set; }
 
         /// <summary>
         /// Gets the secret key data.

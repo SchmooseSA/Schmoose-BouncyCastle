@@ -1850,7 +1850,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
 			keyRingGen.AddSubKey(elgKeyPair);
 
-			PgpSecretKeyRing keyRing = keyRingGen.GenerateSecretKeyRing();
+            IPgpSecretKeyRing keyRing = keyRingGen.GenerateSecretKeyRing();
 
 			keyRing.GetSecretKey().ExtractPrivateKey(passPhrase);
 
@@ -1907,12 +1907,12 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
 			PgpKeyRingGenerator keyRingGen = new PgpKeyRingGenerator(PgpSignature.PositiveCertification,
 				rsaKeyPair1, "test", SymmetricKeyAlgorithmTag.Aes256, passPhrase, null, null, random);
-			PgpSecretKeyRing secRing1 = keyRingGen.GenerateSecretKeyRing();
+            IPgpSecretKeyRing secRing1 = keyRingGen.GenerateSecretKeyRing();
 			PgpPublicKeyRing pubRing1 = keyRingGen.GeneratePublicKeyRing();
 
 			keyRingGen = new PgpKeyRingGenerator(PgpSignature.PositiveCertification,
 				rsaKeyPair2, "test", SymmetricKeyAlgorithmTag.Aes256, passPhrase, null, null, random);
-			PgpSecretKeyRing secRing2 = keyRingGen.GenerateSecretKeyRing();
+            IPgpSecretKeyRing secRing2 = keyRingGen.GenerateSecretKeyRing();
 			PgpPublicKeyRing pubRing2 = keyRingGen.GeneratePublicKeyRing();
 
 			try
@@ -1984,7 +1984,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
 			keyRingGen.AddSubKey(elgKeyPair);
 
-			PgpSecretKeyRing keyRing = keyRingGen.GenerateSecretKeyRing();
+            IPgpSecretKeyRing keyRing = keyRingGen.GenerateSecretKeyRing();
 
 			keyRing.GetSecretKey().ExtractPrivateKey(passPhrase);
 

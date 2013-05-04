@@ -816,7 +816,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
 			IAsymmetricCipherKeyPair kp = kpg.GenerateKeyPair();
 
-			PgpSecretKey secretKey = new PgpSecretKey(
+			IPgpSecretKey secretKey = new PgpSecretKey(
                 PgpSignature.DefaultCertification,
                 PublicKeyAlgorithmTag.RsaGeneral,
                 kp.Public,

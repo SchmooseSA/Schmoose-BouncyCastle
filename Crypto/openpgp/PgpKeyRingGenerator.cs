@@ -175,7 +175,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         }
 
         /// <summary>Return the secret key ring.</summary>
-        public PgpSecretKeyRing GenerateSecretKeyRing()
+        public IPgpSecretKeyRing GenerateSecretKeyRing()
         {
             return new PgpSecretKeyRing(_keys);
         }
@@ -196,7 +196,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 pgpSecretKey = (PgpSecretKey)enumerator.Current;
 
                 var k = new PgpPublicKey((PgpPublicKey)pgpSecretKey.PublicKey);
-                k.PublicPk = new PublicSubkeyPacket(k.Algorithm, k.CreationTime, k.PublicPk.Key);
+                k.PublicKeyPacket = new PublicSubkeyPacket(k.Algorithm, k.CreationTime, k.PublicKeyPacket.Key);
 
                 pubKeys.Add(k);
             }

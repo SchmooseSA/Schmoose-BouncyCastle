@@ -54,6 +54,18 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// </value>
         IPublicKeyPacket PublicKeyPacket { get; }
 
+        ITrustPacket TrustPaket { get; }
+
+        IList KeySigs { get; }
+
+        IList Ids { get; }
+
+        IList IdTrusts { get; }
+
+        IList IdSigs { get; }
+
+        IList SubSigs { get; }
+
         /// <summary>The strength of the key in bits.</summary>
         int BitStrength { get; }
 

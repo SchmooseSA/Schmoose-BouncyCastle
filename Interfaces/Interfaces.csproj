@@ -37,13 +37,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="bcpg\attr\IImageAttrib.cs" />
+    <Compile Include="bcpg\HashAlgorithmTags.cs" />
     <Compile Include="bcpg\IBcpgKey.cs" />
     <Compile Include="bcpg\IBcpgObject.cs" />
     <Compile Include="bcpg\IBcpgOutputStream.cs" />
     <Compile Include="bcpg\IBcpgPublicKey.cs" />
     <Compile Include="bcpg\IContainedPacket.cs" />
     <Compile Include="bcpg\IPacket.cs" />
+    <Compile Include="bcpg\IPgpSecretKeyRing.cs" />
     <Compile Include="bcpg\IPublicKeyPacket.cs" />
+    <Compile Include="bcpg\IS2k.cs" />
+    <Compile Include="bcpg\ISecretKeyPacket.cs" />
+    <Compile Include="bcpg\ITrustPacket.cs" />
     <Compile Include="bcpg\IUserAttributeSubpacket.cs" />
     <Compile Include="bcpg\PacketTags.cs" />
     <Compile Include="bcpg\PublicKeyAlgorithmTags.cs" />
