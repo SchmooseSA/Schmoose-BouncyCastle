@@ -421,6 +421,12 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                     case PublicKeyAlgorithmTag.ElGamalGeneral:
                         var elK = (ElGamalPublicBcpgKey)_publicPk.Key;
                         return new ElGamalPublicKeyParameters(elK.Y, new ElGamalParameters(elK.P, elK.G));
+                    case PublicKeyAlgorithmTag.Ecdsa:
+                        var ecdsaK = (EcdsaPublicBcpgKey) _publicPk.Key;
+                        return new ECPublicKeyParameters(_publicPk.Algorithm.ToString(), ecdsaK.Point, ecdsaK.Oid);
+                    case PublicKeyAlgorithmTag.Ecdh:
+                        var edhK = (EcdhPublicBcpgKey) _publicPk.Key;
+                        return new ECDHPublicKeyParameters(edhK.Point, edhK.Oid, edhK.HashAlgorithm, edhK.SymmetricKeyAlgorithm);
                     default:
                         throw new PgpException("unknown public key algorithm encountered");
                 }
