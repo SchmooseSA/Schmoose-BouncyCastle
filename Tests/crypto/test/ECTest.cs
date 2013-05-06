@@ -1,5 +1,3 @@
-using System;
-
 using NUnit.Framework;
 
 using Org.BouncyCastle.Asn1.Nist;
@@ -8,7 +6,6 @@ using Org.BouncyCastle.Asn1.X9;
 using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Math.EC;
 using Org.BouncyCastle.Security;
-using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Agreement;
 using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Crypto.Parameters;
