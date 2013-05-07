@@ -99,7 +99,8 @@ namespace Org.BouncyCastle.Crypto.Generators
             var isEcdh = _algorithm == "ECDH";
 
             var q = _parameters.G.Multiply(d);
-			if (_publicKeyParamSet != null)
+
+            if (_publicKeyParamSet != null)
 			{
 			    return new AsymmetricCipherKeyPair(
                     isEcdh 

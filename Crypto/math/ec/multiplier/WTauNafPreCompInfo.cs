@@ -13,7 +13,7 @@ namespace Org.BouncyCastle.Math.EC.Multiplier
 		* {@link org.bouncycastle.math.ec.multiplier.WTauNafMultiplier.multiply()
 		* WTauNafMultiplier.multiply()}</code>.
 		*/
-		private readonly F2MPoint[] preComp;
+		private readonly F2MPoint[] _preComp;
 
 		/**
 		* Constructor for <code>WTauNafPreCompInfo</code>
@@ -24,7 +24,7 @@ namespace Org.BouncyCastle.Math.EC.Multiplier
 		*/
 		internal WTauNafPreCompInfo(F2MPoint[] preComp)
 		{
-			this.preComp = preComp;
+			_preComp = preComp;
 		}
 
 		/**
@@ -35,7 +35,7 @@ namespace Org.BouncyCastle.Math.EC.Multiplier
 		*/
 		internal F2MPoint[] GetPreComp()
 		{
-			return preComp;
+			return _preComp;
 		}
 	}
 }

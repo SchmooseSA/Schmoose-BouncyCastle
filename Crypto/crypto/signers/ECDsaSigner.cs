@@ -1,7 +1,9 @@
+using System;
 using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Math.EC;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.Utilities.Encoders;
 
 namespace Org.BouncyCastle.Crypto.Signers
 {
@@ -68,7 +70,7 @@ namespace Org.BouncyCastle.Crypto.Signers
             do // Generate s
             {
                 IBigInteger k;
-
+                
                 do // Generate r
                 {
                     do
@@ -81,7 +83,6 @@ namespace Org.BouncyCastle.Crypto.Signers
 
                     // 5.3.3
                     var x = p.X.ToBigInteger();
-
                     r = x.Mod(n);
                 }
                 while (r.SignValue == 0);
@@ -106,8 +107,7 @@ namespace Org.BouncyCastle.Crypto.Signers
             var n = _key.Parameters.N;
 
             // r and s should both in the range [1,n-1]
-            if (r.SignValue < 1 || s.SignValue < 1
-                || r.CompareTo(n) >= 0 || s.CompareTo(n) >= 0)
+            if (r.SignValue < 1 || s.SignValue < 1 || r.CompareTo(n) >= 0 || s.CompareTo(n) >= 0)
             {
                 return false;
             }
@@ -118,13 +118,12 @@ namespace Org.BouncyCastle.Crypto.Signers
             var u1 = e.Multiply(c).Mod(n);
             var u2 = r.Multiply(c).Mod(n);
 
-            var g = _key.Parameters.G;
+            var g = _key.Parameters.G;                       
             var q = ((ECPublicKeyParameters)_key).Q;
 
             var point = ECAlgorithms.SumOfTwoMultiplies(g, u1, q, u2);
 
-            var v = point.X.ToBigInteger().Mod(n);
-
+            var v = point.X.ToBigInteger().Mod(n);                        
             return v.Equals(r);
         }
 

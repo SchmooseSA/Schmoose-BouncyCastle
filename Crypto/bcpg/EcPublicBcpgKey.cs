@@ -1,5 +1,4 @@
-﻿using System;
-using Org.BouncyCastle.Asn1;
+﻿using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Bcpg.OpenPgp;
 using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Math;
@@ -9,8 +8,8 @@ namespace Org.BouncyCastle.Bcpg
 {
     public abstract class EcPublicBcpgKey : BcpgObject, IBcpgPublicKey
     {
-        private readonly MPInteger _point;
         private readonly DerObjectIdentifier _oid;
+        private readonly ECPoint _point;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EcPublicBcpgKey"/> class.
@@ -19,9 +18,7 @@ namespace Org.BouncyCastle.Bcpg
         protected EcPublicBcpgKey(BcpgInputStream bcpgIn)
         {
             _oid = new DerObjectIdentifier(this.ReadBytesOfEncodedLength(bcpgIn));
-            _point = new MPInteger(bcpgIn);
-
-            this.Initialize();
+            _point = DecodePoint(new MPInteger(bcpgIn), _oid);
         }
 
         /// <summary>
@@ -33,17 +30,7 @@ namespace Org.BouncyCastle.Bcpg
         protected EcPublicBcpgKey(ECPoint point, DerObjectIdentifier oid)
         {
             _oid = oid;
-
-            var x = point.X.ToBigInteger().ToByteArrayUnsigned();
-            var y = point.Y.ToBigInteger().ToByteArrayUnsigned();
-
-            var bytes = new byte[1 + x.Length + y.Length];
-            bytes[0] = 4;
-            Buffer.BlockCopy(x, 0, bytes, 1, x.Length);
-            Buffer.BlockCopy(y, 0, bytes, 1 + x.Length, y.Length);
-            _point = new MPInteger(new BigInteger(bytes));
-
-            this.Initialize();
+            _point = point;
         }
 
         /// <summary>
@@ -52,7 +39,10 @@ namespace Org.BouncyCastle.Bcpg
         /// <value>
         /// The bit strength.
         /// </value>
-        public int BitStrength { get; private set; }
+        public int BitStrength 
+        {
+            get { return _point.Curve.FieldSize; }
+        }
 
         /// <summary>
         /// The base format for this key - in the case of the symmetric keys it will generally
@@ -76,7 +66,10 @@ namespace Org.BouncyCastle.Bcpg
             get { return _oid; }
         }
 
-        public ECPoint Point { get; private set; }
+        public ECPoint Point 
+        {
+            get { return _point; }
+        }
 
         /// <summary>
         /// Encodes the specified BCPG out.
@@ -87,7 +80,9 @@ namespace Org.BouncyCastle.Bcpg
             var oid = this.Oid.ToBytes();
             bcpgOut.WriteByte((byte)oid.Length);
             bcpgOut.Write(oid, 0, oid.Length);
-            bcpgOut.WriteObject(_point);
+
+            var point = new MPInteger(new BigInteger(1, _point.GetEncoded()));
+            bcpgOut.WriteObject(point);
         }
 
         /// <summary>
@@ -107,28 +102,15 @@ namespace Org.BouncyCastle.Bcpg
             return buffer;
         }
 
-        private void Initialize()
+        private static ECPoint DecodePoint(MPInteger encoded, DerObjectIdentifier oid)
         {
-            var curve = ECKeyPairGenerator.FindECCurveByOid(this.Oid);
+            var curve = ECKeyPairGenerator.FindECCurveByOid(oid);
             if (curve == null)
-                throw new PgpException(this.Oid.Id + " does not match any known curve.");
+                throw new PgpException(oid.Id + " does not match any known curve.");
             if (!(curve.Curve is FPCurve))
                 throw new PgpException("Only FPCurves are supported.");
 
-            this.BitStrength = curve.Curve.FieldSize;
-
-            var len = (this.BitStrength + 8 - 1) / 8; // fast ceiling
-
-            var bytes = _point.Value.ToByteArrayUnsigned();
-            if (bytes.Length - 1 == len)
-                throw new PgpException("Compressed ec points are not yet supported.");
-            if (bytes.Length - 1 != 2 * len)
-                throw new PgpException("Invalid data length.");
-            if (bytes[0] != 4)
-                throw new PgpException("4 was expected for w but was " + bytes[0]);
-            this.Point = new FPPoint(curve.Curve,
-                new FPFieldElement(curve.N, new BigInteger(bytes, 1, len)),
-                new FPFieldElement(curve.N, new BigInteger(bytes, 1 + len, len)));
+            return curve.Curve.DecodePoint(encoded.Value.ToByteArrayUnsigned());
         }
     }
 }

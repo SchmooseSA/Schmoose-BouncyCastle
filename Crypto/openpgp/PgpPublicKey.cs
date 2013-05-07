@@ -148,9 +148,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 throw new PgpException("unknown key class");
             }
 
-            this._publicPk = new PublicKeyPacket(algorithm, time, bcpgKey);
-            this._ids = Platform.CreateArrayList();
-            this._idSigs = Platform.CreateArrayList();
+            _publicPk = new PublicKeyPacket(algorithm, time, bcpgKey);
+            _ids = Platform.CreateArrayList();
+            _idSigs = Platform.CreateArrayList();
 
             try
             {

@@ -4,8 +4,7 @@ namespace Org.BouncyCastle.Math.EC.Multiplier
 	* Class holding precomputation data for the WNAF (Window Non-Adjacent Form)
 	* algorithm.
 	*/
-	internal class WNafPreCompInfo
-		: IPreCompInfo 
+	internal class WNafPreCompInfo : IPreCompInfo 
 	{
 		/**
 		* Array holding the precomputed <code>ECPoint</code>s used for the Window
@@ -13,7 +12,7 @@ namespace Org.BouncyCastle.Math.EC.Multiplier
 		* {@link org.bouncycastle.math.ec.multiplier.WNafMultiplier.multiply()
 		* WNafMultiplier.multiply()}</code>.
 		*/
-		private ECPoint[] preComp = null;
+		private ECPoint[] _preComp;
 
 		/**
 		* Holds an <code>ECPoint</code> representing twice(this). Used for the
@@ -21,26 +20,26 @@ namespace Org.BouncyCastle.Math.EC.Multiplier
 		* {@link org.bouncycastle.math.ec.multiplier.WNafMultiplier.multiply()
 		* WNafMultiplier.multiply()}</code>.
 		*/
-		private ECPoint twiceP = null;
+		private ECPoint _twiceP;
 
 		internal ECPoint[] GetPreComp()
 		{
-			return preComp;
+			return _preComp;
 		}
 
 		internal void SetPreComp(ECPoint[] preComp)
 		{
-			this.preComp = preComp;
+			_preComp = preComp;
 		}
 
 		internal ECPoint GetTwiceP()
 		{
-			return twiceP;
+			return _twiceP;
 		}
 
 		internal void SetTwiceP(ECPoint twiceThis)
 		{
-			this.twiceP = twiceThis;
+			_twiceP = twiceThis;
 		}
 	}
 }
