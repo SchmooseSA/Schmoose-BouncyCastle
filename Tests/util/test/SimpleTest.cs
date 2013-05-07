@@ -2,9 +2,6 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Reflection;
-using System.Text;
-
-using Org.BouncyCastle.Utilities;
 
 namespace Org.BouncyCastle.Utilities.Test
 {
@@ -21,8 +18,7 @@ namespace Org.BouncyCastle.Utilities.Test
             return SimpleTestResult.Successful(this, "Okay");
         }
 
-        internal void Fail(
-            string message)
+        internal void Fail(string message)
         {
             throw new TestFailedException(SimpleTestResult.Failed(this, message));
         }

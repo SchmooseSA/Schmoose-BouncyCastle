@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.IO;
 using NUnit.Framework;
+using Org.BouncyCastle.Asn1.Sec;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Crypto.Parameters;
@@ -1015,6 +1016,15 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             + "n3pjONa4PKrePkEsCUhRbIySqXIHuNwZumDOlKzZHDpCUw72LaC6S6zwuoEf"
             + "ucOcxTeGIUViANWXyTIKkHfo7HfigixJIL8nsAFn");
 
+        private static readonly byte[] _eccSec1 = Base64.Decode(
+          @"lKUEUYgt3xMIKoZIzj0DAQcCAwTN9nCBTQwwFD9MBQH2glGS9kiQ5S+XLRFHZybZWejbXvP06uzi
+            FUb7mHCOqKqzxi5C2Y3ZdfGgn93ys+9VJP3e/gkDAugwt5451IWpYMySmg4UP4gdNF0lJLosqEQc
+            f3fq50zouwCvfZNGYG9G6VjQpg7mIEHzpenNOLloZBlj31gphdv8dKToBUAV2GciGPsXyQi0DXRl
+            c3QgaWRlbnRpdHmIfwQTEwgAJwUCUYgt3w4cdGVzdCBpZGVudGl0eQQWAgEABRUIAwoCBgsJCAcD
+            AgAKCRCtLBE1z/+r3Jq5AP9jls4F4lCHrJU/1eLuLXjdiMK7kAO/T55EUcUwIy7ibAD9GczCN/DT
+            W2Wcrilj341BE2cMz7OA7tcZ8vwxdcZyJ2w=");
+
+
         private void CheckSecretKeyRingWithPersonalCertificate(byte[] keyRing)
         {
             var secCol = new PgpSecretKeyRingBundle(keyRing);
@@ -1093,6 +1103,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             PublicKeyRingWithX509Test();
             SecretKeyRingWithPersonalCertificateTest();
             InsertMasterTest();
+
+            EccKeyTest();
+            GenerateEccKeyTest();
         }
 
         public override string Name
@@ -2144,11 +2157,108 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
         }
 
         [Test]
-        public void EccKeyTest()
+        public void GenerateEccKeyTest()
         {
+            const string identity = "GenerateEccKeyTest Identity";
 
+            var secureRandom = new SecureRandom();
+            var keyParamSet = SecObjectIdentifiers.SecP256r1;
+            var ecParams = new ECKeyGenerationParameters(keyParamSet, secureRandom);
+
+            var now = DateTime.UtcNow;
+            var masterKey = GenerateKeyPair(PublicKeyAlgorithmTag.Ecdsa, ecParams, now);
+            var subKey = GenerateKeyPair(PublicKeyAlgorithmTag.Ecdh, ecParams, now);
+            
+            var keyRingGenerator = new PgpKeyRingGenerator(
+                PgpSignature.PositiveCertification,
+                masterKey,
+                identity,
+                SymmetricKeyAlgorithmTag.Aes256,
+                HashAlgorithmTag.Sha256,
+                "".ToCharArray(),
+                true,
+                GenerateSignatureSubpackets(identity),
+                null,
+                secureRandom);
+            keyRingGenerator.AddSubKey(subKey);
+
+            var secretKeyRing = keyRingGenerator.GenerateSecretKeyRing();
+            CheckEccKey(secretKeyRing);
         }
 
-        
+        [Test]
+        public void EccKeyTest()
+        {
+            var secretRings = new PgpSecretKeyRingBundle(_eccSec1);
+            var count = 0;
+
+            foreach (PgpSecretKeyRing secretKeyRing in secretRings.GetKeyRings())
+            {
+                count++;
+
+                CheckEccKey(secretKeyRing);
+            }
+
+            if (count != 1)
+            {
+                Fail("wrong number of secret keyrings");
+            }
+        }
+
+        private void CheckEccKey(IPgpSecretKeyRing secretKeyRing)
+        {
+            var keyCount = 0;
+
+            var bytes = secretKeyRing.GetEncoded();
+
+            var pgpSec2 = new PgpSecretKeyRing(bytes);
+
+            foreach (PgpSecretKey k in pgpSec2.GetSecretKeys())
+            {
+                keyCount++;
+                var pk = k.PublicKey;
+
+                pk.GetSignatures();
+
+                var pkBytes = pk.GetEncoded();
+
+                var pkR1 = new PgpPublicKeyRing(pkBytes);
+                Assert.IsNotNull(pkR1);
+                var pk1 = pkR1.GetPublicKey();
+
+                AreEqual(pk1.GetFingerprint(), pk.GetFingerprint());
+
+                var pkBytes1 = pkR1.GetEncoded();
+
+                var pkR2 = new PgpPublicKeyRing(pkBytes1);
+                Assert.IsNotNull(pkR2);
+
+                var pkBytes2 = pkR2.GetEncoded();
+
+                AreEqual(pkBytes1, pkBytes2);
+            }
+
+            if (keyCount != secretKeyRing.SecretKeyCount)
+            {
+                Fail("wrong number of secret keys");
+            }
+        }
+
+        private static PgpKeyPair GenerateKeyPair(PublicKeyAlgorithmTag algorithm, IKeyGenerationParameters parameters, DateTime dateTime)
+        {
+            var generator = GeneratorUtilities.GetKeyPairGenerator(algorithm);
+            generator.Init(parameters);
+            var keyPair = generator.GenerateKeyPair();
+            return new PgpKeyPair(algorithm, keyPair, dateTime);
+        }
+
+        private static PgpSignatureSubpacketVector GenerateSignatureSubpackets(string identity)
+        {
+            var hashedSubkeysGenerator = new PgpSignatureSubpacketGenerator();
+
+            hashedSubkeysGenerator.SetSignerUserId(false, identity);
+            
+            return hashedSubkeysGenerator.Generate();
+        }
     }
 }
