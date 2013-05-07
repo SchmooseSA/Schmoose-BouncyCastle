@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{C9A32B71-5377-43EB-B9CD-5B93AF005667}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interfaces.IceCream", "Interfaces\Interfaces.IceCream.csproj", "{2FD27502-3833-4816-8FC2-5857B3E90777}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crypto.IceCream", "Crypto\Crypto.IceCream.csproj", "{D8418F0B-1125-406A-8306-0265410C6613}"
@@ -13,10 +11,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C9A32B71-5377-43EB-B9CD-5B93AF005667}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C9A32B71-5377-43EB-B9CD-5B93AF005667}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C9A32B71-5377-43EB-B9CD-5B93AF005667}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C9A32B71-5377-43EB-B9CD-5B93AF005667}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2FD27502-3833-4816-8FC2-5857B3E90777}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2FD27502-3833-4816-8FC2-5857B3E90777}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2FD27502-3833-4816-8FC2-5857B3E90777}.Release|Any CPU.ActiveCfg = Release|Any CPU
