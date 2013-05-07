@@ -970,5 +970,37 @@ namespace Org.BouncyCastle.Crypto.Tests
                 Fail("MQV Test Vector #2 agreement failed");
             }
         }
+
+        [Test]
+        public void TestECDsaP256Sha256WithGeneratedKey()
+        {
+            var secureRandom = new SecureRandom();
+            X9ECParameters p = NistNamedCurves.GetByName("P-256");
+            var parameters = new ECDomainParameters(p.Curve, p.G, p.N, p.H);
+            var ecParams = new ECKeyGenerationParameters(parameters, secureRandom);
+            var ecGen = new ECKeyPairGenerator("ECDSA");
+            ecGen.Init(ecParams);
+            var pairKey = ecGen.GenerateKeyPair();
+            var priKey = pairKey.Private as ECPrivateKeyParameters;
+
+
+
+            byte[] m = Hex.Decode("1BD4ED430B0F384B4E8D458EFF1A8A553286D7AC21CB2F6806172EF5F94A06AD");
+
+            var dsa = new ECDsaSigner();
+
+            dsa.Init(true, new ParametersWithRandom(priKey, secureRandom));
+
+            IBigInteger[] sig = dsa.GenerateSignature(m);
+
+            // Verify the signature
+            var pubKey = pairKey.Public as ECPublicKeyParameters;
+
+            dsa.Init(false, pubKey);
+            if (!dsa.VerifySignature(m, sig[0], sig[1]))
+            {
+                Fail("signature fails");
+            }
+        }
     }
 }
