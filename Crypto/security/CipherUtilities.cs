@@ -299,11 +299,14 @@ namespace Org.BouncyCastle.Security
                 case CipherAlgorithm.HC256:
                     streamCipher = new HC256Engine();
                     break;
-#if INCLUDE_IDEA
-				case CipherAlgorithm.IDEA:
+
+                case CipherAlgorithm.IDEA:
+#if INCLUDE_IDEA				
 					blockCipher = new IdeaEngine();
-					break;
-#endif
+                    break;
+#else
+                    throw new SecurityUtilityException("Cipher " + algorithm + " not included.");
+#endif                    
                 case CipherAlgorithm.NOEKEON:
                     blockCipher = new NoekeonEngine();
                     break;
