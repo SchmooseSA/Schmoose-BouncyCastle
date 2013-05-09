@@ -32,6 +32,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                     case PublicKeyAlgorithmTag.ElGamalEncrypt:
                     case PublicKeyAlgorithmTag.ElGamalGeneral:
                         return CipherUtilities.GetCipher("ElGamal/ECB/PKCS1Padding");
+                    case PublicKeyAlgorithmTag.Ecdh:
+                        return CipherUtilities.GetCipher("ECCCDHIES");                        
                     default:
                         throw new PgpException("unknown asymmetric algorithm: " + algorithm);
                 }

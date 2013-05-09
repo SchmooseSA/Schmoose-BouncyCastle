@@ -174,28 +174,23 @@ namespace Org.BouncyCastle.Security
                 algorithm = aliased;
 
 
-            IBasicAgreement iesAgreement = null;
+            IesEngine iesEngine = null;
             switch (algorithm)
             {
                 case "IES":
-                    iesAgreement = new DHBasicAgreement();
+                    iesEngine = new IesEngine(new DHBasicAgreement(), new Kdf2BytesGenerator(new Sha1Digest()), new HMac(new Sha1Digest()));
                     break;
                 case "ECIES":
-                    iesAgreement = new EcdhBasicAgreement();
+                    iesEngine = new IesEngine(new EcdhBasicAgreement(), new Kdf2BytesGenerator(new Sha1Digest()), new HMac(new Sha1Digest()));
+                    break;
+
+                case "ECCCDHIES":
+                    iesEngine = new IesEngine(new EcdhcOnePassAgreement());                    
                     break;
             }
 
-            if (iesAgreement != null)
-            {
-                return new BufferedIesCipher(
-                    new IesEngine(
-                        iesAgreement,
-                        new Kdf2BytesGenerator(
-                            new Sha1Digest()),
-                        new HMac(
-                            new Sha1Digest())));
-            }
-
+            if (iesEngine != null)            
+                return new BufferedIesCipher(iesEngine);            
 
             if (algorithm.StartsWith("PBE"))
             {
@@ -237,8 +232,7 @@ namespace Org.BouncyCastle.Security
                                         "PBEWITHMD5AND192BITAES-CBC-OPENSSL",
                                         "PBEWITHMD5AND256BITAES-CBC-OPENSSL"))
                     {
-                        return new PaddedBufferedBlockCipher(
-                            new CbcBlockCipher(new AesFastEngine()));
+                        return new PaddedBufferedBlockCipher(new CbcBlockCipher(new AesFastEngine()));
                     }
                 }
             }
@@ -298,7 +292,7 @@ namespace Org.BouncyCastle.Security
                     break;
                 case CipherAlgorithm.HC256:
                     streamCipher = new HC256Engine();
-                    break;
+                    break;                
 
                 case CipherAlgorithm.IDEA:
 #if INCLUDE_IDEA				

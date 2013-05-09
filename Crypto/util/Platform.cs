@@ -35,7 +35,7 @@ namespace Org.BouncyCastle.Utilities
 #if SILVERLIGHT
             return String.Compare(a, b, StringComparison.InvariantCultureIgnoreCase);
 #else
-            return String.Compare(a, b, true);
+            return string.Compare(a, b, StringComparison.OrdinalIgnoreCase);
 #endif
         }
 

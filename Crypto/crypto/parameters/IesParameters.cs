@@ -8,42 +8,23 @@ namespace Org.BouncyCastle.Crypto.Parameters
      */
     public class IesParameters : ICipherParameters
     {
-        private byte[]  derivation;
-        private byte[]  encoding;
-        private int     macKeySize;
-
         /**
          * @param derivation the derivation parameter for the KDF function.
          * @param encoding the encoding parameter for the KDF function.
          * @param macKeySize the size of the MAC key (in bits).
          */
-        public IesParameters(
-            byte[]  derivation,
-            byte[]  encoding,
-            int     macKeySize)
+        public IesParameters(byte[] derivation, byte[] encoding, int macKeySize)
         {
-            this.derivation = derivation;
-            this.encoding = encoding;
-            this.macKeySize = macKeySize;
+            this.Derivation = derivation;
+            this.Encoding = encoding;
+            this.MacKeySize = macKeySize;
         }
 
-        public byte[] GetDerivationV()
-        {
-            return derivation;
-        }
+        public byte[] Derivation { get; private set; }
 
-        public byte[] GetEncodingV()
-        {
-            return encoding;
-        }
+        public byte[] Encoding { get; private set; }
 
-        public int MacKeySize
-        {
-			get
-			{
-				return macKeySize;
-			}
-        }
+        public int MacKeySize { get; private set; }
     }
 
 }

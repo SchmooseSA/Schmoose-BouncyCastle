@@ -378,6 +378,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                     case PublicKeyAlgorithmTag.ElGamalGeneral:
                     case PublicKeyAlgorithmTag.RsaEncrypt:
                     case PublicKeyAlgorithmTag.RsaGeneral:
+                    case PublicKeyAlgorithmTag.Ecdh:
                         return true;
                     default:
                         return false;

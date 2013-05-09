@@ -1,9 +1,6 @@
-using System;
-
 namespace Org.BouncyCastle.Crypto
 {
-	public abstract class BufferedCipherBase
-		: IBufferedCipher
+	public abstract class BufferedCipherBase : IBufferedCipher
 	{
 		protected static readonly byte[] EmptyBuffer = new byte[0];
 

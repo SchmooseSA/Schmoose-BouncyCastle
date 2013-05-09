@@ -1,4 +1,5 @@
 using System.IO;
+using Org.BouncyCastle.Bcpg.OpenPgp;
 using Org.BouncyCastle.Math;
 
 namespace Org.BouncyCastle.Bcpg
@@ -10,6 +11,7 @@ namespace Org.BouncyCastle.Bcpg
         private readonly long _keyId;
         private readonly PublicKeyAlgorithmTag _algorithm;
         private readonly IBigInteger[] _data;
+        private readonly byte[] _extraData;
 
         internal PublicKeyEncSessionPacket(BcpgInputStream bcpgIn)
         {
@@ -33,12 +35,21 @@ namespace Org.BouncyCastle.Bcpg
                     _data = new[] { new MPInteger(bcpgIn).Value };
                     break;
                 case PublicKeyAlgorithmTag.ElGamalEncrypt:
-                case PublicKeyAlgorithmTag.ElGamalGeneral:
+                case PublicKeyAlgorithmTag.ElGamalGeneral:                
                     _data = new[]
 					{
 						new MPInteger(bcpgIn).Value,
 						new MPInteger(bcpgIn).Value
 					};
+                    break;
+
+                case PublicKeyAlgorithmTag.Ecdh:
+                    _data = new[] { new MPInteger(bcpgIn).Value };
+                    var length = bcpgIn.ReadByte();
+                    if (length > 0xFF)
+                        throw new IOException("EC DH symmetric key data is too long.");
+                    _extraData = new byte[length];
+                    bcpgIn.ReadFully(_extraData, 0, length);
                     break;
                 default:
                     throw new IOException("unknown PGP public key algorithm encountered");
@@ -46,11 +57,15 @@ namespace Org.BouncyCastle.Bcpg
         }
 
         public PublicKeyEncSessionPacket(long keyId, PublicKeyAlgorithmTag algorithm, BigInteger[] data)
+            : this(keyId, algorithm, data, null) { }
+
+        public PublicKeyEncSessionPacket(long keyId, PublicKeyAlgorithmTag algorithm, BigInteger[] data, byte[] extraData)
         {
             _version = 3;
             _keyId = keyId;
             _algorithm = algorithm;
             _data = (IBigInteger[])data.Clone();
+            _extraData = extraData != null ? (byte[])extraData.Clone() : null;
         }
 
         public int Version
@@ -73,6 +88,11 @@ namespace Org.BouncyCastle.Bcpg
             return (IBigInteger[])_data.Clone();
         }
 
+        public byte[] ExtraData
+        {
+            get { return _extraData != null ? (byte[])_extraData.Clone() : null; }
+        }
+
         public override void Encode(IBcpgOutputStream bcpgOut)
         {
             using (var bOut = new MemoryStream())
@@ -89,6 +109,14 @@ namespace Org.BouncyCastle.Bcpg
                     for (var i = 0; i != _data.Length; i++)
                     {
                         MPInteger.EncodeInteger(pOut, _data[i]);
+                    }
+
+                    if (_extraData != null)
+                    {
+                        if (_extraData.Length > 0xFF)
+                            throw new PgpException("Extra Data is too large.");
+                        pOut.WriteByte((byte)_extraData.Length);
+                        pOut.Write(_extraData, 0, _extraData.Length);
                     }
 
                     bcpgOut.WritePacket(PacketTag.PublicKeyEncryptedSession, bOut.ToArray(), true);

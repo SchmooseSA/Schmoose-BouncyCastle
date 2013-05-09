@@ -594,6 +594,7 @@
     <Compile Include="cms\SignerInformationStore.cs" />
     <Compile Include="cms\SigOutputStream.cs" />
     <Compile Include="cms\SimpleAttributeTableGenerator.cs" />
+    <Compile Include="crypto\agreement\EcdhcOnePassAgreement.cs" />
     <Compile Include="crypto\agreement\DHAgreement.cs" />
     <Compile Include="crypto\agreement\DHBasicAgreement.cs" />
     <Compile Include="crypto\agreement\EcdhBasicAgreement.cs" />

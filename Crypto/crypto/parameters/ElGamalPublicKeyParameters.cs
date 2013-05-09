@@ -4,50 +4,42 @@ using Org.BouncyCastle.Math;
 
 namespace Org.BouncyCastle.Crypto.Parameters
 {
-    public class ElGamalPublicKeyParameters
-		: ElGamalKeyParameters
+    public class ElGamalPublicKeyParameters : ElGamalKeyParameters
     {
-        private readonly IBigInteger y;
+        private readonly IBigInteger _y;
 
-		public ElGamalPublicKeyParameters(
-            IBigInteger			y,
-            ElGamalParameters	parameters)
-			: base(false, parameters)
+        public ElGamalPublicKeyParameters(IBigInteger y, ElGamalParameters parameters)
+            : base(false, parameters)
         {
-			if (y == null)
-				throw new ArgumentNullException("y");
+            if (y == null)
+                throw new ArgumentNullException("y");
 
-			this.y = y;
+            _y = y;
         }
 
-		public IBigInteger Y
+        public IBigInteger Y
         {
-            get { return y; }
+            get { return _y; }
         }
 
-		public override bool Equals(
+        public override bool Equals(
             object obj)
         {
-			if (obj == this)
-				return true;
+            if (obj == this)
+                return true;
 
-			ElGamalPublicKeyParameters other = obj as ElGamalPublicKeyParameters;
-
-			if (other == null)
-				return false;
-
-			return Equals(other);
+            var other = obj as ElGamalPublicKeyParameters;
+            return other != null && Equals(other);
         }
 
-		protected bool Equals(
-			ElGamalPublicKeyParameters other)
-		{
-			return y.Equals(other.y) && base.Equals(other);
-		}
-
-		public override int GetHashCode()
+        protected bool Equals(ElGamalPublicKeyParameters other)
         {
-			return y.GetHashCode() ^ base.GetHashCode();
+            return _y.Equals(other.Y) && base.Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return _y.GetHashCode() ^ base.GetHashCode();
         }
     }
 }
