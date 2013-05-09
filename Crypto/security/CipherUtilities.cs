@@ -142,8 +142,7 @@ namespace Org.BouncyCastle.Security
         /// <param name="mechanism">A string representation of the encoding.</param>
         /// <returns>A DerObjectIdentifier, null if the Oid is not available.</returns>
         // TODO Don't really want to support this
-        public static DerObjectIdentifier GetObjectIdentifier(
-            string mechanism)
+        public static DerObjectIdentifier GetObjectIdentifier(string mechanism)
         {
             if (mechanism == null)
                 throw new ArgumentNullException("mechanism");
@@ -157,14 +156,12 @@ namespace Org.BouncyCastle.Security
             return (DerObjectIdentifier) _oids[mechanism];
         }
 
-        public static IBufferedCipher GetCipher(
-            DerObjectIdentifier oid)
+        public static IBufferedCipher GetCipher(DerObjectIdentifier oid)
         {
             return GetCipher(oid.Id);
         }
 
-        public static IBufferedCipher GetCipher(
-            string algorithm)
+        public static IBufferedCipher GetCipher(string algorithm)
         {
             if (algorithm == null)
                 throw new ArgumentNullException("algorithm");
@@ -178,13 +175,14 @@ namespace Org.BouncyCastle.Security
 
 
             IBasicAgreement iesAgreement = null;
-            if (algorithm == "IES")
+            switch (algorithm)
             {
-                iesAgreement = new DHBasicAgreement();
-            }
-            else if (algorithm == "ECIES")
-            {
-                iesAgreement = new EcdhBasicAgreement();
+                case "IES":
+                    iesAgreement = new DHBasicAgreement();
+                    break;
+                case "ECIES":
+                    iesAgreement = new EcdhBasicAgreement();
+                    break;
             }
 
             if (iesAgreement != null)
@@ -246,13 +244,13 @@ namespace Org.BouncyCastle.Security
             }
 
 
-            string[] parts = algorithm.Split('/');
+            var parts = algorithm.Split('/');
 
             IBlockCipher blockCipher = null;
             IAsymmetricBlockCipher asymBlockCipher = null;
             IStreamCipher streamCipher = null;
 
-            string algorithmName = parts[0];
+            var algorithmName = parts[0];
             CipherAlgorithm cipherAlgorithm;
             try
             {
