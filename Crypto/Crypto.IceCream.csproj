@@ -598,6 +598,7 @@
     <Compile Include="crypto\agreement\DHBasicAgreement.cs" />
     <Compile Include="crypto\agreement\ECDHBasicAgreement.cs" />
     <Compile Include="crypto\agreement\ECDHCBasicAgreement.cs" />
+    <Compile Include="crypto\agreement\EcdhcOnePassAgreement.cs" />
     <Compile Include="crypto\agreement\ECDHWithKdfBasicAgreement.cs" />
     <Compile Include="crypto\agreement\ECMqvBasicAgreement.cs" />
     <Compile Include="crypto\agreement\ECMqvWithKdfBasicAgreement.cs" />
@@ -769,6 +770,7 @@
     <Compile Include="crypto\parameters\DsaPrivateKeyParameters.cs" />
     <Compile Include="crypto\parameters\DsaPublicKeyParameters.cs" />
     <Compile Include="crypto\parameters\DsaValidationParameters.cs" />
+    <Compile Include="crypto\parameters\ECDHPrivateKeyParameters.cs" />
     <Compile Include="crypto\parameters\ECDHPublicKeyParameters.cs" />
     <Compile Include="crypto\parameters\ECDomainParameters.cs" />
     <Compile Include="crypto\parameters\ECKeyGenerationParameters.cs" />
