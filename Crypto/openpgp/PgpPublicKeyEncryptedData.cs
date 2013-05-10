@@ -1,10 +1,14 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
-
+using System.Text;
 using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.IO;
 using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Security;
+using Org.BouncyCastle.Utilities.Encoders;
 using Org.BouncyCastle.Utilities.IO;
 
 namespace Org.BouncyCastle.Bcpg.OpenPgp
@@ -222,6 +226,87 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             }
         }
 
+        private void ProcessSymmetricKeyDataForRsa(IBufferedCipher cipher, IList<IBigInteger> symmetricKeyData)
+        {
+            cipher.ProcessBytes(symmetricKeyData[0].ToByteArrayUnsigned());
+        }
+
+        private void ProcessSymmetricKeyDataForElGamal(IPgpPrivateKey privateKey, IBufferedCipher cipher, IList<IBigInteger> symmetricKeyData)
+        {
+            var k = (ElGamalPrivateKeyParameters)privateKey.Key;
+            var size = (k.Parameters.P.BitLength + 7) / 8;
+
+            var bi = symmetricKeyData[0].ToByteArray();
+
+            var diff = bi.Length - size;
+            if (diff >= 0)
+            {
+                cipher.ProcessBytes(bi, diff, size);
+            }
+            else
+            {
+                var zeros = new byte[-diff];
+                cipher.ProcessBytes(zeros);
+                cipher.ProcessBytes(bi);
+            }
+
+            bi = symmetricKeyData[1].ToByteArray();
+
+            diff = bi.Length - size;
+            if (diff >= 0)
+            {
+                cipher.ProcessBytes(bi, diff, size);
+            }
+            else
+            {
+                var zeros = new byte[-diff];
+                cipher.ProcessBytes(zeros);
+                cipher.ProcessBytes(bi);
+            }
+        }
+
+        private static readonly byte[] _anonymousSender = Encoding.UTF8.GetBytes("Anonymous Sender    ");
+
+        private void ProcessSymmetricKeyDataForEcdh(IPgpPrivateKey privateKey, IBufferedCipher cipher, IList<IBigInteger> symmetricKeyData)
+        {
+            
+            var encSymKey = symmetricKeyData[1].ToByteArrayUnsigned();
+            var ecParam = (ECDHPrivateKeyParameters)privateKey.Key;
+            using (var keyParams = new MemoryStream())
+            {
+                var zb = ecParam.PublicKeyParameters.Q.GetEncodedX();
+                keyParams.WriteByte(0x00);
+                keyParams.WriteByte(0x00);
+                keyParams.WriteByte(0x00);
+                keyParams.WriteByte(0x01);
+                keyParams.Write(zb, 0, zb.Length);
+
+                var oid = ecParam.PublicKeyParamSet.ToBytes();                
+                keyParams.WriteByte((byte)oid.Length);
+                keyParams.Write(oid, 0, oid.Length);
+                keyParams.WriteByte((byte)PublicKeyAlgorithmTag.Ecdh);
+                keyParams.WriteByte(0x3);
+                keyParams.WriteByte(0x1);
+                keyParams.WriteByte((byte)ecParam.PublicKeyParameters.HashAlgorithm);
+                keyParams.WriteByte((byte)ecParam.PublicKeyParameters.SymmetricKeyAlgorithm);
+                keyParams.Write(_anonymousSender, 0, _anonymousSender.Length);
+                keyParams.Write(ecParam.FingerPrint, 0, ecParam.FingerPrint.Length);
+
+                var kBytes = keyParams.ToArray();
+                var digest = DigestUtilities.GetDigest(ecParam.PublicKeyParameters.HashAlgorithm.ToString());
+                digest.BlockUpdate(kBytes, 0, kBytes.Length);
+                var hash = DigestUtilities.DoFinal(digest);
+                var size = ecParam.PublicKeyParameters.SymmetricKeyAlgorithm == SymmetricKeyAlgorithmTag.Aes256
+                    ? 32 : ecParam.PublicKeyParameters.SymmetricKeyAlgorithm == SymmetricKeyAlgorithmTag.Aes192
+                    ? 24 : ecParam.PublicKeyParameters.SymmetricKeyAlgorithm == SymmetricKeyAlgorithmTag.Aes128
+                    ? 16 : 0;                
+
+                var wrap = new AesWrapEngine();
+                wrap.Init(false, new KeyParameter(hash, 0, size));
+                var symKey = wrap.Unwrap(encSymKey, 0, encSymKey.Length);
+            }
+        }
+
         private byte[] FetchSymmetricKeyData(IPgpPrivateKey privKey)
         {
             var c1 = GetKeyCipher(_keyData.Algorithm);
@@ -236,44 +321,18 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             }
 
             var keyD = _keyData.GetEncSessionKey();
-
-            if (_keyData.Algorithm == PublicKeyAlgorithmTag.RsaEncrypt
-                || _keyData.Algorithm == PublicKeyAlgorithmTag.RsaGeneral)
+            switch (_keyData.Algorithm)
             {
-                c1.ProcessBytes(keyD[0].ToByteArrayUnsigned());
-            }
-            else
-            {
-                var k = (ElGamalPrivateKeyParameters)privKey.Key;
-                var size = (k.Parameters.P.BitLength + 7) / 8;
-
-                var bi = keyD[0].ToByteArray();
-
-                var diff = bi.Length - size;
-                if (diff >= 0)
-                {
-                    c1.ProcessBytes(bi, diff, size);
-                }
-                else
-                {
-                    var zeros = new byte[-diff];
-                    c1.ProcessBytes(zeros);
-                    c1.ProcessBytes(bi);
-                }
-
-                bi = keyD[1].ToByteArray();
-
-                diff = bi.Length - size;
-                if (diff >= 0)
-                {
-                    c1.ProcessBytes(bi, diff, size);
-                }
-                else
-                {
-                    var zeros = new byte[-diff];
-                    c1.ProcessBytes(zeros);
-                    c1.ProcessBytes(bi);
-                }
+                case PublicKeyAlgorithmTag.RsaGeneral:
+                case PublicKeyAlgorithmTag.RsaEncrypt:
+                    this.ProcessSymmetricKeyDataForRsa(c1, keyD);
+                    break;
+                case PublicKeyAlgorithmTag.Ecdh:
+                    this.ProcessSymmetricKeyDataForEcdh(privKey, c1, keyD);
+                    break;
+                default:
+                    this.ProcessSymmetricKeyDataForElGamal(privKey, c1, keyD);
+                    break;
             }
 
             byte[] plain;

@@ -1,164 +1,147 @@
-using System;
 using System.IO;
 
 namespace Org.BouncyCastle.Utilities.Encoders
 {
-	public class HexEncoder
-		: IEncoder
-	{
-		private static readonly byte[] encodingTable =
+    public class HexEncoder : IEncoder
+    {
+        public static readonly byte[] EncodingTable =
 		{
 			(byte)'0', (byte)'1', (byte)'2', (byte)'3', (byte)'4', (byte)'5', (byte)'6', (byte)'7',
 			(byte)'8', (byte)'9', (byte)'a', (byte)'b', (byte)'c', (byte)'d', (byte)'e', (byte)'f'
 		};
 
-		/*
-		* set up the decoding table.
-		*/
-		internal static readonly byte[] decodingTable = new byte[128];
+        /*
+        * set up the decoding table.
+        */
+        internal static readonly byte[] DecodingTable = new byte[128];
 
-		static HexEncoder()
-		{
-			for (int i = 0; i < encodingTable.Length; i++)
-			{
-				decodingTable[encodingTable[i]] = (byte)i;
-			}
+        static HexEncoder()
+        {
+            for (var i = 0; i < EncodingTable.Length; i++)
+            {
+                DecodingTable[EncodingTable[i]] = (byte)i;
+            }
 
-			decodingTable['A'] = decodingTable['a'];
-			decodingTable['B'] = decodingTable['b'];
-			decodingTable['C'] = decodingTable['c'];
-			decodingTable['D'] = decodingTable['d'];
-			decodingTable['E'] = decodingTable['e'];
-			decodingTable['F'] = decodingTable['f'];
-		}
+            DecodingTable['A'] = DecodingTable['a'];
+            DecodingTable['B'] = DecodingTable['b'];
+            DecodingTable['C'] = DecodingTable['c'];
+            DecodingTable['D'] = DecodingTable['d'];
+            DecodingTable['E'] = DecodingTable['e'];
+            DecodingTable['F'] = DecodingTable['f'];
+        }
 
-		/**
-		* encode the input data producing a Hex output stream.
-		*
-		* @return the number of bytes produced.
-		*/
-		public int Encode(
-			byte[]	data,
-			int		off,
-			int		length,
-			Stream	outStream)
-		{
-			for (int i = off; i < (off + length); i++)
-			{
-				int v = data[i];
+        /**
+        * encode the input data producing a Hex output stream.
+        *
+        * @return the number of bytes produced.
+        */
+        public int Encode(byte[] data, int off, int length, Stream outStream)
+        {
+            for (var i = off; i < (off + length); i++)
+            {
+                int v = data[i];
 
-				outStream.WriteByte(encodingTable[v >> 4]);
-				outStream.WriteByte(encodingTable[v & 0xf]);
-			}
+                outStream.WriteByte(EncodingTable[v >> 4]);
+                outStream.WriteByte(EncodingTable[v & 0xf]);
+            }
 
-			return length * 2;
-		}
+            return length * 2;
+        }
 
-		private bool ignore(
-			char c)
-		{
-			return (c == '\n' || c =='\r' || c == '\t' || c == ' ');
-		}
+        private static bool Ignore(char c)
+        {
+            return (c == '\n' || c == '\r' || c == '\t' || c == ' ');
+        }
 
-		/**
-		* decode the Hex encoded byte data writing it to the given output stream,
-		* whitespace characters will be ignored.
-		*
-		* @return the number of bytes produced.
-		*/
-		public int Decode(
-			byte[]	data,
-			int		off,
-			int		length,
-			Stream	outStream)
-		{
-			byte b1, b2;
-			int outLen = 0;
-			int end = off + length;
+        /**
+        * decode the Hex encoded byte data writing it to the given output stream,
+        * whitespace characters will be ignored.
+        *
+        * @return the number of bytes produced.
+        */
+        public int Decode(byte[] data, int off, int length, Stream outStream)
+        {
+            var outLen = 0;
+            var end = off + length;
 
-			while (end > off)
-			{
-				if (!ignore((char)data[end - 1]))
-				{
-					break;
-				}
+            while (end > off)
+            {
+                if (!Ignore((char)data[end - 1]))
+                {
+                    break;
+                }
 
-				end--;
-			}
+                end--;
+            }
 
-			int i = off;
-			while (i < end)
-			{
-				while (i < end && ignore((char)data[i]))
-				{
-					i++;
-				}
+            var i = off;
+            while (i < end)
+            {
+                while (i < end && Ignore((char)data[i]))
+                {
+                    i++;
+                }
 
-				b1 = decodingTable[data[i++]];
+                var b1 = DecodingTable[data[i++]];
 
-				while (i < end && ignore((char)data[i]))
-				{
-					i++;
-				}
+                while (i < end && Ignore((char)data[i]))
+                {
+                    i++;
+                }
 
-				b2 = decodingTable[data[i++]];
+                byte b2 = DecodingTable[data[i++]];
 
-				outStream.WriteByte((byte)((b1 << 4) | b2));
+                outStream.WriteByte((byte)((b1 << 4) | b2));
 
-				outLen++;
-			}
+                outLen++;
+            }
 
-			return outLen;
-		}
+            return outLen;
+        }
 
-		/**
-		* decode the Hex encoded string data writing it to the given output stream,
-		* whitespace characters will be ignored.
-		*
-		* @return the number of bytes produced.
-		*/
-		public int DecodeString(
-			string	data,
-			Stream	outStream)
-		{
-			byte    b1, b2;
-			int     length = 0;
+        /**
+        * decode the Hex encoded string data writing it to the given output stream,
+        * whitespace characters will be ignored.
+        *
+        * @return the number of bytes produced.
+        */
+        public int DecodeString(string data, Stream outStream)
+        {
+            var length = 0;
+            var end = data.Length;
+            while (end > 0)
+            {
+                if (!Ignore(data[end - 1]))
+                {
+                    break;
+                }
 
-			int     end = data.Length;
+                end--;
+            }
 
-			while (end > 0)
-			{
-				if (!ignore(data[end - 1]))
-				{
-					break;
-				}
+            var i = 0;
+            while (i < end)
+            {
+                while (i < end && Ignore(data[i]))
+                {
+                    i++;
+                }
 
-				end--;
-			}
+                var b1 = DecodingTable[data[i++]];
 
-			int i = 0;
-			while (i < end)
-			{
-				while (i < end && ignore(data[i]))
-				{
-					i++;
-				}
+                while (i < end && Ignore(data[i]))
+                {
+                    i++;
+                }
 
-				b1 = decodingTable[data[i++]];
+                var b2 = DecodingTable[data[i++]];
 
-				while (i < end && ignore(data[i]))
-				{
-					i++;
-				}
+                outStream.WriteByte((byte)((b1 << 4) | b2));
 
-				b2 = decodingTable[data[i++]];
+                length++;
+            }
 
-				outStream.WriteByte((byte)((b1 << 4) | b2));
-
-				length++;
-			}
-
-			return length;
-		}
-	}
+            return length;
+        }
+    }
 }

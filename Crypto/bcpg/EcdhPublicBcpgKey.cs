@@ -8,15 +8,26 @@ namespace Org.BouncyCastle.Bcpg
     {
         private readonly byte _reserved;
         private readonly byte _hashFunctionId; 
-        private readonly byte _symAlgorithmId;
+        private readonly byte _symAlgorithmId;        
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EcdhPublicBcpgKey"/> class.
+        /// </summary>
+        /// <param name="bcpgIn">The BCPG in.</param>
+        /// <exception cref="Org.BouncyCastle.Bcpg.OpenPgp.PgpException">kdf parameter size of 3 expected.</exception>        
+        public EcdhPublicBcpgKey(BcpgInputStream bcpgIn)
+            : this(bcpgIn, null)
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EcdhPublicBcpgKey"/> class.
         /// </summary>
         /// <param name="bcpgIn">The BCPG in.</param>
         /// <exception cref="Org.BouncyCastle.Bcpg.OpenPgp.PgpException">kdf parameter size of 3 expected.</exception>
-        public EcdhPublicBcpgKey(BcpgInputStream bcpgIn)
-            : base(bcpgIn)
+        /// <param name="oid">The OID.</param>
+        private EcdhPublicBcpgKey(BcpgInputStream bcpgIn, DerObjectIdentifier oid)
+            : base(bcpgIn, oid)
         {
             var kdfParamters = this.ReadBytesOfEncodedLength(bcpgIn);
             if(kdfParamters.Length != 3)
@@ -29,7 +40,7 @@ namespace Org.BouncyCastle.Bcpg
             this.VerifyHashAlgorithm();
             this.VerifySymmetricKeyAlgorithm();
         }
-
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="EcdhPublicBcpgKey"/> class.
         /// </summary>

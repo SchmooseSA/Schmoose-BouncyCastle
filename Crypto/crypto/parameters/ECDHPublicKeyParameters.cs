@@ -70,7 +70,7 @@ namespace Org.BouncyCastle.Crypto.Parameters
 
         public override int GetHashCode()
         {
-            return this.AlgorithmName.GetHashCode() 
+            return this.HashAlgorithm.GetHashCode() 
                 ^ this.SymmetricKeyAlgorithm.GetHashCode() 
                 ^ base.GetHashCode();
         }

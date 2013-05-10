@@ -460,10 +460,16 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                                 privateKey = new ElGamalPrivateKeyParameters(elPriv.X, elParams);
                                 break;
                             case PublicKeyAlgorithmTag.Ecdh:
+                                var ecdhPub = (EcdhPublicBcpgKey)pubPk.Key;
+                                var ecdhPriv = new EcSecretBcpgKey(bcpgIn);
+                                privateKey = new ECDHPrivateKeyParameters(ecdhPriv.X,
+                                    new ECDHPublicKeyParameters(ecdhPub.Point, ecdhPub.Oid, ecdhPub.HashAlgorithm, ecdhPub.SymmetricKeyAlgorithm), 
+                                    PgpPublicKey.BuildFingerprint(pubPk));
+                                break;
                             case PublicKeyAlgorithmTag.Ecdsa:
-                                var ecPub = (EcPublicBcpgKey)pubPk.Key;
-                                var ecPriv = new EcSecretBcpgKey(bcpgIn);
-                                privateKey = new ECPrivateKeyParameters(pubPk.Algorithm.ToString(), ecPriv.X, ecPub.Oid);
+                                var ecdsaPub = (EcPublicBcpgKey)pubPk.Key;
+                                var ecdsaPriv = new EcSecretBcpgKey(bcpgIn);
+                                privateKey = new ECPrivateKeyParameters(pubPk.Algorithm.ToString(), ecdsaPriv.X, ecdsaPub.Oid);
                                 break;
                             default:
                                 throw new PgpException("unknown public key algorithm encountered");

@@ -10,7 +10,7 @@ namespace Org.BouncyCastle.Bcpg
         /// </summary>
         /// <param name="bcpgIn">The BCPG in.</param>
         public EcdsaPublicBcpgKey(BcpgInputStream bcpgIn)
-            : base(bcpgIn) { }
+            : base(bcpgIn, null) { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EcdsaPublicBcpgKey"/> class.

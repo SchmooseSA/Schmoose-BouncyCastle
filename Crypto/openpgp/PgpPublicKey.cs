@@ -14,12 +14,12 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
     public class PgpPublicKey : IPgpPublicKey
     {
         private static readonly int[] _masterKeyCertificationTypes = new[]
-		{
-			PgpSignature.PositiveCertification,
-			PgpSignature.CasualCertification,
-			PgpSignature.NoCertification,
-			PgpSignature.DefaultCertification
-		};
+            {
+                PgpSignature.PositiveCertification,
+                PgpSignature.CasualCertification,
+                PgpSignature.NoCertification,
+                PgpSignature.DefaultCertification
+            };
 
         private byte[] _fingerprint;
 
@@ -30,7 +30,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         private readonly IList _idTrusts = Platform.CreateArrayList();
         private readonly IList _idSigs = Platform.CreateArrayList();
         private readonly IList _subSigs;
-
+        
         private void Init()
         {
             var key = _publicPk.Key;
@@ -39,47 +39,13 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             {
                 var rK = (RsaPublicBcpgKey)key;
 
-                KeyId = rK.Modulus.LongValue;
-
-                try
-                {
-                    var digest = DigestUtilities.GetDigest("MD5");
-
-                    var bytes = rK.Modulus.ToByteArrayUnsigned();
-                    digest.BlockUpdate(bytes, 0, bytes.Length);
-
-                    bytes = rK.PublicExponent.ToByteArrayUnsigned();
-                    digest.BlockUpdate(bytes, 0, bytes.Length);
-
-                    _fingerprint = DigestUtilities.DoFinal(digest);
-                }
-                //catch (NoSuchAlgorithmException)
-                catch (Exception e)
-                {
-                    throw new IOException("can't find MD5", e);
-                }
-
-                BitStrength = rK.Modulus.BitLength;
+                _fingerprint = BuildFingerprintMd5(_publicPk);
+                this.KeyId = rK.Modulus.LongValue;
+                this.BitStrength = rK.Modulus.BitLength;
             }
             else
             {
-                var kBytes = _publicPk.GetEncodedContents();
-
-                try
-                {
-                    var digest = DigestUtilities.GetDigest("SHA1");
-
-                    digest.Update(0x99);
-                    digest.Update((byte)(kBytes.Length >> 8));
-                    digest.Update((byte)kBytes.Length);
-                    digest.BlockUpdate(kBytes, 0, kBytes.Length);
-                    _fingerprint = DigestUtilities.DoFinal(digest);
-                }
-                catch (Exception e)
-                {
-                    throw new IOException("can't find SHA1", e);
-                }
-
+                _fingerprint = BuildFingerprintSha1(_publicPk);
                 this.KeyId = (long)(((ulong)_fingerprint[_fingerprint.Length - 8] << 56)
                     | ((ulong)_fingerprint[_fingerprint.Length - 7] << 48)
                     | ((ulong)_fingerprint[_fingerprint.Length - 6] << 40)
@@ -87,9 +53,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                     | ((ulong)_fingerprint[_fingerprint.Length - 4] << 24)
                     | ((ulong)_fingerprint[_fingerprint.Length - 3] << 16)
                     | ((ulong)_fingerprint[_fingerprint.Length - 2] << 8)
-                    | (ulong)_fingerprint[_fingerprint.Length - 1]);
+                    |  (ulong)_fingerprint[_fingerprint.Length - 1]);
 
-                BitStrength = key.BitStrength;
+                this.BitStrength = key.BitStrength;
             }
         }
 
@@ -820,13 +786,13 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             }
 
             var returnKey = new PgpPublicKey((PgpPublicKey)key);
-            if (returnKey._subSigs != null)
+            if (returnKey.SubSigs != null)
             {
-                returnKey._subSigs.Add(certification);
+                returnKey.SubSigs.Add(certification);
             }
             else
             {
-                returnKey._keySigs.Add(certification);
+                returnKey.KeySigs.Add(certification);
             }
 
             return returnKey;
@@ -839,7 +805,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         public static PgpPublicKey RemoveCertification(PgpPublicKey key, PgpSignature certification)
         {
             var returnKey = new PgpPublicKey(key);
-            var sigs = returnKey._subSigs ?? returnKey._keySigs;
+            var sigs = returnKey.SubSigs ?? returnKey.KeySigs;
 
             //			bool found = sigs.Remove(certification);
             var pos = sigs.IndexOf(certification);
@@ -880,6 +846,53 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             }
 
             return returnKey;
+        }
+
+        public static byte[] BuildFingerprint(IPublicKeyPacket publicPk)
+        {
+            return publicPk.Version <= 3 ? BuildFingerprintMd5(publicPk) : BuildFingerprintSha1(publicPk);
+        }
+
+        private static byte[] BuildFingerprintMd5(IPublicKeyPacket publicPk)
+        {
+            var rK = (RsaPublicBcpgKey)publicPk.Key;
+
+            try
+            {
+                var digest = DigestUtilities.GetDigest("MD5");
+
+                var bytes = rK.Modulus.ToByteArrayUnsigned();
+                digest.BlockUpdate(bytes, 0, bytes.Length);
+
+                bytes = rK.PublicExponent.ToByteArrayUnsigned();
+                digest.BlockUpdate(bytes, 0, bytes.Length);
+
+                return DigestUtilities.DoFinal(digest);
+            }
+            catch (Exception e)
+            {
+                throw new IOException("can't find MD5", e);
+            }
+        }
+
+        private static byte[] BuildFingerprintSha1(IPublicKeyPacket publicPk)
+        {
+            var kBytes = publicPk.GetEncodedContents();
+
+            try
+            {
+                var digest = DigestUtilities.GetDigest("SHA1");
+
+                digest.Update(0x99);
+                digest.Update((byte)(kBytes.Length >> 8));
+                digest.Update((byte)kBytes.Length);
+                digest.BlockUpdate(kBytes, 0, kBytes.Length);
+                return DigestUtilities.DoFinal(digest);
+            }
+            catch (Exception e)
+            {
+                throw new IOException("can't find SHA1", e);
+            }
         }
     }
 }

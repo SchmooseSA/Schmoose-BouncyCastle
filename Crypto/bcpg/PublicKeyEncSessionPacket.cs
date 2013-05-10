@@ -1,6 +1,8 @@
 using System.IO;
+using System.Linq;
 using Org.BouncyCastle.Bcpg.OpenPgp;
 using Org.BouncyCastle.Math;
+using Org.BouncyCastle.Utilities;
 
 namespace Org.BouncyCastle.Bcpg
 {
@@ -85,7 +87,14 @@ namespace Org.BouncyCastle.Bcpg
 
         public IBigInteger[] GetEncSessionKey()
         {
-            return (IBigInteger[])_data.Clone();
+            var sessionKey = Platform.CreateArrayList<IBigInteger>();
+            foreach (var integer in _data)
+            {
+                sessionKey.Add(integer);    
+            }            
+            if(_extraData != null)
+                sessionKey.Add(new BigInteger(_extraData));
+            return sessionKey.ToArray();
         }
 
         public byte[] ExtraData

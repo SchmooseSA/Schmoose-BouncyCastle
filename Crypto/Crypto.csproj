@@ -756,6 +756,7 @@
     <Compile Include="crypto\paddings\ZeroBytePadding.cs" />
     <Compile Include="crypto\parameters\AEADParameters.cs" />
     <Compile Include="crypto\parameters\CcmParameters.cs" />
+    <Compile Include="crypto\parameters\ECDHPrivateKeyParameters.cs" />
     <Compile Include="crypto\parameters\ECDHPublicKeyParameters.cs" />
     <Compile Include="crypto\parameters\DesEdeParameters.cs" />
     <Compile Include="crypto\parameters\DesParameters.cs" />

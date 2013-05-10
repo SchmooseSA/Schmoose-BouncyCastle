@@ -1,4 +1,6 @@
+using System;
 using System.IO;
+using System.Text;
 
 namespace Org.BouncyCastle.Utilities.Encoders
 {
@@ -102,6 +104,65 @@ namespace Org.BouncyCastle.Utilities.Encoders
         public static int Decode(string data, Stream outStream)
         {
             return _encoder.DecodeString(data, outStream);
+        }
+
+        public static string HexDump(byte[] bytes, int bytesPerLine = 16)
+        {
+            if (bytes == null) 
+                return "<null>";
+
+            var bytesLength = bytes.Length;
+
+            const int firstHexColumn = 11;
+            var firstCharColumn = firstHexColumn
+                + bytesPerLine * 3
+                + (bytesPerLine - 1) / 8
+                + 2;                  
+
+            var lineLength = firstCharColumn
+                + bytesPerLine
+                + Environment.NewLine.Length;
+
+            var line = (new String(' ', lineLength - 2) + Environment.NewLine).ToCharArray();
+            var expectedLines = (bytesLength + bytesPerLine - 1) / bytesPerLine;
+            var result = new StringBuilder(expectedLines * lineLength);
+
+            for (var i = 0; i < bytesLength; i += bytesPerLine)
+            {
+                line[0] = (char)HexEncoder.EncodingTable[(i >> 28) & 0xF];
+                line[1] = (char)HexEncoder.EncodingTable[(i >> 24) & 0xF];
+                line[2] = (char)HexEncoder.EncodingTable[(i >> 20) & 0xF];
+                line[3] = (char)HexEncoder.EncodingTable[(i >> 16) & 0xF];
+                line[4] = (char)HexEncoder.EncodingTable[(i >> 12) & 0xF];
+                line[5] = (char)HexEncoder.EncodingTable[(i >> 8) & 0xF];
+                line[6] = (char)HexEncoder.EncodingTable[(i >> 4) & 0xF];
+                line[7] = (char)HexEncoder.EncodingTable[(i >> 0) & 0xF];
+
+                var hexColumn = firstHexColumn;
+                var charColumn = firstCharColumn;
+
+                for (var j = 0; j < bytesPerLine; j++)
+                {
+                    if (j > 0 && (j & 7) == 0) hexColumn++;
+                    if (i + j >= bytesLength)
+                    {
+                        line[hexColumn] = ' ';
+                        line[hexColumn + 1] = ' ';
+                        line[charColumn] = ' ';
+                    }
+                    else
+                    {
+                        var b = bytes[i + j];
+                        line[hexColumn] = (char)HexEncoder.EncodingTable[(b >> 4) & 0xF];
+                        line[hexColumn + 1] = (char)HexEncoder.EncodingTable[b & 0xF];
+                        line[charColumn] = (b < 32 ? '·' : (char)b);
+                    }
+                    hexColumn += 3;
+                    charColumn++;
+                }
+                result.Append(line);
+            }
+            return result.ToString();
         }
     }
 }

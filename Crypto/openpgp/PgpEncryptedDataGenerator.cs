@@ -36,7 +36,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             bool withIntegrityPacket)
         {
             _defAlgorithm = encAlgorithm;
-            this._withIntegrityPacket = withIntegrityPacket;
+            _withIntegrityPacket = withIntegrityPacket;
             _rand = new SecureRandom();
         }
 
@@ -48,7 +48,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             SecureRandom rand)
         {
             _defAlgorithm = encAlgorithm;
-            this._rand = rand;
+            _rand = rand;
         }
 
         /// <summary>Creates a cipher stream which will have an integrity packet associated with it.</summary>
@@ -58,8 +58,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             SecureRandom rand)
         {
             _defAlgorithm = encAlgorithm;
-            this._rand = rand;
-            this._withIntegrityPacket = withIntegrityPacket;
+           _rand = rand;
+           _withIntegrityPacket = withIntegrityPacket;
         }
 
         /// <summary>Base constructor.</summary>
@@ -72,8 +72,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             bool oldFormat)
         {
             _defAlgorithm = encAlgorithm;
-            this._rand = rand;
-            this._oldFormat = oldFormat;
+            _rand = rand;
+            _oldFormat = oldFormat;
         }
 
         /// <summary>

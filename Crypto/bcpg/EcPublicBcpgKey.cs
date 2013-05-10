@@ -1,4 +1,5 @@
-﻿using Org.BouncyCastle.Asn1;
+﻿using System.IO;
+using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Bcpg.OpenPgp;
 using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Math;
@@ -15,12 +16,13 @@ namespace Org.BouncyCastle.Bcpg
         /// Initializes a new instance of the <see cref="EcPublicBcpgKey"/> class.
         /// </summary>
         /// <param name="bcpgIn">The BCPG in.</param>
-        protected EcPublicBcpgKey(BcpgInputStream bcpgIn)
+        /// <param name="oid">The OID.</param>
+        protected EcPublicBcpgKey(BcpgInputStream bcpgIn, DerObjectIdentifier oid)
         {
-            _oid = new DerObjectIdentifier(this.ReadBytesOfEncodedLength(bcpgIn));
-            _point = DecodePoint(new MPInteger(bcpgIn), _oid);
+            _oid = oid ?? new DerObjectIdentifier(this.ReadBytesOfEncodedLength(bcpgIn));
+            _point = DecodePoint(new MPInteger(bcpgIn).Value, _oid);
         }
-
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="EcPublicBcpgKey"/> class.
         /// </summary>
@@ -31,6 +33,12 @@ namespace Org.BouncyCastle.Bcpg
         {
             _oid = oid;
             _point = point;
+        }
+
+        protected EcPublicBcpgKey(IBigInteger encodedPoint, DerObjectIdentifier oid)
+        {
+            _oid = oid;
+            _point = DecodePoint(encodedPoint, _oid);
         }
 
         /// <summary>
@@ -102,7 +110,7 @@ namespace Org.BouncyCastle.Bcpg
             return buffer;
         }
 
-        private static ECPoint DecodePoint(MPInteger encoded, DerObjectIdentifier oid)
+        private static ECPoint DecodePoint(IBigInteger encodedPoint, DerObjectIdentifier oid)
         {
             var curve = ECKeyPairGenerator.FindECCurveByOid(oid);
             if (curve == null)
@@ -110,7 +118,7 @@ namespace Org.BouncyCastle.Bcpg
             if (!(curve.Curve is FPCurve))
                 throw new PgpException("Only FPCurves are supported.");
 
-            return curve.Curve.DecodePoint(encoded.Value.ToByteArrayUnsigned());
+            return curve.Curve.DecodePoint(encodedPoint.ToByteArrayUnsigned());
         }
     }
 }

@@ -99,6 +99,9 @@ namespace Org.BouncyCastle.Math.EC
         public abstract ECPoint Twice();
         public abstract ECPoint Multiply(IBigInteger b);
 
+        public abstract byte[] GetEncodedX();
+        public abstract byte[] GetEncodedY();
+
         /**
         * Sets the appropriate <code>ECMultiplier</code>, unless already set. 
         */
@@ -126,6 +129,26 @@ namespace Org.BouncyCastle.Math.EC
 
         protected internal abstract bool YTilde { get; }
 
+        public override byte[] GetEncodedX()
+        {
+            return GetEncodedX(X9IntegerConverter.GetByteLength(this.X));
+        }
+
+        public byte[] GetEncodedX(int byteLength)
+        {
+            return X9IntegerConverter.IntegerToBytes(this.X.ToBigInteger(), byteLength);
+        }
+
+        public override byte[] GetEncodedY()
+        {
+            return GetEncodedY(X9IntegerConverter.GetByteLength(this.Y));
+        }
+
+        private byte[] GetEncodedY(int byteLength)
+        {            
+            return X9IntegerConverter.IntegerToBytes(this.Y.ToBigInteger(), byteLength);
+        }
+
         /**
          * return the field element encoded with point compression. (S 4.3.6)
          */
@@ -137,7 +160,7 @@ namespace Org.BouncyCastle.Math.EC
             // Note: some of the tests rely on calculating byte length from the field element
             // (since the test cases use mismatching fields for curve/elements)
             var byteLength = X9IntegerConverter.GetByteLength(this.X);
-            var x = X9IntegerConverter.IntegerToBytes(this.X.ToBigInteger(), byteLength);
+            var x = this.GetEncodedX(byteLength);
             byte[] po;
 
             if (this.IsCompressed)
@@ -147,7 +170,7 @@ namespace Org.BouncyCastle.Math.EC
             }
             else
             {
-                var y = X9IntegerConverter.IntegerToBytes(this.Y.ToBigInteger(), byteLength);
+                var y = this.GetEncodedY(byteLength);
                 po = new byte[1 + x.Length + y.Length];
 
                 po[0] = 0x04;
