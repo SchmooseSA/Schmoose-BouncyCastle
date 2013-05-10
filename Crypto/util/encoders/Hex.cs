@@ -155,7 +155,7 @@ namespace Org.BouncyCastle.Utilities.Encoders
                         var b = bytes[i + j];
                         line[hexColumn] = (char)HexEncoder.EncodingTable[(b >> 4) & 0xF];
                         line[hexColumn + 1] = (char)HexEncoder.EncodingTable[b & 0xF];
-                        line[charColumn] = (b < 32 ? '·' : (char)b);
+                        line[charColumn] = (b < 32 ? '.' : (char)b);
                     }
                     hexColumn += 3;
                     charColumn++;
