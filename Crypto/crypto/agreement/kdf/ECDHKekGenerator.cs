@@ -25,9 +25,9 @@ namespace Org.BouncyCastle.Crypto.Agreement.Kdf
         {
             var parameters = (DHKdfParameters)param;
 
-            this._algorithm = parameters.Algorithm;
-            this._keySize = parameters.KeySize;
-            this._z = parameters.GetZ(); // TODO Clone?
+            _algorithm = parameters.Algorithm;
+            _keySize = parameters.KeySize;
+            _z = parameters.GetZ(); // TODO Clone?
         }
 
         public IDigest Digest
