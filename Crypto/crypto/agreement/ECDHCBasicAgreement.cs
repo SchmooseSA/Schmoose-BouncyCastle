@@ -23,8 +23,7 @@ namespace Org.BouncyCastle.Crypto.Agreement
      * (if you want that just use ECDHBasicAgreement and note they both implement
      * BasicAgreement!).</p>
      */
-    public class EcdhcBasicAgreement
-		: IBasicAgreement
+    public class ECDHCBasicAgreement : IBasicAgreement
     {
         private ECPrivateKeyParameters _key;
 

@@ -10,10 +10,10 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
     /// <remarks>General class to handle a PGP secret key object.</remarks>
     public class PgpSecretKey : IPgpSecretKey
     {
-        private readonly SecretKeyPacket _secret;
+        private readonly ISecretKeyPacket _secret;
         private readonly IPgpPublicKey _pub;
 
-        internal PgpSecretKey(SecretKeyPacket secret, IPgpPublicKey pub)
+        internal PgpSecretKey(ISecretKeyPacket secret, IPgpPublicKey pub)
         {
             _secret = secret;
             _pub = pub;
@@ -64,7 +64,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 case PublicKeyAlgorithmTag.Ecdh:
                 case PublicKeyAlgorithmTag.Ecdsa:
                     var ecK = (ECPrivateKeyParameters)privKey.Key;
-                    secKey = new EcSecretBcpgKey(ecK.D);
+                    secKey = new ECSecretBcpgKey(ecK.D);
                     break;
 
                 default:
@@ -460,15 +460,15 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                                 privateKey = new ElGamalPrivateKeyParameters(elPriv.X, elParams);
                                 break;
                             case PublicKeyAlgorithmTag.Ecdh:
-                                var ecdhPub = (EcdhPublicBcpgKey)pubPk.Key;
-                                var ecdhPriv = new EcSecretBcpgKey(bcpgIn);
+                                var ecdhPub = (ECDHPublicBcpgKey)pubPk.Key;
+                                var ecdhPriv = new ECSecretBcpgKey(bcpgIn);
                                 privateKey = new ECDHPrivateKeyParameters(ecdhPriv.X,
                                     new ECDHPublicKeyParameters(ecdhPub.Point, ecdhPub.Oid, ecdhPub.HashAlgorithm, ecdhPub.SymmetricKeyAlgorithm), 
                                     PgpPublicKey.BuildFingerprint(pubPk));
                                 break;
                             case PublicKeyAlgorithmTag.Ecdsa:
-                                var ecdsaPub = (EcPublicBcpgKey)pubPk.Key;
-                                var ecdsaPriv = new EcSecretBcpgKey(bcpgIn);
+                                var ecdsaPub = (ECPublicBcpgKey)pubPk.Key;
+                                var ecdsaPriv = new ECSecretBcpgKey(bcpgIn);
                                 privateKey = new ECPrivateKeyParameters(pubPk.Algorithm.ToString(), ecdsaPriv.X, ecdsaPub.Oid);
                                 break;
                             default:
@@ -661,12 +661,12 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <param name="publicKey">New public key.</param>
         /// <returns>A new secret key.</returns>
         /// <exception cref="ArgumentException">If KeyId's do not match.</exception>
-        public static PgpSecretKey ReplacePublicKey(PgpSecretKey secretKey, PgpPublicKey publicKey)
+        public static PgpSecretKey ReplacePublicKey(PgpSecretKey secretKey, IPgpPublicKey publicKey)
         {
             if (publicKey.KeyId != secretKey.KeyId)
                 throw new ArgumentException("KeyId's do not match");
 
-            return new PgpSecretKey(secretKey._secret, publicKey);
+            return new PgpSecretKey(secretKey.SecretPacket, publicKey);
         }
 
         private static byte[] EncryptKeyData(

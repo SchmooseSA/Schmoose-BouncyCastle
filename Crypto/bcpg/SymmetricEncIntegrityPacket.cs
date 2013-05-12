@@ -1,18 +1,13 @@
-using System;
-using System.IO;
-
 namespace Org.BouncyCastle.Bcpg
 {
-	public class SymmetricEncIntegrityPacket
-		: InputStreamPacket
+	public class SymmetricEncIntegrityPacket : InputStreamPacket
 	{
-		internal readonly int version;
+		internal readonly int Version;
 
-		internal SymmetricEncIntegrityPacket(
-			BcpgInputStream bcpgIn)
+		internal SymmetricEncIntegrityPacket(BcpgInputStream bcpgIn)
 			: base(bcpgIn)
         {
-			version = bcpgIn.ReadByte();
-        }
+			this.Version = bcpgIn.ReadByte();
+        }        
     }
 }

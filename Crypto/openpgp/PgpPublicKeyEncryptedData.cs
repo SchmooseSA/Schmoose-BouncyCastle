@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Crypto.Agreement;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.IO;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Security;
-using Org.BouncyCastle.Utilities.Encoders;
 using Org.BouncyCastle.Utilities.IO;
 
 namespace Org.BouncyCastle.Bcpg.OpenPgp
@@ -36,8 +36,6 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                     case PublicKeyAlgorithmTag.ElGamalEncrypt:
                     case PublicKeyAlgorithmTag.ElGamalGeneral:
                         return CipherUtilities.GetCipher("ElGamal/ECB/PKCS1Padding");
-                    case PublicKeyAlgorithmTag.Ecdh:
-                        return CipherUtilities.GetCipher("ECCCDHIES");                        
                     default:
                         throw new PgpException("unknown asymmetric algorithm: " + algorithm);
                 }
@@ -148,7 +146,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             try
             {
                 if (EncData is SymmetricEncIntegrityPacket)
-                {
+                {                    
                     cName += "/CFB/NoPadding";
                 }
                 else
@@ -267,48 +265,69 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         private static readonly byte[] _anonymousSender = Encoding.UTF8.GetBytes("Anonymous Sender    ");
 
-        private void ProcessSymmetricKeyDataForEcdh(IPgpPrivateKey privateKey, IBufferedCipher cipher, IList<IBigInteger> symmetricKeyData)
+        // TODO: make this pretty
+        private byte[] ProcessSymmetricKeyDataForEcdh(IPgpPrivateKey privateKey, IList<IBigInteger> symmetricKeyData)
         {
-            
+            var encodedPoint = symmetricKeyData[0].ToByteArrayUnsigned();
             var encSymKey = symmetricKeyData[1].ToByteArrayUnsigned();
-            var ecParam = (ECDHPrivateKeyParameters)privateKey.Key;
+            var ecPrivate = (ECDHPrivateKeyParameters)privateKey.Key;
+            var ecPublic = ecPrivate.PublicKeyParameters;
             using (var keyParams = new MemoryStream())
             {
-                var zb = ecParam.PublicKeyParameters.Q.GetEncodedX();
+                var publicKey = ECDHPublicKeyParameters.Create(symmetricKeyData[0], ecPublic.PublicKeyParamSet,
+                                                               ecPublic.HashAlgorithm, ecPublic.SymmetricKeyAlgorithm);
+
+                var agreement = new ECDHBasicAgreement();
+                agreement.Init(ecPrivate);
+                var zb = agreement.CalculateAgreement(publicKey).ToByteArrayUnsigned();
+
+
                 keyParams.WriteByte(0x00);
                 keyParams.WriteByte(0x00);
                 keyParams.WriteByte(0x00);
                 keyParams.WriteByte(0x01);
                 keyParams.Write(zb, 0, zb.Length);
 
-                var oid = ecParam.PublicKeyParamSet.ToBytes();                
+                var oid = publicKey.PublicKeyParamSet.ToBytes();                
                 keyParams.WriteByte((byte)oid.Length);
                 keyParams.Write(oid, 0, oid.Length);
                 keyParams.WriteByte((byte)PublicKeyAlgorithmTag.Ecdh);
                 keyParams.WriteByte(0x3);
                 keyParams.WriteByte(0x1);
-                keyParams.WriteByte((byte)ecParam.PublicKeyParameters.HashAlgorithm);
-                keyParams.WriteByte((byte)ecParam.PublicKeyParameters.SymmetricKeyAlgorithm);
+                keyParams.WriteByte((byte)publicKey.HashAlgorithm);
+                keyParams.WriteByte((byte)publicKey.SymmetricKeyAlgorithm);
                 keyParams.Write(_anonymousSender, 0, _anonymousSender.Length);
-                keyParams.Write(ecParam.FingerPrint, 0, ecParam.FingerPrint.Length);
+                keyParams.Write(ecPrivate.FingerPrint, 0, ecPrivate.FingerPrint.Length);
 
                 var kBytes = keyParams.ToArray();
-                var digest = DigestUtilities.GetDigest(ecParam.PublicKeyParameters.HashAlgorithm.ToString());
+                var digest = DigestUtilities.GetDigest(ecPrivate.PublicKeyParameters.HashAlgorithm.ToString());
                 digest.BlockUpdate(kBytes, 0, kBytes.Length);
                 var hash = DigestUtilities.DoFinal(digest);
-                var size = ecParam.PublicKeyParameters.SymmetricKeyAlgorithm == SymmetricKeyAlgorithmTag.Aes256
-                    ? 32 : ecParam.PublicKeyParameters.SymmetricKeyAlgorithm == SymmetricKeyAlgorithmTag.Aes192
-                    ? 24 : ecParam.PublicKeyParameters.SymmetricKeyAlgorithm == SymmetricKeyAlgorithmTag.Aes128
+                var size = ecPrivate.PublicKeyParameters.SymmetricKeyAlgorithm == SymmetricKeyAlgorithmTag.Aes256
+                    ? 32 : ecPrivate.PublicKeyParameters.SymmetricKeyAlgorithm == SymmetricKeyAlgorithmTag.Aes192
+                    ? 24 : ecPrivate.PublicKeyParameters.SymmetricKeyAlgorithm == SymmetricKeyAlgorithmTag.Aes128
                     ? 16 : 0;                
 
                 var wrap = new AesWrapEngine();
                 wrap.Init(false, new KeyParameter(hash, 0, size));
-                var symKey = wrap.Unwrap(encSymKey, 0, encSymKey.Length);
+                var paddedSymKey = wrap.Unwrap(encSymKey, 0, encSymKey.Length);
+                var symKeySize = paddedSymKey.Length;
+                while (paddedSymKey[symKeySize - 1] == 0x05)
+                    --symKeySize;
+
+                var symKey = new byte[symKeySize];
+                Buffer.BlockCopy(paddedSymKey, 0, symKey, 0, symKeySize);
+                return symKey;
             }
         }
 
         private byte[] FetchSymmetricKeyData(IPgpPrivateKey privKey)
         {
+            var keyD = _keyData.GetEncSessionKey();
+            if (_keyData.Algorithm == PublicKeyAlgorithmTag.Ecdh)
+            {
+                return this.ProcessSymmetricKeyDataForEcdh(privKey, keyD);
+            }
             var c1 = GetKeyCipher(_keyData.Algorithm);
 
             try
@@ -320,15 +339,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 throw new PgpException("error setting asymmetric cipher", e);
             }
 
-            var keyD = _keyData.GetEncSessionKey();
             switch (_keyData.Algorithm)
             {
                 case PublicKeyAlgorithmTag.RsaGeneral:
                 case PublicKeyAlgorithmTag.RsaEncrypt:
                     this.ProcessSymmetricKeyDataForRsa(c1, keyD);
-                    break;
-                case PublicKeyAlgorithmTag.Ecdh:
-                    this.ProcessSymmetricKeyDataForEcdh(privKey, c1, keyD);
                     break;
                 default:
                     this.ProcessSymmetricKeyDataForElGamal(privKey, c1, keyD);

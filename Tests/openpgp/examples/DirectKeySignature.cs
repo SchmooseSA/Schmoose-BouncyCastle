@@ -21,16 +21,15 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
 	*/
 	public class DirectKeySignature
 	{
-		public static void Main(
-			string[] args)
+		public static void Main(string[] args)
 		{
 			if (args.Length == 1)
 			{
 				Stream fis = File.OpenRead(args[0]);
 
-				PgpPublicKeyRing ring = new PgpPublicKeyRing(
+				var ring = new PgpPublicKeyRing(
 					PgpUtilities.GetDecoderStream(fis));
-				PgpPublicKey key = ring.GetPublicKey();
+				var key = ring.GetPublicKey();
 
 				// iterate through all direct key signautures and look for NotationData subpackets
 				foreach (PgpSignature sig in key.GetSignaturesOfType(PgpSignature.DirectKey))

@@ -98,15 +98,13 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
 		public override void PerformTest()
 		{
-			PgpPublicKey pubKey = null;
-
 			//
 			// Read the public key
 			//
 			PgpObjectFactory pgpFact = new PgpObjectFactory(testPubKeyRing);
 			PgpPublicKeyRing pgpPub = (PgpPublicKeyRing)pgpFact.NextPgpObject();
 
-			pubKey = pgpPub.GetPublicKey();
+			var pubKey = pgpPub.GetPublicKey();
 
 			if (pubKey.BitStrength != 1024)
 			{

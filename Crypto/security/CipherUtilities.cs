@@ -181,11 +181,11 @@ namespace Org.BouncyCastle.Security
                     iesEngine = new IesEngine(new DHBasicAgreement(), new Kdf2BytesGenerator(new Sha1Digest()), new HMac(new Sha1Digest()));
                     break;
                 case "ECIES":
-                    iesEngine = new IesEngine(new EcdhBasicAgreement(), new Kdf2BytesGenerator(new Sha1Digest()), new HMac(new Sha1Digest()));
+                    iesEngine = new IesEngine(new ECDHBasicAgreement(), new Kdf2BytesGenerator(new Sha1Digest()), new HMac(new Sha1Digest()));
                     break;
 
                 case "ECCCDHIES":
-                    iesEngine = new IesEngine(new EcdhcOnePassAgreement());                    
+                    iesEngine = new IesEngine(new ECDHBasicAgreement());                    
                     break;
             }
 

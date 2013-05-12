@@ -77,7 +77,9 @@ namespace Org.BouncyCastle.Crypto.Parameters
 
         internal ECKeyGenerationParameters CreateKeyGenerationParameters(SecureRandom random)
         {
-            return _publicKeyParamSet != null ? new ECKeyGenerationParameters(_publicKeyParamSet, random) : new ECKeyGenerationParameters(_parameters, random);
+            return _publicKeyParamSet != null 
+                ? new ECKeyGenerationParameters(_publicKeyParamSet, random) 
+                : new ECKeyGenerationParameters(_parameters, random);
         }
 
         private static string VerifyAlgorithmName(string algorithm)

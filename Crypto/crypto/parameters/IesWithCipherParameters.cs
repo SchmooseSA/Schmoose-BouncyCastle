@@ -1,10 +1,8 @@
-using System;
-
 namespace Org.BouncyCastle.Crypto.Parameters
 {
     public class IesWithCipherParameters : IesParameters
     {
-        private int cipherKeySize;
+        private readonly int _cipherKeySize;
 
         /**
          * @param derivation the derivation parameter for the KDF function.
@@ -12,21 +10,15 @@ namespace Org.BouncyCastle.Crypto.Parameters
          * @param macKeySize the size of the MAC key (in bits).
          * @param cipherKeySize the size of the associated Cipher key (in bits).
          */
-        public IesWithCipherParameters(
-            byte[]  derivation,
-            byte[]  encoding,
-            int     macKeySize,
-            int     cipherKeySize) : base(derivation, encoding, macKeySize)
+        public IesWithCipherParameters(byte[] derivation, byte[] encoding, int macKeySize, int cipherKeySize)
+            : base(derivation, encoding, macKeySize)
         {
-            this.cipherKeySize = cipherKeySize;
+            _cipherKeySize = cipherKeySize;
         }
 
         public int CipherKeySize
         {
-            get
-            {
-                return cipherKeySize;
-            }
+            get { return _cipherKeySize; }
         }
     }
 

@@ -1,6 +1,6 @@
 namespace Org.BouncyCastle.Bcpg
 {
-    public interface ISecretKeyPacket
+    public interface ISecretKeyPacket : IContainedPacket
     {
         /// <summary>
         /// Gets the enc algorithm.
@@ -51,17 +51,5 @@ namespace Org.BouncyCastle.Bcpg
         /// </summary>
         /// <returns></returns>
         byte[] GetEncodedContents();
-
-        /// <summary>
-        /// Encodes this instance to the given stream.
-        /// </summary>
-        /// <param name="bcpgOut">The BCPG out.</param>
-        void Encode(IBcpgOutputStream bcpgOut);
-
-        /// <summary>
-        /// Gets the encoded version of this instance.
-        /// </summary>
-        /// <returns></returns>
-        byte[] GetEncoded();
     }
 }

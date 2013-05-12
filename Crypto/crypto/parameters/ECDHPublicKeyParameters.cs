@@ -1,11 +1,14 @@
 using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Bcpg;
+using Org.BouncyCastle.Crypto.Generators;
+using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Math.EC;
 
 namespace Org.BouncyCastle.Crypto.Parameters
 {
     public class ECDHPublicKeyParameters : ECPublicKeyParameters
     {
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ECDHPublicKeyParameters" /> class.
         /// </summary>
@@ -37,6 +40,23 @@ namespace Org.BouncyCastle.Crypto.Parameters
         }
 
         /// <summary>
+        /// Creates a ECDH public key parameters from the given encoded point.
+        /// </summary>
+        /// <param name="encodedPoint">The encoded point.</param>
+        /// <param name="publicKeyParamSet">The public key param set.</param>
+        /// <param name="hashAlgorithm">The hash algorithm.</param>
+        /// <param name="symmetricKeyAlgorithm">The symmetric key algorithm.</param>
+        /// <returns></returns>
+        public static ECDHPublicKeyParameters Create(IBigInteger encodedPoint, DerObjectIdentifier publicKeyParamSet, 
+            HashAlgorithmTag hashAlgorithm, SymmetricKeyAlgorithmTag symmetricKeyAlgorithm)
+        {
+            var curve = ECKeyPairGenerator.FindECCurveByOid(publicKeyParamSet);
+            var point = curve.Curve.DecodePoint(encodedPoint.ToByteArrayUnsigned());
+
+            return new ECDHPublicKeyParameters(point, publicKeyParamSet, hashAlgorithm, symmetricKeyAlgorithm);
+        }
+
+        /// <summary>
         /// Gets the hash algorithm.
         /// </summary>
         /// <value>
@@ -63,15 +83,15 @@ namespace Org.BouncyCastle.Crypto.Parameters
 
         protected bool Equals(ECDHPublicKeyParameters other)
         {
-            return this.HashAlgorithm == other.HashAlgorithm 
-                && this.SymmetricKeyAlgorithm == other.SymmetricKeyAlgorithm 
+            return this.HashAlgorithm == other.HashAlgorithm
+                && this.SymmetricKeyAlgorithm == other.SymmetricKeyAlgorithm
                 && base.Equals(other);
         }
 
         public override int GetHashCode()
         {
-            return this.HashAlgorithm.GetHashCode() 
-                ^ this.SymmetricKeyAlgorithm.GetHashCode() 
+            return this.HashAlgorithm.GetHashCode()
+                ^ this.SymmetricKeyAlgorithm.GetHashCode()
                 ^ base.GetHashCode();
         }
     }

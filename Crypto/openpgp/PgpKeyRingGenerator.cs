@@ -183,7 +183,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <summary>Return the public key ring that corresponds to the secret key ring.</summary>
         public PgpPublicKeyRing GeneratePublicKeyRing()
         {
-            var pubKeys = Platform.CreateArrayList();
+            var pubKeys = Platform.CreateArrayList<IPgpPublicKey>();
 
             var enumerator = _keys.GetEnumerator();
             enumerator.MoveNext();
@@ -195,7 +195,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             {
                 pgpSecretKey = (PgpSecretKey)enumerator.Current;
 
-                var k = new PgpPublicKey((PgpPublicKey)pgpSecretKey.PublicKey);
+                var k = new PgpPublicKey(pgpSecretKey.PublicKey);
                 k.PublicKeyPacket = new PublicSubkeyPacket(k.Algorithm, k.CreationTime, k.PublicKeyPacket.Key);
 
                 pubKeys.Add(k);

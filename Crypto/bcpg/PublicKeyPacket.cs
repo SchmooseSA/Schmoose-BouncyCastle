@@ -49,10 +49,10 @@ namespace Org.BouncyCastle.Bcpg
                     break;
 
                 case PublicKeyAlgorithmTag.Ecdh:
-                    _key = new EcdhPublicBcpgKey(bcpgIn);
+                    _key = new ECDHPublicBcpgKey(bcpgIn);
                     break;
                 case PublicKeyAlgorithmTag.Ecdsa:
-                    _key = new EcdsaPublicBcpgKey(bcpgIn);
+                    _key = new ECDSAPublicBcpgKey(bcpgIn);
                     break;
 
                 default:

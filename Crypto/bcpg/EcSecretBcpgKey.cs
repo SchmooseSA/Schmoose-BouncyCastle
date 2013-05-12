@@ -2,16 +2,16 @@
 
 namespace Org.BouncyCastle.Bcpg
 {
-    public class EcSecretBcpgKey : BcpgObject, IBcpgKey
+    public class ECSecretBcpgKey : BcpgObject, IBcpgKey
     {
         private readonly MPInteger _x;
 
-        public EcSecretBcpgKey(BcpgInputStream bcpgIn)
+        public ECSecretBcpgKey(BcpgInputStream bcpgIn)
 		{
             _x = new MPInteger(bcpgIn);
 		}
 
-        public EcSecretBcpgKey(IBigInteger x)
+        public ECSecretBcpgKey(IBigInteger x)
 		{
             _x = new MPInteger(x);
 		}

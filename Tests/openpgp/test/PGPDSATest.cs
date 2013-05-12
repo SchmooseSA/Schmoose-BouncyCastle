@@ -360,14 +360,12 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
 		public override void PerformTest()
         {
-            PgpPublicKey pubKey = null;
-
-			//
+            //
             // Read the public key
             //
             PgpPublicKeyRing pgpPub = new PgpPublicKeyRing(testPubKey);
 
-			pubKey = pgpPub.GetPublicKey();
+			var pubKey = pgpPub.GetPublicKey();
 
             //
             // Read the private key

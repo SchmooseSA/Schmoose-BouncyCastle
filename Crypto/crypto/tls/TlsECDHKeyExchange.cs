@@ -220,7 +220,7 @@ namespace Org.BouncyCastle.Crypto.Tls
 		protected virtual byte[] CalculateECDHBasicAgreement(ECPublicKeyParameters publicKey,
 			ECPrivateKeyParameters privateKey)
 		{
-			EcdhBasicAgreement basicAgreement = new EcdhBasicAgreement();
+			ECDHBasicAgreement basicAgreement = new ECDHBasicAgreement();
 			basicAgreement.Init(privateKey);
 			IBigInteger agreement = basicAgreement.CalculateAgreement(publicKey);
 			return BigIntegers.AsUnsignedByteArray(agreement);

@@ -17,7 +17,7 @@ namespace Org.BouncyCastle.Crypto.Agreement
      * DL/ECKAS-DH2. It assumes that the input keys are valid (see also
      * Section 7.2.2).
      */
-    public class EcdhBasicAgreement : IBasicAgreement
+    public class ECDHBasicAgreement : IBasicAgreement
     {
         protected internal ECPrivateKeyParameters PrivKey;
 
@@ -39,7 +39,7 @@ namespace Org.BouncyCastle.Crypto.Agreement
             // if ( p.IsInfinity ) throw new Exception("d*Q == infinity");
 
             return p.X.ToBigInteger();
-        }
+        }        
     }
 
 }

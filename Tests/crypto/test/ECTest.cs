@@ -146,8 +146,8 @@ namespace Org.BouncyCastle.Crypto.Tests
             //
             // two way
             //
-            IBasicAgreement e1 = new EcdhBasicAgreement();
-            IBasicAgreement e2 = new EcdhBasicAgreement();
+            IBasicAgreement e1 = new ECDHBasicAgreement();
+            IBasicAgreement e2 = new ECDHBasicAgreement();
 
             e1.Init(p1.Private);
             e2.Init(p2.Private);
@@ -163,8 +163,8 @@ namespace Org.BouncyCastle.Crypto.Tests
             //
             // two way
             //
-            e1 = new EcdhcBasicAgreement();
-            e2 = new EcdhcBasicAgreement();
+            e1 = new ECDHCBasicAgreement();
+            e2 = new ECDHCBasicAgreement();
 
             e1.Init(p1.Private);
             e2.Init(p2.Private);

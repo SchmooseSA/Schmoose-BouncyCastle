@@ -325,7 +325,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             //
             PgpPublicKeyRing pgpPub = new PgpPublicKeyRing(fingerprintKey);
 
-			PgpPublicKey pubKey = pgpPub.GetPublicKey();
+			var pubKey = pgpPub.GetPublicKey();
 
 			if (!Arrays.AreEqual(pubKey.GetFingerprint(), Hex.Decode("4FFB9F0884266C715D1CEAC804A3BBFA")))
             {
@@ -442,7 +442,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 		{
 			PgpPublicKeyRing pgpPub = new PgpPublicKeyRing(embeddedJPEGKey);
 
-			PgpPublicKey pubKey = pgpPub.GetPublicKey();
+			var pubKey = pgpPub.GetPublicKey();
 
 			int count = 0;
 			foreach (PgpUserAttributeSubpacketVector attributes in pubKey.GetUserAttributes())
@@ -478,7 +478,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 			PgpPublicKeyRing pgpPub = new PgpPublicKeyRing(testPubKey);
 			PgpSecretKeyRing pgpSec = new PgpSecretKeyRing(testPrivKey);
 
-			PgpPublicKey pubKey = pgpPub.GetPublicKey();
+			var pubKey = pgpPub.GetPublicKey();
 
 			PgpUserAttributeSubpacketVectorGenerator vGen = new PgpUserAttributeSubpacketVectorGenerator();
 

@@ -7,12 +7,12 @@ using Org.BouncyCastle.Security;
 
 namespace Org.BouncyCastle.Crypto.Agreement
 {
-    public class EcdhWithKdfBasicAgreement : EcdhBasicAgreement
+    public class ECDHWithKdfBasicAgreement : ECDHBasicAgreement
     {
         private readonly string _algorithm;
         private readonly IDerivationFunction _kdf;
 
-        public EcdhWithKdfBasicAgreement(string algorithm, IDerivationFunction kdf)
+        public ECDHWithKdfBasicAgreement(string algorithm, IDerivationFunction kdf)
         {
             if (algorithm == null)
                 throw new ArgumentNullException("algorithm");

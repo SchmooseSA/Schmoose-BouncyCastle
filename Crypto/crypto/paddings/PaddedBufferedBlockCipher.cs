@@ -28,11 +28,11 @@ namespace Org.BouncyCastle.Crypto.Paddings
 			IBlockCipher		cipher,
 			IBlockCipherPadding	padding)
 		{
-			this.cipher = cipher;
+			this.Cipher = cipher;
 			this.padding = padding;
 
-			buf = new byte[cipher.GetBlockSize()];
-			bufOff = 0;
+			Buffer = new byte[cipher.GetBlockSize()];
+			BufferOffset = 0;
 		}
 
 		/**
@@ -57,7 +57,7 @@ namespace Org.BouncyCastle.Crypto.Paddings
 			bool				forEncryption,
 			ICipherParameters	parameters)
 		{
-			this.forEncryption = forEncryption;
+			this.ForEncryption = forEncryption;
 
 			ISecureRandom initRandom = null;
 			if (parameters is ParametersWithRandom)
@@ -69,7 +69,7 @@ namespace Org.BouncyCastle.Crypto.Paddings
 
 			Reset();
 			padding.Init(initRandom);
-			cipher.Init(forEncryption, parameters);
+			Cipher.Init(forEncryption, parameters);
 		}
 
 		/**
@@ -83,20 +83,20 @@ namespace Org.BouncyCastle.Crypto.Paddings
 		public override int GetOutputSize(
 			int length)
 		{
-			int total = length + bufOff;
-			int leftOver = total % buf.Length;
+			int total = length + BufferOffset;
+			int leftOver = total % Buffer.Length;
 
 			if (leftOver == 0)
 			{
-				if (forEncryption)
+				if (ForEncryption)
 				{
-					return total + buf.Length;
+					return total + Buffer.Length;
 				}
 
 				return total;
 			}
 
-			return total - leftOver + buf.Length;
+			return total - leftOver + Buffer.Length;
 		}
 
 		/**
@@ -110,12 +110,12 @@ namespace Org.BouncyCastle.Crypto.Paddings
 		public override int GetUpdateOutputSize(
 			int length)
 		{
-			int total       = length + bufOff;
-			int leftOver    = total % buf.Length;
+			int total       = length + BufferOffset;
+			int leftOver    = total % Buffer.Length;
 
 			if (leftOver == 0)
 			{
-				return total - buf.Length;
+				return total - Buffer.Length;
 			}
 
 			return total - leftOver;
@@ -138,13 +138,13 @@ namespace Org.BouncyCastle.Crypto.Paddings
 		{
 			int resultLen = 0;
 
-			if (bufOff == buf.Length)
+			if (BufferOffset == Buffer.Length)
 			{
-				resultLen = cipher.ProcessBlock(buf, 0, output, outOff);
-				bufOff = 0;
+				resultLen = Cipher.ProcessBlock(Buffer, 0, output, outOff);
+				BufferOffset = 0;
 			}
 
-			buf[bufOff++] = input;
+			Buffer[BufferOffset++] = input;
 
 			return resultLen;
 		}
@@ -185,30 +185,30 @@ namespace Org.BouncyCastle.Crypto.Paddings
 			}
 
 			int resultLen = 0;
-			int gapLen = buf.Length - bufOff;
+			int gapLen = Buffer.Length - BufferOffset;
 
 			if (length > gapLen)
 			{
-				Array.Copy(input, inOff, buf, bufOff, gapLen);
+				Array.Copy(input, inOff, Buffer, BufferOffset, gapLen);
 
-				resultLen += cipher.ProcessBlock(buf, 0, output, outOff);
+				resultLen += Cipher.ProcessBlock(Buffer, 0, output, outOff);
 
-				bufOff = 0;
+				BufferOffset = 0;
 				length -= gapLen;
 				inOff += gapLen;
 
-				while (length > buf.Length)
+				while (length > Buffer.Length)
 				{
-					resultLen += cipher.ProcessBlock(input, inOff, output, outOff + resultLen);
+					resultLen += Cipher.ProcessBlock(input, inOff, output, outOff + resultLen);
 
 					length -= blockSize;
 					inOff += blockSize;
 				}
 			}
 
-			Array.Copy(input, inOff, buf, bufOff, length);
+			Array.Copy(input, inOff, Buffer, BufferOffset, length);
 
-			bufOff += length;
+			BufferOffset += length;
 
 			return resultLen;
 		}
@@ -231,12 +231,12 @@ namespace Org.BouncyCastle.Crypto.Paddings
 			byte[]  output,
 			int     outOff)
 		{
-			int blockSize = cipher.GetBlockSize();
+			int blockSize = Cipher.GetBlockSize();
 			int resultLen = 0;
 
-			if (forEncryption)
+			if (ForEncryption)
 			{
-				if (bufOff == blockSize)
+				if (BufferOffset == blockSize)
 				{
 					if ((outOff + 2 * blockSize) > output.Length)
 					{
@@ -245,22 +245,22 @@ namespace Org.BouncyCastle.Crypto.Paddings
 						throw new DataLengthException("output buffer too short");
 					}
 
-					resultLen = cipher.ProcessBlock(buf, 0, output, outOff);
-					bufOff = 0;
+					resultLen = Cipher.ProcessBlock(Buffer, 0, output, outOff);
+					BufferOffset = 0;
 				}
 
-				padding.AddPadding(buf, bufOff);
+				padding.AddPadding(Buffer, BufferOffset);
 
-				resultLen += cipher.ProcessBlock(buf, 0, output, outOff + resultLen);
+				resultLen += Cipher.ProcessBlock(Buffer, 0, output, outOff + resultLen);
 
 				Reset();
 			}
 			else
 			{
-				if (bufOff == blockSize)
+				if (BufferOffset == blockSize)
 				{
-					resultLen = cipher.ProcessBlock(buf, 0, buf, 0);
-					bufOff = 0;
+					resultLen = Cipher.ProcessBlock(Buffer, 0, Buffer, 0);
+					BufferOffset = 0;
 				}
 				else
 				{
@@ -271,9 +271,9 @@ namespace Org.BouncyCastle.Crypto.Paddings
 
 				try
 				{
-					resultLen -= padding.PadCount(buf);
+					resultLen -= padding.PadCount(Buffer);
 
-					Array.Copy(buf, 0, output, outOff, resultLen);
+					Array.Copy(Buffer, 0, output, outOff, resultLen);
 				}
 				finally
 				{

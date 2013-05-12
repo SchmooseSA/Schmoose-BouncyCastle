@@ -27,12 +27,12 @@ namespace Org.BouncyCastle.Crypto.Modes
 			if (cipher is OfbBlockCipher || cipher is CfbBlockCipher)
                 throw new ArgumentException("CtsBlockCipher can only accept ECB, or CBC ciphers");
 
-			this.cipher = cipher;
+			this.Cipher = cipher;
 
             blockSize = cipher.GetBlockSize();
 
-            buf = new byte[blockSize * 2];
-            bufOff = 0;
+            Buffer = new byte[blockSize * 2];
+            BufferOffset = 0;
         }
 
         /**
@@ -45,12 +45,12 @@ namespace Org.BouncyCastle.Crypto.Modes
         public override int GetUpdateOutputSize(
             int length)
         {
-            int total = length + bufOff;
-            int leftOver = total % buf.Length;
+            int total = length + BufferOffset;
+            int leftOver = total % Buffer.Length;
 
 			if (leftOver == 0)
             {
-                return total - buf.Length;
+                return total - Buffer.Length;
             }
 
 			return total - leftOver;
@@ -67,7 +67,7 @@ namespace Org.BouncyCastle.Crypto.Modes
         public override int GetOutputSize(
             int length)
         {
-            return length + bufOff;
+            return length + BufferOffset;
         }
 
         /**
@@ -87,16 +87,16 @@ namespace Org.BouncyCastle.Crypto.Modes
         {
             int resultLen = 0;
 
-            if (bufOff == buf.Length)
+            if (BufferOffset == Buffer.Length)
             {
-                resultLen = cipher.ProcessBlock(buf, 0, output, outOff);
+                resultLen = Cipher.ProcessBlock(Buffer, 0, output, outOff);
 				Debug.Assert(resultLen == blockSize);
 
-				Array.Copy(buf, blockSize, buf, 0, blockSize);
-                bufOff = blockSize;
+				Array.Copy(Buffer, blockSize, Buffer, 0, blockSize);
+                BufferOffset = blockSize;
             }
 
-            buf[bufOff++] = input;
+            Buffer[BufferOffset++] = input;
 
             return resultLen;
         }
@@ -137,34 +137,34 @@ namespace Org.BouncyCastle.Crypto.Modes
             }
 
             int resultLen = 0;
-            int gapLen = buf.Length - bufOff;
+            int gapLen = Buffer.Length - BufferOffset;
 
             if (length > gapLen)
             {
-                Array.Copy(input, inOff, buf, bufOff, gapLen);
+                Array.Copy(input, inOff, Buffer, BufferOffset, gapLen);
 
-                resultLen += cipher.ProcessBlock(buf, 0, output, outOff);
-                Array.Copy(buf, blockSize, buf, 0, blockSize);
+                resultLen += Cipher.ProcessBlock(Buffer, 0, output, outOff);
+                Array.Copy(Buffer, blockSize, Buffer, 0, blockSize);
 
-                bufOff = blockSize;
+                BufferOffset = blockSize;
 
                 length -= gapLen;
                 inOff += gapLen;
 
                 while (length > blockSize)
                 {
-                    Array.Copy(input, inOff, buf, bufOff, blockSize);
-                    resultLen += cipher.ProcessBlock(buf, 0, output, outOff + resultLen);
-                    Array.Copy(buf, blockSize, buf, 0, blockSize);
+                    Array.Copy(input, inOff, Buffer, BufferOffset, blockSize);
+                    resultLen += Cipher.ProcessBlock(Buffer, 0, output, outOff + resultLen);
+                    Array.Copy(Buffer, blockSize, Buffer, 0, blockSize);
 
                     length -= blockSize;
                     inOff += blockSize;
                 }
             }
 
-            Array.Copy(input, inOff, buf, bufOff, length);
+            Array.Copy(input, inOff, Buffer, BufferOffset, length);
 
-            bufOff += length;
+            BufferOffset += length;
 
             return resultLen;
         }
@@ -186,39 +186,39 @@ namespace Org.BouncyCastle.Crypto.Modes
             byte[]  output,
             int     outOff)
         {
-            if (bufOff + outOff > output.Length)
+            if (BufferOffset + outOff > output.Length)
             {
                 throw new DataLengthException("output buffer too small in doFinal");
             }
 
-            int blockSize = cipher.GetBlockSize();
-            int length = bufOff - blockSize;
+            int blockSize = Cipher.GetBlockSize();
+            int length = BufferOffset - blockSize;
             byte[] block = new byte[blockSize];
 
-            if (forEncryption)
+            if (ForEncryption)
             {
-                cipher.ProcessBlock(buf, 0, block, 0);
+                Cipher.ProcessBlock(Buffer, 0, block, 0);
 
-				if (bufOff < blockSize)
+				if (BufferOffset < blockSize)
 				{
 					throw new DataLengthException("need at least one block of input for CTS");
 				}
 
-                for (int i = bufOff; i != buf.Length; i++)
+                for (int i = BufferOffset; i != Buffer.Length; i++)
                 {
-                    buf[i] = block[i - blockSize];
+                    Buffer[i] = block[i - blockSize];
                 }
 
-                for (int i = blockSize; i != bufOff; i++)
+                for (int i = blockSize; i != BufferOffset; i++)
                 {
-                    buf[i] ^= block[i - blockSize];
+                    Buffer[i] ^= block[i - blockSize];
                 }
 
-				IBlockCipher c = (cipher is CbcBlockCipher)
-					?	((CbcBlockCipher)cipher).GetUnderlyingCipher()
-					:	cipher;
+				IBlockCipher c = (Cipher is CbcBlockCipher)
+					?	((CbcBlockCipher)Cipher).GetUnderlyingCipher()
+					:	Cipher;
 
-				c.ProcessBlock(buf, blockSize, output, outOff);
+				c.ProcessBlock(Buffer, blockSize, output, outOff);
 
 				Array.Copy(block, 0, output, outOff + blockSize, length);
             }
@@ -226,24 +226,24 @@ namespace Org.BouncyCastle.Crypto.Modes
             {
                 byte[] lastBlock = new byte[blockSize];
 
-				IBlockCipher c = (cipher is CbcBlockCipher)
-					?	((CbcBlockCipher)cipher).GetUnderlyingCipher()
-					:	cipher;
+				IBlockCipher c = (Cipher is CbcBlockCipher)
+					?	((CbcBlockCipher)Cipher).GetUnderlyingCipher()
+					:	Cipher;
 
-				c.ProcessBlock(buf, 0, block, 0);
+				c.ProcessBlock(Buffer, 0, block, 0);
 
-				for (int i = blockSize; i != bufOff; i++)
+				for (int i = blockSize; i != BufferOffset; i++)
                 {
-                    lastBlock[i - blockSize] = (byte)(block[i - blockSize] ^ buf[i]);
+                    lastBlock[i - blockSize] = (byte)(block[i - blockSize] ^ Buffer[i]);
                 }
 
-                Array.Copy(buf, blockSize, block, 0, length);
+                Array.Copy(Buffer, blockSize, block, 0, length);
 
-                cipher.ProcessBlock(block, 0, output, outOff);
+                Cipher.ProcessBlock(block, 0, output, outOff);
                 Array.Copy(lastBlock, 0, output, outOff + blockSize, length);
             }
 
-            int offset = bufOff;
+            int offset = BufferOffset;
 
             Reset();
 

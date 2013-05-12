@@ -40,7 +40,7 @@ namespace Org.BouncyCastle.Crypto.Tls
 			}
 			else if (clientPrivateKey is ECPrivateKeyParameters)
 			{
-				basicAgreement = new EcdhBasicAgreement();
+				basicAgreement = new ECDHBasicAgreement();
 			}
 			else
 			{

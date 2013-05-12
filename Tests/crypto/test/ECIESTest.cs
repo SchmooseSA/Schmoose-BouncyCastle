@@ -64,11 +64,11 @@ namespace Org.BouncyCastle.Crypto.Tests
 			// stream test
 			//
 			IesEngine i1 = new IesEngine(
-				new EcdhBasicAgreement(),
+				new ECDHBasicAgreement(),
 				new Kdf2BytesGenerator(new Sha1Digest()),
 				new HMac(new Sha1Digest()));
 			IesEngine i2 = new IesEngine(
-				new EcdhBasicAgreement(),
+				new ECDHBasicAgreement(),
 				new Kdf2BytesGenerator(new Sha1Digest()),
 				new HMac(new Sha1Digest()));
 			byte[] d = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 };
@@ -102,12 +102,12 @@ namespace Org.BouncyCastle.Crypto.Tests
 			BufferedBlockCipher c2 = new PaddedBufferedBlockCipher(
 				new CbcBlockCipher(new TwofishEngine()));
 			i1 = new IesEngine(
-				new EcdhBasicAgreement(),
+				new ECDHBasicAgreement(),
 				new Kdf2BytesGenerator(new Sha1Digest()),
 				new HMac(new Sha1Digest()),
 				c1);
 			i2 = new IesEngine(
-				new EcdhBasicAgreement(),
+				new ECDHBasicAgreement(),
 				new Kdf2BytesGenerator(new Sha1Digest()),
 				new HMac(new Sha1Digest()),
 				c2);
@@ -143,11 +143,11 @@ namespace Org.BouncyCastle.Crypto.Tests
 			// stream test
 			//
 			IesEngine i1 = new IesEngine(
-				new EcdhBasicAgreement(),
+				new ECDHBasicAgreement(),
 				new Kdf2BytesGenerator(new Sha1Digest()),
 				new HMac(new Sha1Digest()));
 			IesEngine i2 = new IesEngine(
-				new EcdhBasicAgreement(),
+				new ECDHBasicAgreement(),
 				new Kdf2BytesGenerator(new Sha1Digest()),
 				new HMac(new Sha1Digest()));
 			byte[] d = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 };
@@ -176,12 +176,12 @@ namespace Org.BouncyCastle.Crypto.Tests
 			BufferedBlockCipher c2 = new PaddedBufferedBlockCipher(
 				new CbcBlockCipher(new TwofishEngine()));
 			i1 = new IesEngine(
-				new EcdhBasicAgreement(),
+				new ECDHBasicAgreement(),
 				new Kdf2BytesGenerator(new Sha1Digest()),
 				new HMac(new Sha1Digest()),
 				c1);
 			i2 = new IesEngine(
-				new EcdhBasicAgreement(),
+				new ECDHBasicAgreement(),
 				new Kdf2BytesGenerator(new Sha1Digest()),
 				new HMac(new Sha1Digest()),
 				c2);

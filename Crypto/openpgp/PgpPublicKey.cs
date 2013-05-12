@@ -102,12 +102,12 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             {
                 var ecdh = (ECDHPublicKeyParameters) pubKey;
                  
-                bcpgKey = new EcdhPublicBcpgKey(ecdh.Q, ecdh.PublicKeyParamSet, ecdh.HashAlgorithm, ecdh.SymmetricKeyAlgorithm);
+                bcpgKey = new ECDHPublicBcpgKey(ecdh.Q, ecdh.PublicKeyParamSet, ecdh.HashAlgorithm, ecdh.SymmetricKeyAlgorithm);
             }
             else if (pubKey is ECPublicKeyParameters)
             {
                 var ecdsa = (ECPublicKeyParameters)pubKey;
-                bcpgKey = new EcdsaPublicBcpgKey(ecdsa.Q, ecdsa.PublicKeyParamSet);
+                bcpgKey = new ECDSAPublicBcpgKey(ecdsa.Q, ecdsa.PublicKeyParamSet);
             }
             else
             {
@@ -129,20 +129,20 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         }
 
         /// <summary>Constructor for a sub-key.</summary>
-        internal PgpPublicKey(IPublicKeyPacket publicPk, TrustPacket trustPk, IList sigs)
+        internal PgpPublicKey(IPublicKeyPacket publicPk, ITrustPacket trustPk, IList sigs)
         {
-            this._publicPk = publicPk;
-            this._trustPk = trustPk;
-            this._subSigs = sigs;
+            _publicPk = publicPk;
+            _trustPk = trustPk;
+            _subSigs = sigs;
 
             Init();
         }
 
-        internal PgpPublicKey(PgpPublicKey key, TrustPacket trust, IList subSigs)
+        internal PgpPublicKey(IPgpPublicKey key, ITrustPacket trust, IList subSigs)
         {
-            this._publicPk = key._publicPk;
-            this._trustPk = trust;
-            this._subSigs = subSigs;
+            _publicPk = key.PublicKeyPacket;
+            _trustPk = trust;
+            _subSigs = subSigs;
 
             _fingerprint = key.GetFingerprint();
             KeyId = key.KeyId;
@@ -151,25 +151,25 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         /// <summary>Copy constructor.</summary>
         /// <param name="pubKey">The public key to copy.</param>
-        internal PgpPublicKey(PgpPublicKey pubKey)
+        internal PgpPublicKey(IPgpPublicKey pubKey)
         {
-            this._publicPk = pubKey._publicPk;
+           _publicPk = pubKey.PublicKeyPacket;
 
-            this._keySigs = Platform.CreateArrayList(pubKey._keySigs);
-            this._ids = Platform.CreateArrayList(pubKey._ids);
-            this._idTrusts = Platform.CreateArrayList(pubKey._idTrusts);
-            this._idSigs = Platform.CreateArrayList(pubKey._idSigs.Count);
-            for (var i = 0; i != pubKey._idSigs.Count; i++)
+           _keySigs = Platform.CreateArrayList(pubKey.KeySigs);
+           _ids = Platform.CreateArrayList(pubKey.Ids);
+           _idTrusts = Platform.CreateArrayList(pubKey.IdTrusts);
+           _idSigs = Platform.CreateArrayList(pubKey.IdSigs.Count);
+            for (var i = 0; i != pubKey.IdSigs.Count; i++)
             {
-                this._idSigs.Add(Platform.CreateArrayList((IList)pubKey._idSigs[i]));
+                _idSigs.Add(Platform.CreateArrayList((IList)pubKey.IdSigs[i]));
             }
 
-            if (pubKey._subSigs != null)
+            if (pubKey.SubSigs != null)
             {
-                this._subSigs = Platform.CreateArrayList(pubKey._subSigs.Count);
-                for (var i = 0; i != pubKey._subSigs.Count; i++)
+                _subSigs = Platform.CreateArrayList(pubKey.SubSigs.Count);
+                for (var i = 0; i != pubKey.SubSigs.Count; i++)
                 {
-                    this._subSigs.Add(pubKey._subSigs[i]);
+                    this._subSigs.Add(pubKey.SubSigs[i]);
                 }
             }
 
@@ -389,10 +389,10 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                         var elK = (ElGamalPublicBcpgKey)_publicPk.Key;
                         return new ElGamalPublicKeyParameters(elK.Y, new ElGamalParameters(elK.P, elK.G));
                     case PublicKeyAlgorithmTag.Ecdsa:
-                        var ecdsaK = (EcdsaPublicBcpgKey) _publicPk.Key;
+                        var ecdsaK = (ECDSAPublicBcpgKey) _publicPk.Key;
                         return new ECPublicKeyParameters(_publicPk.Algorithm.ToString(), ecdsaK.Point, ecdsaK.Oid);
                     case PublicKeyAlgorithmTag.Ecdh:
-                        var edhK = (EcdhPublicBcpgKey) _publicPk.Key;
+                        var edhK = (ECDHPublicBcpgKey) _publicPk.Key;
                         return new ECDHPublicKeyParameters(edhK.Point, edhK.Oid, edhK.HashAlgorithm, edhK.SymmetricKeyAlgorithm);
                     default:
                         throw new PgpException("unknown public key algorithm encountered");
@@ -653,7 +653,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         private static PgpPublicKey AddCert(IPgpPublicKey key, object id, PgpSignature certification)
         {
-            var returnKey = new PgpPublicKey((PgpPublicKey)key);
+            var returnKey = new PgpPublicKey(key);
             IList sigList = null;
 
             for (var i = 0; i != returnKey._ids.Count; i++)
@@ -706,7 +706,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         private static IPgpPublicKey RemoveCert(IPgpPublicKey key, object id)
         {
-            var returnKey = new PgpPublicKey((PgpPublicKey)key);
+            var returnKey = new PgpPublicKey(key);
             var found = false;
 
             for (var i = 0; i < returnKey._ids.Count; i++)
@@ -745,7 +745,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         private static PgpPublicKey RemoveCert(IPgpPublicKey key, object id, PgpSignature certification)
         {
-            var returnKey = new PgpPublicKey((PgpPublicKey)key);
+            var returnKey = new PgpPublicKey(key);
             var found = false;
 
             for (var i = 0; i < returnKey._ids.Count; i++)
@@ -785,7 +785,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 }
             }
 
-            var returnKey = new PgpPublicKey((PgpPublicKey)key);
+            var returnKey = new PgpPublicKey(key);
             if (returnKey.SubSigs != null)
             {
                 returnKey.SubSigs.Add(certification);

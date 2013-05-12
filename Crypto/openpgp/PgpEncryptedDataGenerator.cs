@@ -24,16 +24,13 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         private DigestStream _digestOut;
         private BcpgOutputStream _pOut;
 
-        public PgpEncryptedDataGenerator(
-            SymmetricKeyAlgorithmTag encAlgorithm)
+        public PgpEncryptedDataGenerator(SymmetricKeyAlgorithmTag encAlgorithm)
         {
             _defAlgorithm = encAlgorithm;
             _rand = new SecureRandom();
         }
 
-        public PgpEncryptedDataGenerator(
-            SymmetricKeyAlgorithmTag encAlgorithm,
-            bool withIntegrityPacket)
+        public PgpEncryptedDataGenerator(SymmetricKeyAlgorithmTag encAlgorithm, bool withIntegrityPacket)
         {
             _defAlgorithm = encAlgorithm;
             _withIntegrityPacket = withIntegrityPacket;
@@ -43,33 +40,25 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <summary>Existing SecureRandom constructor.</summary>
         /// <param name="encAlgorithm">The symmetric algorithm to use.</param>
         /// <param name="rand">Source of randomness.</param>
-        public PgpEncryptedDataGenerator(
-            SymmetricKeyAlgorithmTag encAlgorithm,
-            SecureRandom rand)
+        public PgpEncryptedDataGenerator(SymmetricKeyAlgorithmTag encAlgorithm, SecureRandom rand)
         {
             _defAlgorithm = encAlgorithm;
             _rand = rand;
         }
 
         /// <summary>Creates a cipher stream which will have an integrity packet associated with it.</summary>
-        public PgpEncryptedDataGenerator(
-            SymmetricKeyAlgorithmTag encAlgorithm,
-            bool withIntegrityPacket,
-            SecureRandom rand)
+        public PgpEncryptedDataGenerator(SymmetricKeyAlgorithmTag encAlgorithm, bool withIntegrityPacket, SecureRandom rand)
         {
             _defAlgorithm = encAlgorithm;
-           _rand = rand;
-           _withIntegrityPacket = withIntegrityPacket;
+            _rand = rand;
+            _withIntegrityPacket = withIntegrityPacket;
         }
 
         /// <summary>Base constructor.</summary>
         /// <param name="encAlgorithm">The symmetric algorithm to use.</param>
         /// <param name="rand">Source of randomness.</param>
         /// <param name="oldFormat">PGP 2.6.x compatibility required.</param>
-        public PgpEncryptedDataGenerator(
-            SymmetricKeyAlgorithmTag encAlgorithm,
-            SecureRandom rand,
-            bool oldFormat)
+        public PgpEncryptedDataGenerator(SymmetricKeyAlgorithmTag encAlgorithm, SecureRandom rand, bool oldFormat)
         {
             _defAlgorithm = encAlgorithm;
             _rand = rand;
@@ -88,40 +77,40 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// </summary>
         public void Close()
         {
-            if (_cOut != null)
+            if (_cOut == null) 
+                return;
+
+            // TODO Should this all be under the try/catch block?
+            if (_digestOut != null)
             {
-                // TODO Should this all be under the try/catch block?
-                if (_digestOut != null)
-                {
-                    //
-                    // hand code a mod detection packet
-                    //
-                    var bOut = new BcpgOutputStream(
-                        _digestOut, PacketTag.ModificationDetectionCode, 20);
+                //
+                // hand code a mod detection packet
+                //
+                var bOut = new BcpgOutputStream(
+                    _digestOut, PacketTag.ModificationDetectionCode, 20);
 
-                    bOut.Flush();
-                    _digestOut.Flush();
+                bOut.Flush();
+                _digestOut.Flush();
 
-                    // TODO
-                    byte[] dig = DigestUtilities.DoFinal(_digestOut.WriteDigest());
-                    _cOut.Write(dig, 0, dig.Length);
-                }
-
-                _cOut.Flush();
-
-                try
-                {
-                    _pOut.Write(_c.DoFinal());
-                    _pOut.Finish();
-                }
-                catch (Exception e)
-                {
-                    throw new IOException(e.Message, e);
-                }
-
-                _cOut = null;
-                _pOut = null;
+                // TODO
+                var dig = DigestUtilities.DoFinal(_digestOut.WriteDigest());
+                _cOut.Write(dig, 0, dig.Length);
             }
+
+            _cOut.Flush();
+
+            try
+            {
+                _pOut.Write(_c.DoFinal());
+                _pOut.Finish();
+            }
+            catch (Exception e)
+            {
+                throw new IOException(e.Message, e);
+            }
+
+            _cOut = null;
+            _pOut = null;
         }
 
         /// <summary>
@@ -129,7 +118,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// </summary>
         public void AddMethod(char[] passPhrase)
         {
-            AddMethod(passPhrase, HashAlgorithmTag.Sha1);
+            this.AddMethod(passPhrase, HashAlgorithmTag.Sha1);
         }
 
         /// <summary>Add a PBE encryption method to the encrypted object.</summary>
@@ -158,9 +147,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             Debug.Assert(sessionInfo != null);
             Debug.Assert(sessionInfo.Length >= 3);
 
-            int check = 0;
-
-            for (int i = 1; i < sessionInfo.Length - 2; i++)
+            var check = 0;
+            for (var i = 1; i < sessionInfo.Length - 2; i++)
             {
                 check += sessionInfo[i];
             }
@@ -169,11 +157,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             sessionInfo[sessionInfo.Length - 1] = (byte)(check);
         }
 
-        private byte[] CreateSessionInfo(
-            SymmetricKeyAlgorithmTag algorithm,
-            KeyParameter key)
+        private static byte[] CreateSessionInfo(SymmetricKeyAlgorithmTag algorithm, KeyParameter key)
         {
-            byte[] keyBytes = key.GetKey();
+            var keyBytes = key.GetKey();
             var sessionInfo = new byte[keyBytes.Length + 3];
             sessionInfo[0] = (byte)algorithm;
             keyBytes.CopyTo(sessionInfo, 1);
@@ -192,10 +178,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         ///         stream does not close off the Stream parameter <c>outStr</c>.
         ///     </p>
         /// </summary>
-        private Stream Open(
-            Stream outStr,
-            long length,
-            byte[] buffer)
+        private Stream Open(Stream outStr, long length, byte[] buffer)
         {
             if (_cOut != null)
                 throw new InvalidOperationException("generator already in open state");
@@ -217,10 +200,12 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 }
                 else
                 {
+                    var pubMethod = (PubMethod)_methods[0];
+
                     key = PgpUtilities.MakeRandomKey(_defAlgorithm, _rand);
 
                     var sessionInfo = CreateSessionInfo(_defAlgorithm, key);
-                    var pubMethod = (PubMethod)_methods[0];
+
 
                     try
                     {
@@ -237,9 +222,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             else // multiple methods
             {
                 key = PgpUtilities.MakeRandomKey(_defAlgorithm, _rand);
-                byte[] sessionInfo = CreateSessionInfo(_defAlgorithm, key);
+                var sessionInfo = CreateSessionInfo(_defAlgorithm, key);
 
-                for (int i = 0; i != _methods.Count; i++)
+                for (var i = 0; i != _methods.Count; i++)
                 {
                     var m = (EncMethod)_methods[i];
 
@@ -256,7 +241,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 }
             }
 
-            string cName = PgpUtilities.GetSymmetricCipherName(_defAlgorithm);
+            var cName = PgpUtilities.GetSymmetricCipherName(_defAlgorithm);
             if (cName == null)
             {
                 throw new PgpException("null cipher specified");
@@ -309,7 +294,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                     }
                 }
 
-                int blockSize = _c.GetBlockSize();
+                var blockSize = _c.GetBlockSize();
                 var inLineIv = new byte[blockSize + 2];
                 _rand.NextBytes(inLineIv, 0, blockSize);
                 Array.Copy(inLineIv, inLineIv.Length - 4, inLineIv, inLineIv.Length - 2, 2);
@@ -318,8 +303,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
                 if (_withIntegrityPacket)
                 {
-                    string digestName = PgpUtilities.GetDigestName(HashAlgorithmTag.Sha1);
-                    IDigest digest = DigestUtilities.GetDigest(digestName);
+                    var digestName = PgpUtilities.GetDigestName(HashAlgorithmTag.Sha1);
+                    var digest = DigestUtilities.GetDigest(digestName);
                     myOut = _digestOut = new DigestStream(myOut, null, digest);
                 }
 
@@ -343,9 +328,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         ///         stream does not close off the Stream parameter <c>outStr</c>.
         ///     </p>
         /// </summary>
-        public Stream Open(
-            Stream outStr,
-            long length)
+        public Stream Open(Stream outStr, long length)
         {
             return Open(outStr, length, null);
         }
@@ -365,11 +348,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         ///         bytes worth of the buffer will be used.
         ///     </p>
         /// </summary>
-        public Stream Open(
-            Stream outStr,
-            byte[] buffer)
+        public Stream Open(Stream outStr, byte[] buffer)
         {
-            return Open(outStr, 0, buffer);
+            return this.Open(outStr, 0, buffer);
         }
 
         private abstract class EncMethod : ContainedPacket
@@ -425,6 +406,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             internal PubMethod(IPgpPublicKey pubKey)
             {
                 _pubKey = pubKey;
+            }
+
+            public IPgpPublicKey PublicKey
+            {
+                get { return _pubKey; }
             }
 
             public override void AddSessionInfo(byte[] si, SecureRandom random)

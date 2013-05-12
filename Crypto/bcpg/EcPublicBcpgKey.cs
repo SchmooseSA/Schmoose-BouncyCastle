@@ -1,5 +1,4 @@
-﻿using System.IO;
-using Org.BouncyCastle.Asn1;
+﻿using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Bcpg.OpenPgp;
 using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Math;
@@ -7,35 +6,35 @@ using Org.BouncyCastle.Math.EC;
 
 namespace Org.BouncyCastle.Bcpg
 {
-    public abstract class EcPublicBcpgKey : BcpgObject, IBcpgPublicKey
+    public abstract class ECPublicBcpgKey : BcpgObject, IBcpgPublicKey
     {
         private readonly DerObjectIdentifier _oid;
         private readonly ECPoint _point;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="EcPublicBcpgKey"/> class.
+        /// Initializes a new instance of the <see cref="ECPublicBcpgKey"/> class.
         /// </summary>
         /// <param name="bcpgIn">The BCPG in.</param>
         /// <param name="oid">The OID.</param>
-        protected EcPublicBcpgKey(BcpgInputStream bcpgIn, DerObjectIdentifier oid)
+        protected ECPublicBcpgKey(BcpgInputStream bcpgIn, DerObjectIdentifier oid)
         {
             _oid = oid ?? new DerObjectIdentifier(this.ReadBytesOfEncodedLength(bcpgIn));
             _point = DecodePoint(new MPInteger(bcpgIn).Value, _oid);
         }
         
         /// <summary>
-        /// Initializes a new instance of the <see cref="EcPublicBcpgKey"/> class.
+        /// Initializes a new instance of the <see cref="ECPublicBcpgKey"/> class.
         /// </summary>
         /// <param name="point">The point.</param>
         /// <param name="oid">The oid.</param>
         /// <exception cref="Org.BouncyCastle.Bcpg.OpenPgp.PgpException">Only FPCurves are supported.</exception>
-        protected EcPublicBcpgKey(ECPoint point, DerObjectIdentifier oid)
+        protected ECPublicBcpgKey(ECPoint point, DerObjectIdentifier oid)
         {
             _oid = oid;
             _point = point;
         }
 
-        protected EcPublicBcpgKey(IBigInteger encodedPoint, DerObjectIdentifier oid)
+        protected ECPublicBcpgKey(IBigInteger encodedPoint, DerObjectIdentifier oid)
         {
             _oid = oid;
             _point = DecodePoint(encodedPoint, _oid);

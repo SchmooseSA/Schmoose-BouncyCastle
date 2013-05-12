@@ -4,29 +4,29 @@ using Org.BouncyCastle.Math.EC;
 
 namespace Org.BouncyCastle.Bcpg
 {
-    public class EcdhPublicBcpgKey : EcPublicBcpgKey
+    public class ECDHPublicBcpgKey : ECPublicBcpgKey
     {
         private readonly byte _reserved;
         private readonly byte _hashFunctionId; 
         private readonly byte _symAlgorithmId;        
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="EcdhPublicBcpgKey"/> class.
+        /// Initializes a new instance of the <see cref="ECDHPublicBcpgKey"/> class.
         /// </summary>
         /// <param name="bcpgIn">The BCPG in.</param>
         /// <exception cref="Org.BouncyCastle.Bcpg.OpenPgp.PgpException">kdf parameter size of 3 expected.</exception>        
-        public EcdhPublicBcpgKey(BcpgInputStream bcpgIn)
+        public ECDHPublicBcpgKey(BcpgInputStream bcpgIn)
             : this(bcpgIn, null)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="EcdhPublicBcpgKey"/> class.
+        /// Initializes a new instance of the <see cref="ECDHPublicBcpgKey"/> class.
         /// </summary>
         /// <param name="bcpgIn">The BCPG in.</param>
         /// <exception cref="Org.BouncyCastle.Bcpg.OpenPgp.PgpException">kdf parameter size of 3 expected.</exception>
         /// <param name="oid">The OID.</param>
-        private EcdhPublicBcpgKey(BcpgInputStream bcpgIn, DerObjectIdentifier oid)
+        private ECDHPublicBcpgKey(BcpgInputStream bcpgIn, DerObjectIdentifier oid)
             : base(bcpgIn, oid)
         {
             var kdfParamters = this.ReadBytesOfEncodedLength(bcpgIn);
@@ -42,13 +42,13 @@ namespace Org.BouncyCastle.Bcpg
         }
         
         /// <summary>
-        /// Initializes a new instance of the <see cref="EcdhPublicBcpgKey"/> class.
+        /// Initializes a new instance of the <see cref="ECDHPublicBcpgKey"/> class.
         /// </summary>
         /// <param name="point">The point.</param>
         /// <param name="oid">The oid.</param>
         /// <param name="hashAlgorithm">The hash algorithm.</param>
         /// <param name="symmetricKeyAlgorithm">The symmetric key algorithm.</param>
-        public EcdhPublicBcpgKey(ECPoint point, DerObjectIdentifier oid, HashAlgorithmTag hashAlgorithm,
+        public ECDHPublicBcpgKey(ECPoint point, DerObjectIdentifier oid, HashAlgorithmTag hashAlgorithm,
                                  SymmetricKeyAlgorithmTag symmetricKeyAlgorithm)
             : base(point, oid)
         {
