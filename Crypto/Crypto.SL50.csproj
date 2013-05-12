@@ -689,6 +689,7 @@
     <Compile Include="crypto\engines\RC6Engine.cs" />
     <Compile Include="crypto\engines\RFC3211WrapEngine.cs" />
     <Compile Include="crypto\engines\RFC3394WrapEngine.cs" />
+    <Compile Include="crypto\engines\RFC6637ECDHEngine.cs" />
     <Compile Include="crypto\engines\RijndaelEngine.cs" />
     <Compile Include="crypto\engines\RSABlindedEngine.cs" />
     <Compile Include="crypto\engines\RSABlindingEngine.cs" />

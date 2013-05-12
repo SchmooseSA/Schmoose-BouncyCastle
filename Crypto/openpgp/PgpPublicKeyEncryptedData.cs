@@ -10,6 +10,7 @@ using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Utilities.IO;
+using Org.BouncyCastle.crypto.engines;
 
 namespace Org.BouncyCastle.Bcpg.OpenPgp
 {
@@ -263,62 +264,16 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             }
         }
 
-        private static readonly byte[] _anonymousSender = Encoding.UTF8.GetBytes("Anonymous Sender    ");
-
-        // TODO: make this pretty
-        private byte[] ProcessSymmetricKeyDataForEcdh(IPgpPrivateKey privateKey, IList<IBigInteger> symmetricKeyData)
+        private byte[] ProcessSymmetricKeyDataForEcdh(IPgpPrivateKey privKey, IList<IBigInteger> symmetricKeyData)
         {
-            var encodedPoint = symmetricKeyData[0].ToByteArrayUnsigned();
             var encSymKey = symmetricKeyData[1].ToByteArrayUnsigned();
-            var ecPrivate = (ECDHPrivateKeyParameters)privateKey.Key;
-            var ecPublic = ecPrivate.PublicKeyParameters;
-            using (var keyParams = new MemoryStream())
-            {
-                var publicKey = ECDHPublicKeyParameters.Create(symmetricKeyData[0], ecPublic.PublicKeyParamSet,
-                                                               ecPublic.HashAlgorithm, ecPublic.SymmetricKeyAlgorithm);
+            var privateKey = (ECDHPrivateKeyParameters)privKey.Key;
+            var publicKey = privateKey.PublicKeyParameters;
+            var ephemeralKey = ECDHPublicKeyParameters.Create(symmetricKeyData[0], publicKey.PublicKeyParamSet, publicKey.HashAlgorithm, publicKey.SymmetricKeyAlgorithm);
 
-                var agreement = new ECDHBasicAgreement();
-                agreement.Init(ecPrivate);
-                var zb = agreement.CalculateAgreement(publicKey).ToByteArrayUnsigned();
-
-
-                keyParams.WriteByte(0x00);
-                keyParams.WriteByte(0x00);
-                keyParams.WriteByte(0x00);
-                keyParams.WriteByte(0x01);
-                keyParams.Write(zb, 0, zb.Length);
-
-                var oid = publicKey.PublicKeyParamSet.ToBytes();                
-                keyParams.WriteByte((byte)oid.Length);
-                keyParams.Write(oid, 0, oid.Length);
-                keyParams.WriteByte((byte)PublicKeyAlgorithmTag.Ecdh);
-                keyParams.WriteByte(0x3);
-                keyParams.WriteByte(0x1);
-                keyParams.WriteByte((byte)publicKey.HashAlgorithm);
-                keyParams.WriteByte((byte)publicKey.SymmetricKeyAlgorithm);
-                keyParams.Write(_anonymousSender, 0, _anonymousSender.Length);
-                keyParams.Write(ecPrivate.FingerPrint, 0, ecPrivate.FingerPrint.Length);
-
-                var kBytes = keyParams.ToArray();
-                var digest = DigestUtilities.GetDigest(ecPrivate.PublicKeyParameters.HashAlgorithm.ToString());
-                digest.BlockUpdate(kBytes, 0, kBytes.Length);
-                var hash = DigestUtilities.DoFinal(digest);
-                var size = ecPrivate.PublicKeyParameters.SymmetricKeyAlgorithm == SymmetricKeyAlgorithmTag.Aes256
-                    ? 32 : ecPrivate.PublicKeyParameters.SymmetricKeyAlgorithm == SymmetricKeyAlgorithmTag.Aes192
-                    ? 24 : ecPrivate.PublicKeyParameters.SymmetricKeyAlgorithm == SymmetricKeyAlgorithmTag.Aes128
-                    ? 16 : 0;                
-
-                var wrap = new AesWrapEngine();
-                wrap.Init(false, new KeyParameter(hash, 0, size));
-                var paddedSymKey = wrap.Unwrap(encSymKey, 0, encSymKey.Length);
-                var symKeySize = paddedSymKey.Length;
-                while (paddedSymKey[symKeySize - 1] == 0x05)
-                    --symKeySize;
-
-                var symKey = new byte[symKeySize];
-                Buffer.BlockCopy(paddedSymKey, 0, symKey, 0, symKeySize);
-                return symKey;
-            }
+            var engine = new RFC6637ECDHEngine();
+            engine.Init(false, privateKey, ephemeralKey);
+            return engine.ProcessBlock(encSymKey, 0, encSymKey.Length);            
         }
 
         private byte[] FetchSymmetricKeyData(IPgpPrivateKey privKey)
