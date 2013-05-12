@@ -598,7 +598,6 @@
     <Compile Include="crypto\agreement\DHBasicAgreement.cs" />
     <Compile Include="crypto\agreement\ECDHBasicAgreement.cs" />
     <Compile Include="crypto\agreement\ECDHCBasicAgreement.cs" />
-    <Compile Include="crypto\agreement\EcdhcOnePassAgreement.cs" />
     <Compile Include="crypto\agreement\ECDHWithKdfBasicAgreement.cs" />
     <Compile Include="crypto\agreement\ECMqvBasicAgreement.cs" />
     <Compile Include="crypto\agreement\ECMqvWithKdfBasicAgreement.cs" />
@@ -927,8 +926,6 @@
     <Compile Include="ocsp\RevokedStatus.cs" />
     <Compile Include="ocsp\SingleResp.cs" />
     <Compile Include="ocsp\UnknownStatus.cs" />
-    <Compile Include="openpgp\IPgpPublicKeyRing.cs" />
-    <Compile Include="openpgp\IStreamGenerator.cs" />
     <Compile Include="openpgp\PgpCompressedData.cs" />
     <Compile Include="openpgp\PgpCompressedDataGenerator.cs" />
     <Compile Include="openpgp\PgpDataValidationException.cs" />

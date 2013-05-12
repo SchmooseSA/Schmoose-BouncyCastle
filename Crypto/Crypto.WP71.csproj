@@ -486,7 +486,6 @@
     <Compile Include="bcpg\ElGamalPublicBcpgKey.cs" />
     <Compile Include="bcpg\ElGamalSecretBcpgKey.cs" />
     <Compile Include="bcpg\ExperimentalPacket.cs" />
-    <Compile Include="bcpg\HashAlgorithmTags.cs" />
     <Compile Include="bcpg\InputStreamPacket.cs" />
     <Compile Include="bcpg\LiteralDataPacket.cs" />
     <Compile Include="bcpg\MarkerPacket.cs" />
@@ -774,6 +773,7 @@
     <Compile Include="crypto\parameters\DsaPrivateKeyParameters.cs" />
     <Compile Include="crypto\parameters\DsaPublicKeyParameters.cs" />
     <Compile Include="crypto\parameters\DsaValidationParameters.cs" />
+    <Compile Include="crypto\parameters\ECDHPrivateKeyParameters.cs" />
     <Compile Include="crypto\parameters\ECDHPublicKeyParameters.cs" />
     <Compile Include="crypto\parameters\ECDomainParameters.cs" />
     <Compile Include="crypto\parameters\ECKeyGenerationParameters.cs" />
@@ -930,8 +930,6 @@
     <Compile Include="ocsp\RevokedStatus.cs" />
     <Compile Include="ocsp\SingleResp.cs" />
     <Compile Include="ocsp\UnknownStatus.cs" />
-    <Compile Include="openpgp\IPgpPublicKeyRing.cs" />
-    <Compile Include="openpgp\IStreamGenerator.cs" />
     <Compile Include="openpgp\PgpCompressedData.cs" />
     <Compile Include="openpgp\PgpCompressedDataGenerator.cs" />
     <Compile Include="openpgp\PgpDataValidationException.cs" />

@@ -44,7 +44,7 @@
     <Compile Include="bcpg\IBcpgPublicKey.cs" />
     <Compile Include="bcpg\IContainedPacket.cs" />
     <Compile Include="bcpg\IPacket.cs" />
-    <Compile Include="bcpg\IPgpSecretKeyRing.cs" />
+    <Compile Include="openpgp\IPgpSecretKeyRing.cs" />
     <Compile Include="bcpg\IPublicKeyPacket.cs" />
     <Compile Include="bcpg\IS2k.cs" />
     <Compile Include="bcpg\ISecretKeyPacket.cs" />

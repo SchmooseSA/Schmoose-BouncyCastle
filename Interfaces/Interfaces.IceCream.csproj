@@ -39,7 +39,6 @@
     <Compile Include="bcpg\IBcpgPublicKey.cs" />
     <Compile Include="bcpg\IContainedPacket.cs" />
     <Compile Include="bcpg\IPacket.cs" />
-    <Compile Include="bcpg\IPgpSecretKeyRing.cs" />
     <Compile Include="bcpg\IPublicKeyPacket.cs" />
     <Compile Include="bcpg\IS2k.cs" />
     <Compile Include="bcpg\ISecretKeyPacket.cs" />
@@ -70,8 +69,11 @@
     <Compile Include="math\IBigInteger.cs" />
     <Compile Include="openpgp\IPgpPrivateKey.cs" />
     <Compile Include="openpgp\IPgpPublicKey.cs" />
+    <Compile Include="openpgp\IPgpPublicKeyRing.cs" />
     <Compile Include="openpgp\IPgpSecretKey.cs" />
+    <Compile Include="openpgp\IPgpSecretKeyRing.cs" />
     <Compile Include="openpgp\IPgpUserAttributeSubpacketVector.cs" />
+    <Compile Include="openpgp\IStreamGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="bcpg\IRandom.cs" />
     <Compile Include="security\ISecureRandom.cs" />
