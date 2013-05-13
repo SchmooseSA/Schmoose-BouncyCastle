@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text;
 using Org.BouncyCastle.Bcpg;
+using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Agreement;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Parameters;
@@ -75,33 +76,30 @@ namespace Org.BouncyCastle.crypto.engines
         /// Sess Sections 7 & 8 of RFC 6637 (http://tools.ietf.org/html/rfc6637) for more details
         /// </summary>
         /// <returns></returns>
-        private byte[] GenerateKDFParameters()
+        private void UpdateDigestWithKDFParameters(IDigest digest)
         {
-            using (var kdfParams = new MemoryStream())
-            {
-                var agreement = new ECDHBasicAgreement();
-                agreement.Init(_privateKey);
-                var zb = agreement.CalculateAgreement(_publicKey).ToByteArrayUnsigned();
+            var agreement = new ECDHBasicAgreement();
+            agreement.Init(_privateKey);
+            var zb = agreement.CalculateAgreement(_publicKey).ToByteArrayUnsigned();
 
-                kdfParams.WriteByte(0x00);
-                kdfParams.WriteByte(0x00);
-                kdfParams.WriteByte(0x00);
-                kdfParams.WriteByte(0x01);
-                kdfParams.Write(zb, 0, zb.Length);
+            digest.Update(0x00);
+            digest.Update(0x00);
+            digest.Update(0x00);
+            digest.Update(0x01);
 
-                var oid = _publicKey.PublicKeyParamSet.ToBytes();
-                kdfParams.WriteByte((byte)oid.Length);
-                kdfParams.Write(oid, 0, oid.Length);
-                kdfParams.WriteByte((byte)PublicKeyAlgorithmTag.Ecdh);
-                kdfParams.WriteByte(0x3);
-                kdfParams.WriteByte(0x1);
-                kdfParams.WriteByte((byte)_publicKey.HashAlgorithm);
-                kdfParams.WriteByte((byte)_publicKey.SymmetricKeyAlgorithm);
-                kdfParams.Write(_anonymousSender, 0, _anonymousSender.Length);
-                kdfParams.Write(_privateKey.FingerPrint, 0, _privateKey.FingerPrint.Length);
+            digest.BlockUpdate(zb, 0, zb.Length);
 
-                return kdfParams.ToArray();
-            }
+            var oid = _publicKey.PublicKeyParamSet.ToBytes();
+            digest.Update((byte)oid.Length);
+            digest.BlockUpdate(oid, 0, oid.Length);
+            digest.Update((byte)PublicKeyAlgorithmTag.Ecdh);
+            digest.Update(0x3);
+            digest.Update(0x1);
+            digest.Update((byte)_publicKey.HashAlgorithm);
+            digest.Update((byte)_publicKey.SymmetricKeyAlgorithm);
+
+            digest.BlockUpdate(_anonymousSender, 0, _anonymousSender.Length);
+            digest.BlockUpdate(_privateKey.FingerPrint, 0, _privateKey.FingerPrint.Length);            
         }
 
         /// <summary>
@@ -110,9 +108,8 @@ namespace Org.BouncyCastle.crypto.engines
         /// <returns></returns>
         private AesWrapEngine InitializeWrapper()
         {
-            var kdfParams = this.GenerateKDFParameters();
             var digest = DigestUtilities.GetDigest(_publicKey.HashAlgorithm.ToString());
-            digest.BlockUpdate(kdfParams, 0, kdfParams.Length);
+            this.UpdateDigestWithKDFParameters(digest);
             var hash = DigestUtilities.DoFinal(digest);
             var size = _publicKey.SymmetricKeyAlgorithm == SymmetricKeyAlgorithmTag.Aes256
                 ? 32 : _publicKey.SymmetricKeyAlgorithm == SymmetricKeyAlgorithmTag.Aes192
