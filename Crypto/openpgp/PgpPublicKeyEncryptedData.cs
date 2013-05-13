@@ -272,47 +272,49 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             var ephemeralKey = ECDHPublicKeyParameters.Create(symmetricKeyData[0], publicKey.PublicKeyParamSet, publicKey.HashAlgorithm, publicKey.SymmetricKeyAlgorithm);
 
             var engine = new RFC6637ECDHEngine();
-            engine.Init(false, privateKey, ephemeralKey);
+            engine.InitForDecryption(privateKey, ephemeralKey);
             return engine.ProcessBlock(encSymKey, 0, encSymKey.Length);            
         }
 
         private byte[] FetchSymmetricKeyData(IPgpPrivateKey privKey)
         {
+            byte[] plain;
             var keyD = _keyData.GetEncSessionKey();
             if (_keyData.Algorithm == PublicKeyAlgorithmTag.Ecdh)
             {
-                return this.ProcessSymmetricKeyDataForEcdh(privKey, keyD);
+                plain = this.ProcessSymmetricKeyDataForEcdh(privKey, keyD);
             }
-            var c1 = GetKeyCipher(_keyData.Algorithm);
+            else
+            {
+                var c1 = GetKeyCipher(_keyData.Algorithm);
+                try
+                {
+                    c1.Init(false, privKey.Key);
+                }
+                catch (InvalidKeyException e)
+                {
+                    throw new PgpException("error setting asymmetric cipher", e);
+                }
 
-            try
-            {
-                c1.Init(false, privKey.Key);
-            }
-            catch (InvalidKeyException e)
-            {
-                throw new PgpException("error setting asymmetric cipher", e);
-            }
+                switch (_keyData.Algorithm)
+                {
+                    case PublicKeyAlgorithmTag.RsaGeneral:
+                    case PublicKeyAlgorithmTag.RsaEncrypt:
+                        this.ProcessSymmetricKeyDataForRsa(c1, keyD);
+                        break;
+                    default:
+                        this.ProcessSymmetricKeyDataForElGamal(privKey, c1, keyD);
+                        break;
+                }
 
-            switch (_keyData.Algorithm)
-            {
-                case PublicKeyAlgorithmTag.RsaGeneral:
-                case PublicKeyAlgorithmTag.RsaEncrypt:
-                    this.ProcessSymmetricKeyDataForRsa(c1, keyD);
-                    break;
-                default:
-                    this.ProcessSymmetricKeyDataForElGamal(privKey, c1, keyD);
-                    break;
-            }
-
-            byte[] plain;
-            try
-            {
-                plain = c1.DoFinal();
-            }
-            catch (Exception e)
-            {
-                throw new PgpException("exception decrypting secret key", e);
+                try
+                {
+                    plain = c1.DoFinal();
+                }
+                catch (Exception e)
+                {
+                    throw new PgpException("exception decrypting secret key", e);
+                }
             }
 
             if (!ConfirmCheckSum(plain))

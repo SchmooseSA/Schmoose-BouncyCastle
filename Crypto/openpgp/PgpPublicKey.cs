@@ -473,8 +473,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <summary>Allows enumeration of signatures associated with the passed in user attributes.</summary>
         /// <param name="userAttributes">The vector of user attributes to be matched.</param>
         /// <returns>An <c>IEnumerable</c> of <c>PgpSignature</c> objects.</returns>
-        public IEnumerable GetSignaturesForUserAttribute(
-            IPgpUserAttributeSubpacketVector userAttributes)
+        public IEnumerable GetSignaturesForUserAttribute(IPgpUserAttributeSubpacketVector userAttributes)
         {
             for (int i = 0; i != _ids.Count; i++)
             {
@@ -490,8 +489,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <summary>Allows enumeration of signatures of the passed in type that are on this key.</summary>
         /// <param name="signatureType">The type of the signature to be returned.</param>
         /// <returns>An <c>IEnumerable</c> of <c>PgpSignature</c> objects.</returns>
-        public IEnumerable GetSignaturesOfType(
-            int signatureType)
+        public IEnumerable GetSignaturesOfType(int signatureType)
         {
             IList temp = Platform.CreateArrayList();
 

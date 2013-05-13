@@ -3,6 +3,7 @@ using System.Globalization;
 
 using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Asn1.CryptoPro;
+using Org.BouncyCastle.Bcpg;
 using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Security;
 
@@ -75,11 +76,16 @@ namespace Org.BouncyCastle.Crypto.Parameters
             return _parameters.GetHashCode() ^ base.GetHashCode();
         }
 
-        internal ECKeyGenerationParameters CreateKeyGenerationParameters(SecureRandom random)
+        internal ECKeyGenerationParameters CreateKeyGenerationParameters(ISecureRandom random)
+        {
+            return CreateKeyGenerationParameters(random, HashAlgorithmTag.Sha512, SymmetricKeyAlgorithmTag.Aes256);
+        }
+
+        internal ECKeyGenerationParameters CreateKeyGenerationParameters(ISecureRandom random, HashAlgorithmTag hashAlgorithm, SymmetricKeyAlgorithmTag symmetricKeyAlgorithm)
         {
             return _publicKeyParamSet != null 
-                ? new ECKeyGenerationParameters(_publicKeyParamSet, random) 
-                : new ECKeyGenerationParameters(_parameters, random);
+                ? new ECKeyGenerationParameters(_publicKeyParamSet, random, hashAlgorithm, symmetricKeyAlgorithm)
+                : new ECKeyGenerationParameters(_parameters, random, hashAlgorithm, symmetricKeyAlgorithm);
         }
 
         private static string VerifyAlgorithmName(string algorithm)
