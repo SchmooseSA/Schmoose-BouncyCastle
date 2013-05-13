@@ -1198,9 +1198,9 @@
     <Compile Include="x509\X509V3CertificateGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Interfaces\Interfaces.csproj">
-      <Project>{2FD27502-3833-4816-8FC2-5857B3E90777}</Project>
-      <Name>Interfaces</Name>
+    <ProjectReference Include="..\Interfaces\Interfaces.Portable.csproj">
+      <Project>{8B0D73D8-C467-4B06-8957-DB82856CF285}</Project>
+      <Name>Interfaces.Portable</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).$(TargetFrameworkVersion).Overrides.targets" />

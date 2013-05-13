@@ -33,10 +33,6 @@
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyOriginatorKeyFile>
-    </AssemblyOriginatorKeyFile>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -1149,9 +1145,9 @@
     <Compile Include="x509\X509V3CertificateGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Interfaces\Interfaces.IceCream.csproj">
-      <Project>{2fd27502-3833-4816-8fc2-5857b3e90777}</Project>
-      <Name>Interfaces.IceCream</Name>
+    <ProjectReference Include="..\Interfaces\Interfaces.Portable.csproj">
+      <Project>{8B0D73D8-C467-4B06-8957-DB82856CF285}</Project>
+      <Name>Interfaces.Portable</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
