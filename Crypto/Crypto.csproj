@@ -497,6 +497,7 @@
     <Compile Include="bcpg\RsaPublicBcpgKey.cs" />
     <Compile Include="bcpg\RsaSecretBcpgKey.cs" />
     <Compile Include="bcpg\S2k.cs" />
+    <Compile Include="bcpg\attr\SchmooseAttribute.cs" />
     <Compile Include="bcpg\SecretKeyPacket.cs" />
     <Compile Include="bcpg\SecretSubkeyPacket.cs" />
     <Compile Include="bcpg\SignaturePacket.cs" />

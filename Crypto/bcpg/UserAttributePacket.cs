@@ -1,7 +1,5 @@
-using System;
-using System.Collections;
 using System.IO;
-
+using System.Linq;
 using Org.BouncyCastle.Utilities;
 
 namespace Org.BouncyCastle.Bcpg
@@ -9,51 +7,41 @@ namespace Org.BouncyCastle.Bcpg
     /**
     * Basic type for a user attribute packet.
     */
-    public class UserAttributePacket
-        : ContainedPacket
+    public class UserAttributePacket : ContainedPacket
     {
-        private readonly UserAttributeSubpacket[] subpackets;
+        private readonly IUserAttributeSubpacket[] _subpackets;
 
-        public UserAttributePacket(
-            BcpgInputStream bcpgIn)
+        public UserAttributePacket(BcpgInputStream bcpgIn)
         {
-            UserAttributeSubpacketsParser sIn = new UserAttributeSubpacketsParser(bcpgIn);
+            var sIn = new UserAttributeSubpacketsParser(bcpgIn);
             UserAttributeSubpacket sub;
 
-            IList v = Platform.CreateArrayList();
+            var v = Platform.CreateArrayList<IUserAttributeSubpacket>();
             while ((sub = sIn.ReadPacket()) != null)
             {
                 v.Add(sub);
             }
-
-            subpackets = new UserAttributeSubpacket[v.Count];
-
-            for (int i = 0; i != subpackets.Length; i++)
-            {
-                subpackets[i] = (UserAttributeSubpacket)v[i];
-            }
+            _subpackets = v.ToArray();
         }
 
-        public UserAttributePacket(
-            UserAttributeSubpacket[] subpackets)
+        public UserAttributePacket(IUserAttributeSubpacket[] subpackets)
         {
-            this.subpackets = subpackets;
+            _subpackets = subpackets;
         }
 
-        public UserAttributeSubpacket[] GetSubpackets()
+        public IUserAttributeSubpacket[] GetSubpackets()
         {
-            return subpackets;
+            return _subpackets;
         }
 
-        public override void Encode(
-            IBcpgOutputStream bcpgOut)
+        public override void Encode(IBcpgOutputStream bcpgOut)
         {
-            using (MemoryStream bOut = new MemoryStream())
+            using (var bOut = new MemoryStream())
             {
 
-                for (int i = 0; i != subpackets.Length; i++)
+                for (var i = 0; i != _subpackets.Length; i++)
                 {
-                    subpackets[i].Encode(bOut);
+                    _subpackets[i].Encode(bOut);
                 }
 
                 bcpgOut.WritePacket(PacketTag.UserAttribute, bOut.ToArray(), false);

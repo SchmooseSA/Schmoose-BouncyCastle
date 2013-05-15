@@ -5,6 +5,9 @@ namespace Org.BouncyCastle.Bcpg
     */
     public enum UserAttributeSubpacketTag
     {
-        ImageAttribute = 1
+        ImageAttribute = 1,
+
+        // Custome Attributes For Schmoose
+        SchmooseAttribute = 200,        
     }
 }

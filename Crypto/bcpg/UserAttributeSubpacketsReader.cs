@@ -55,6 +55,9 @@ namespace Org.BouncyCastle.Bcpg
 				case UserAttributeSubpacketTag.ImageAttribute:
 					return new ImageAttrib(data);
 
+                case UserAttributeSubpacketTag.SchmooseAttribute:
+                    return new SchmooseAttribute(data);			        
+
                 default:
                     return new UserAttributeSubpacket(type, data);
 			}			

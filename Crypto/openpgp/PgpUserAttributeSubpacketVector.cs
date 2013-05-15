@@ -1,3 +1,4 @@
+using System.Linq;
 using Org.BouncyCastle.Bcpg.Attr;
 
 namespace Org.BouncyCastle.Bcpg.OpenPgp
@@ -5,22 +6,20 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 	/// <remarks>Container for a list of user attribute subpackets.</remarks>
     public class PgpUserAttributeSubpacketVector : IPgpUserAttributeSubpacketVector
 	{
-        private readonly UserAttributeSubpacket[] packets;
+        private readonly IUserAttributeSubpacket[] _packets;
 
-		internal PgpUserAttributeSubpacketVector(
-            UserAttributeSubpacket[] packets)
+		internal PgpUserAttributeSubpacketVector(IUserAttributeSubpacket[] packets)
         {
-            this.packets = packets;
+            _packets = packets;
         }
 
-		public IUserAttributeSubpacket GetSubpacket(
-            UserAttributeSubpacketTag type)
+		public IUserAttributeSubpacket GetSubpacket(UserAttributeSubpacketTag type)
         {
-            for (int i = 0; i != packets.Length; i++)
+            for (var i = 0; i != _packets.Length; i++)
             {
-                if (packets[i].SubpacketType == type)
+                if (_packets[i].SubpacketType == type)
                 {
-                    return packets[i];
+                    return _packets[i];
                 }
             }
 
@@ -29,14 +28,14 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
 		public IImageAttrib GetImageAttribute()
         {
-            IUserAttributeSubpacket p = GetSubpacket(UserAttributeSubpacketTag.ImageAttribute);
+            var p = GetSubpacket(UserAttributeSubpacketTag.ImageAttribute);
 
             return p == null ? null : (IImageAttrib) p;
         }
 
-		internal UserAttributeSubpacket[] ToSubpacketArray()
+        internal IUserAttributeSubpacket[] ToSubpacketArray()
         {
-            return packets;
+            return _packets;
         }
 
 		public override bool Equals(
@@ -45,19 +44,19 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             if (obj == this)
                 return true;
 
-			PgpUserAttributeSubpacketVector other = obj as PgpUserAttributeSubpacketVector;
+			var other = obj as PgpUserAttributeSubpacketVector;
 
 			if (other == null)
 				return false;
 
-			if (other.packets.Length != packets.Length)
+			if (other._packets.Length != _packets.Length)
             {
                 return false;
             }
 
-			for (int i = 0; i != packets.Length; i++)
+			for (var i = 0; i != _packets.Length; i++)
             {
-                if (!other.packets[i].Equals(packets[i]))
+                if (!other._packets[i].Equals(_packets[i]))
                 {
                     return false;
                 }
@@ -67,15 +66,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         }
 
 		public override int GetHashCode()
-        {
-            int code = 0;
-
-			foreach (object o in packets)
-			{
-				code ^= o.GetHashCode();
-			}
-
-			return code;
-        }
-    }
+		{
+		    return _packets.Cast<object>().Aggregate(0, (current, o) => current ^ o.GetHashCode());
+		}
+	}
 }
