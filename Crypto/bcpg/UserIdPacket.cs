@@ -6,32 +6,28 @@ namespace Org.BouncyCastle.Bcpg
     /**
     * Basic type for a user ID packet.
     */
-    public class UserIdPacket
-        : ContainedPacket
+    public class UserIdPacket : ContainedPacket
     {
-        private readonly byte[] idData;
+        private readonly byte[] _idData;
 
-        public UserIdPacket(
-            BcpgInputStream bcpgIn)
+        public UserIdPacket(BcpgInputStream bcpgIn)
         {
-            this.idData = bcpgIn.ReadAll();
+            _idData = bcpgIn.ReadAll();
         }
 
-		public UserIdPacket(
-			string id)
+        public UserIdPacket(string id)
         {
-            this.idData = Encoding.UTF8.GetBytes(id);
+            _idData = Encoding.UTF8.GetBytes(id);
         }
 
-		public string GetId()
+        public string GetId()
         {
-			return Encoding.UTF8.GetString(idData, 0, idData.Length);
+            return Encoding.UTF8.GetString(_idData, 0, _idData.Length);
         }
 
-		public override void Encode(
-            IBcpgOutputStream bcpgOut)
+        public override void Encode(IBcpgOutputStream bcpgOut)
         {
-            bcpgOut.WritePacket(PacketTag.UserId, idData, true);
+            bcpgOut.WritePacket(PacketTag.UserId, _idData, true);
         }
     }
 }

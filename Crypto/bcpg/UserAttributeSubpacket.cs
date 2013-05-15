@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 
 using Org.BouncyCastle.Utilities;
@@ -10,20 +9,20 @@ namespace Org.BouncyCastle.Bcpg
     */
     public class UserAttributeSubpacket : IUserAttributeSubpacket
     {
-        private readonly UserAttributeSubpacketTag	type;
-        private readonly byte[]						data;
+        private readonly UserAttributeSubpacketTag	_type;
+        private readonly byte[]						_data;
 
 		internal UserAttributeSubpacket(
             UserAttributeSubpacketTag	type,
             byte[]						data)
         {
-            this.type = type;
-            this.data = data;
+            _type = type;
+            _data = data;
         }
 
 		public UserAttributeSubpacketTag SubpacketType
         {
-            get { return type; }
+            get { return _type; }
         }
 
 		/**
@@ -31,13 +30,12 @@ namespace Org.BouncyCastle.Bcpg
         */
         public byte[] GetData()
         {
-            return data;
+            return _data;
         }
 
-        public void Encode(
-            Stream os)
+        public void Encode(Stream os)
         {
-            int bodyLen = data.Length + 1;
+            var bodyLen = _data.Length + 1;
 
             if (bodyLen < 192)
             {
@@ -59,28 +57,24 @@ namespace Org.BouncyCastle.Bcpg
                 os.WriteByte((byte)bodyLen);
             }
 
-            os.WriteByte((byte) type);
-            os.Write(data, 0, data.Length);
+            os.WriteByte((byte) _type);
+            os.Write(_data, 0, _data.Length);
         }
 
-        public override bool Equals(
-            object obj)
+        public override bool Equals(object obj)
         {
             if (obj == this)
                 return true;
 
-			UserAttributeSubpacket other = obj as UserAttributeSubpacket;
-
+			var other = obj as UserAttributeSubpacket;
 			if (other == null)
 				return false;
-
-			return type == other.type
-				&& Arrays.AreEqual(data, other.data);
+			return _type == other._type && Arrays.AreEqual(_data, other._data);
         }
 
 		public override int GetHashCode()
         {
-			return type.GetHashCode() ^ Arrays.GetHashCode(data);
+			return _type.GetHashCode() ^ Arrays.GetHashCode(_data);
         }
     }
 }

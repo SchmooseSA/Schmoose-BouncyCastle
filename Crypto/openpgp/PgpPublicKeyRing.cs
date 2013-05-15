@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Org.BouncyCastle.Utilities;
-using Org.BouncyCastle.Utilities.Collections;
 
 namespace Org.BouncyCastle.Bcpg.OpenPgp
 {
@@ -33,9 +32,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         {
             _keys = Platform.CreateArrayList<IPgpPublicKey>();
 
-            BcpgInputStream bcpgInput = BcpgInputStream.Wrap(inputStream);
+            var bcpgInput = BcpgInputStream.Wrap(inputStream);
 
-            PacketTag initialTag = bcpgInput.NextPacketTag();
+            var initialTag = bcpgInput.NextPacketTag();
             if (initialTag != PacketTag.PublicKey && initialTag != PacketTag.PublicSubkey)
             {
                 throw new IOException("public key ring doesn't start with public key tag: "

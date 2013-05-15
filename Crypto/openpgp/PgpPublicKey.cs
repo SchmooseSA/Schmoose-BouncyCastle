@@ -30,7 +30,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         private readonly IList _idTrusts = Platform.CreateArrayList();
         private readonly IList _idSigs = Platform.CreateArrayList();
         private readonly IList _subSigs;
-        
+
         private void Init()
         {
             var key = _publicPk.Key;
@@ -53,7 +53,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                     | ((ulong)_fingerprint[_fingerprint.Length - 4] << 24)
                     | ((ulong)_fingerprint[_fingerprint.Length - 3] << 16)
                     | ((ulong)_fingerprint[_fingerprint.Length - 2] << 8)
-                    |  (ulong)_fingerprint[_fingerprint.Length - 1]);
+                    | (ulong)_fingerprint[_fingerprint.Length - 1]);
 
                 this.BitStrength = key.BitStrength;
             }
@@ -100,8 +100,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             }
             else if (pubKey is ECDHPublicKeyParameters)
             {
-                var ecdh = (ECDHPublicKeyParameters) pubKey;
-                 
+                var ecdh = (ECDHPublicKeyParameters)pubKey;
+
                 bcpgKey = new ECDHPublicBcpgKey(ecdh.Q, ecdh.PublicKeyParamSet, ecdh.HashAlgorithm, ecdh.SymmetricKeyAlgorithm);
             }
             else if (pubKey is ECPublicKeyParameters)
@@ -153,24 +153,16 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <param name="pubKey">The public key to copy.</param>
         internal PgpPublicKey(IPgpPublicKey pubKey)
         {
-           _publicPk = pubKey.PublicKeyPacket;
+            _publicPk = pubKey.PublicKeyPacket;
 
-           _keySigs = Platform.CreateArrayList(pubKey.KeySigs);
-           _ids = Platform.CreateArrayList(pubKey.Ids);
-           _idTrusts = Platform.CreateArrayList(pubKey.IdTrusts);
-           _idSigs = Platform.CreateArrayList(pubKey.IdSigs.Count);
-            for (var i = 0; i != pubKey.IdSigs.Count; i++)
-            {
-                _idSigs.Add(Platform.CreateArrayList((IList)pubKey.IdSigs[i]));
-            }
+            _keySigs = Platform.CreateArrayList(pubKey.KeySigs);
+            _ids = Platform.CreateArrayList(pubKey.Ids);
+            _idTrusts = Platform.CreateArrayList(pubKey.IdTrusts);
+            _idSigs = Platform.CreateArrayList(pubKey.IdSigs);
 
             if (pubKey.SubSigs != null)
             {
-                _subSigs = Platform.CreateArrayList(pubKey.SubSigs.Count);
-                for (var i = 0; i != pubKey.SubSigs.Count; i++)
-                {
-                    this._subSigs.Add(pubKey.SubSigs[i]);
-                }
+                _subSigs = Platform.CreateArrayList(pubKey.SubSigs);
             }
 
             _fingerprint = pubKey.GetFingerprint();
@@ -178,23 +170,23 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             BitStrength = pubKey.BitStrength;
         }
 
-        internal PgpPublicKey(IPublicKeyPacket publicPk, TrustPacket trustPk, IList keySigs, IList ids, IList idTrusts, IList idSigs)
+        internal PgpPublicKey(IPublicKeyPacket publicPk, ITrustPacket trustPk, IList keySigs, IList ids, IList idTrusts, IList idSigs)
         {
-            this._publicPk = publicPk;
-            this._trustPk = trustPk;
-            this._keySigs = keySigs;
-            this._ids = ids;
-            this._idTrusts = idTrusts;
-            this._idSigs = idSigs;
+            _publicPk = publicPk;
+            _trustPk = trustPk;
+            _keySigs = keySigs;
+            _ids = ids;
+            _idTrusts = idTrusts;
+            _idSigs = idSigs;
 
             Init();
         }
 
         internal PgpPublicKey(IPublicKeyPacket publicPk, IList ids, IList idSigs)
         {
-            this._publicPk = publicPk;
-            this._ids = ids;
-            this._idSigs = idSigs;
+            _publicPk = publicPk;
+            _ids = ids;
+            _idSigs = idSigs;
             Init();
         }
 
@@ -230,12 +222,12 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             internal set { _publicPk = value; }
         }
 
-        public ITrustPacket TrustPaket 
+        public ITrustPacket TrustPaket
         {
             get { return _trustPk; }
         }
 
-        public IList KeySigs 
+        public IList KeySigs
         {
             get { return _keySigs; }
         }
@@ -299,9 +291,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             return (long)_publicPk.ValidDays * 24 * 60 * 60;
         }
 
-        private long GetExpirationTimeFromSig(
-            bool selfSigned,
-            int signatureType)
+        private long GetExpirationTimeFromSig(bool selfSigned, int signatureType)
         {
             foreach (PgpSignature sig in GetSignaturesOfType(signatureType))
             {
@@ -389,10 +379,10 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                         var elK = (ElGamalPublicBcpgKey)_publicPk.Key;
                         return new ElGamalPublicKeyParameters(elK.Y, new ElGamalParameters(elK.P, elK.G));
                     case PublicKeyAlgorithmTag.Ecdsa:
-                        var ecdsaK = (ECDSAPublicBcpgKey) _publicPk.Key;
+                        var ecdsaK = (ECDSAPublicBcpgKey)_publicPk.Key;
                         return new ECPublicKeyParameters(_publicPk.Algorithm.ToString(), ecdsaK.Point, ecdsaK.Oid);
                     case PublicKeyAlgorithmTag.Ecdh:
-                        var edhK = (ECDHPublicBcpgKey) _publicPk.Key;
+                        var edhK = (ECDHPublicBcpgKey)_publicPk.Key;
                         return new ECDHPublicKeyParameters(edhK.Point, edhK.Oid, edhK.HashAlgorithm, edhK.SymmetricKeyAlgorithm);
                     default:
                         throw new PgpException("unknown public key algorithm encountered");
@@ -453,13 +443,12 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <summary>Allows enumeration of any signatures associated with the passed in id.</summary>
         /// <param name="id">The ID to be matched.</param>
         /// <returns>An <c>IEnumerable</c> of <c>PgpSignature</c> objects.</returns>
-        public IEnumerable GetSignaturesForId(
-            string id)
+        public IEnumerable GetSignaturesForId(string id)
         {
             if (id == null)
                 throw new ArgumentNullException("id");
 
-            for (int i = 0; i != _ids.Count; i++)
+            for (var i = 0; i != _ids.Count; i++)
             {
                 if (id.Equals(_ids[i]))
                 {
@@ -491,7 +480,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <returns>An <c>IEnumerable</c> of <c>PgpSignature</c> objects.</returns>
         public IEnumerable GetSignaturesOfType(int signatureType)
         {
-            IList temp = Platform.CreateArrayList();
+            var temp = Platform.CreateArrayList();
 
             foreach (PgpSignature sig in GetSignatures())
             {
@@ -554,23 +543,23 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
                 for (var i = 0; i != _ids.Count; i++)
                 {
-                    var id = this._ids[i] as string;
+                    var id = _ids[i] as string;
                     if (id != null)
                     {
                         bcpgOut.WritePacket(new UserIdPacket(id));
                     }
                     else
                     {
-                        var v = (PgpUserAttributeSubpacketVector)this._ids[i];
+                        var v = (PgpUserAttributeSubpacketVector)_ids[i];
                         bcpgOut.WritePacket(new UserAttributePacket(v.ToSubpacketArray()));
                     }
 
-                    if (this._idTrusts[i] != null)
+                    if (_idTrusts[i] != null)
                     {
-                        bcpgOut.WritePacket((ContainedPacket)this._idTrusts[i]);
+                        bcpgOut.WritePacket((ContainedPacket)_idTrusts[i]);
                     }
 
-                    foreach (PgpSignature sig in (IList)this._idSigs[i])
+                    foreach (PgpSignature sig in (IList)_idSigs[i])
                     {
                         sig.Encode(bcpgOut);
                     }
@@ -695,9 +684,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <param name="key">The key the certifications are to be removed from.</param>
         /// <param name="id">The ID that is to be removed.</param>
         /// <returns>The re-certified key, or null if the ID was not found on the key.</returns>
-        public static IPgpPublicKey RemoveCertification(
-            IPgpPublicKey key,
-            string id)
+        public static IPgpPublicKey RemoveCertification(IPgpPublicKey key, string id)
         {
             return RemoveCert(key, id);
         }
