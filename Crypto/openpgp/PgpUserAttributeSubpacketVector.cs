@@ -26,14 +26,14 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 			return null;
         }
 
-		public IImageAttrib GetImageAttribute()
+		public IImageAttribute GetImageAttribute()
         {
             var p = GetSubpacket(UserAttributeSubpacketTag.ImageAttribute);
 
-            return p == null ? null : (IImageAttrib) p;
+		    return p as IImageAttribute;
         }
 
-        internal IUserAttributeSubpacket[] ToSubpacketArray()
+        public IUserAttributeSubpacket[] ToSubpacketArray()
         {
             return _packets;
         }

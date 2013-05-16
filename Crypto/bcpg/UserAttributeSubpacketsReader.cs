@@ -53,10 +53,20 @@ namespace Org.BouncyCastle.Bcpg
 			switch (type)
 			{
 				case UserAttributeSubpacketTag.ImageAttribute:
-					return new ImageAttrib(data);
+					return new ImageAttribute(data);
 
-                case UserAttributeSubpacketTag.SchmooseAttribute:
-                    return new SchmooseAttribute(data);			        
+                case UserAttributeSubpacketTag.Experimental_1:
+                case UserAttributeSubpacketTag.Experimental_2:
+                case UserAttributeSubpacketTag.Experimental_3:
+                case UserAttributeSubpacketTag.Experimental_4:
+                case UserAttributeSubpacketTag.Experimental_5:
+                case UserAttributeSubpacketTag.Experimental_6:
+                case UserAttributeSubpacketTag.Experimental_7:
+                case UserAttributeSubpacketTag.Experimental_8:
+                case UserAttributeSubpacketTag.Experimental_9:
+                case UserAttributeSubpacketTag.Experimental_10:
+                case UserAttributeSubpacketTag.Experimental_11:
+                    return new ExperimentalAttribute(type, data);
 
                 default:
                     return new UserAttributeSubpacket(type, data);
