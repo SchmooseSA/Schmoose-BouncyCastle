@@ -661,7 +661,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <param name="publicKey">New public key.</param>
         /// <returns>A new secret key.</returns>
         /// <exception cref="ArgumentException">If KeyId's do not match.</exception>
-        public static IPgpSecretKey ReplacePublicKey(IPgpSecretKey secretKey, IPgpPublicKey publicKey)
+        public static PgpSecretKey ReplacePublicKey(PgpSecretKey secretKey, IPgpPublicKey publicKey)
         {
             if (publicKey.KeyId != secretKey.KeyId)
                 throw new ArgumentException("KeyId's do not match");

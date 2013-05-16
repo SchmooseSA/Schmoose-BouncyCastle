@@ -43,7 +43,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         }
 
         /// <summary>Initialise the generator for signing.</summary>
-        public void InitSign(int sigType, IPgpPrivateKey key, ISecureRandom random)
+        public void InitSign(int sigType, IPgpPrivateKey key, SecureRandom random)
         {
             _privKey = key;
             _signatureType = sigType;

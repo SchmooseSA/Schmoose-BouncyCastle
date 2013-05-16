@@ -11,7 +11,7 @@ namespace Org.BouncyCastle.Bcpg
     public class UserAttributeSubpacket : IUserAttributeSubpacket
     {
         private readonly UserAttributeSubpacketTag _type;
-        private readonly byte[] _data;
+        private byte[] _data;
 
         internal UserAttributeSubpacket(UserAttributeSubpacketTag type, byte[] data)
         {
@@ -28,11 +28,18 @@ namespace Org.BouncyCastle.Bcpg
         * return the generic data making up the packet.
         */
         
+        [Obsolete("use Data")]
         public byte[] GetData()
         {
-            return _data;
+            return this.Data;
         }
 
+        public byte[] Data 
+        {
+            get { return _data; }
+            protected set { _data = value; }
+        }
+        
         public void Encode(Stream os)
         {
             var bodyLen = _data.Length + 1;
@@ -69,12 +76,12 @@ namespace Org.BouncyCastle.Bcpg
             var other = obj as UserAttributeSubpacket;
             if (other == null)
                 return false;
-            return _type == other.SubpacketType && Arrays.AreEqual(_data, other._data);
+            return _type == other.SubpacketType && Arrays.AreEqual(_data, other.Data);
         }
 
         public override int GetHashCode()
         {
-            return _type.GetHashCode() ^ Arrays.GetHashCode(this._data);
+            return _type.GetHashCode() ^ Arrays.GetHashCode(this.Data);
         }
     }
 }

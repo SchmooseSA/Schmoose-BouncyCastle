@@ -465,8 +465,7 @@
     <Compile Include="asn1\x9\X9ObjectIdentifiers.cs" />
     <Compile Include="bcpg\ArmoredInputStream.cs" />
     <Compile Include="bcpg\ArmoredOutputStream.cs" />
-    <Compile Include="bcpg\attr\ExperimentalAttribute.cs" />
-    <Compile Include="bcpg\attr\ImageAttribute.cs" />
+    <Compile Include="bcpg\attr\ImageAttrib.cs" />
     <Compile Include="bcpg\BcpgInputStream.cs" />
     <Compile Include="bcpg\BcpgObject.cs" />
     <Compile Include="bcpg\BcpgOutputStream.cs" />
@@ -498,6 +497,7 @@
     <Compile Include="bcpg\RsaPublicBcpgKey.cs" />
     <Compile Include="bcpg\RsaSecretBcpgKey.cs" />
     <Compile Include="bcpg\S2k.cs" />
+    <Compile Include="bcpg\attr\SchmooseAttribute.cs" />
     <Compile Include="bcpg\SecretKeyPacket.cs" />
     <Compile Include="bcpg\SecretSubkeyPacket.cs" />
     <Compile Include="bcpg\SignaturePacket.cs" />
