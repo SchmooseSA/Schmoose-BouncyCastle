@@ -36,7 +36,7 @@
     <!-- A reference to the entire .NET Framework is automatically included -->
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="bcpg\attr\IImageAttrib.cs" />
+    <Compile Include="bcpg\attr\IImageAttribute.cs" />
     <Compile Include="bcpg\HashAlgorithmTags.cs" />
     <Compile Include="bcpg\IBcpgKey.cs" />
     <Compile Include="bcpg\IBcpgObject.cs" />
