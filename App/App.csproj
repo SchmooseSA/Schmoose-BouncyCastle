@@ -55,10 +55,6 @@
       <Project>{d8418f0b-1125-406a-8306-0265410c6613}</Project>
       <Name>Crypto</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Interfaces\Interfaces.csproj">
-      <Project>{2fd27502-3833-4816-8fc2-5857b3e90777}</Project>
-      <Name>Interfaces</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Tests\Tests.csproj">
       <Project>{c9a32b71-5377-43eb-b9cd-5b93af005667}</Project>
       <Name>Tests</Name>

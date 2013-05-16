@@ -431,7 +431,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
             foreach (object o in _ids)
             {
-                if (o is PgpUserAttributeSubpacketVector)
+                if (o is IPgpUserAttributeSubpacketVector)
                 {
                     temp.Add(o);
                 }
@@ -550,7 +550,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                     }
                     else
                     {
-                        var v = (PgpUserAttributeSubpacketVector)_ids[i];
+                        var v = (IPgpUserAttributeSubpacketVector)_ids[i];
                         bcpgOut.WritePacket(new UserAttributePacket(v.ToSubpacketArray()));
                     }
 
@@ -630,10 +630,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <returns>
         /// The re-certified key.
         /// </returns>
-        public static PgpPublicKey AddCertification(
-            IPgpPublicKey key,
-            PgpUserAttributeSubpacketVector userAttributes,
-            PgpSignature certification)
+        public static PgpPublicKey AddCertification(IPgpPublicKey key, IPgpUserAttributeSubpacketVector userAttributes, PgpSignature certification)
         {
             return AddCert(key, userAttributes, certification);
         }
@@ -723,7 +720,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <param name="userAttributes">The user attributes that the certfication is to be removed from.</param>
         /// <param name="certification">The certification to be removed.</param>
         /// <returns>The re-certified key, or null if the certification was not found.</returns>
-        public static PgpPublicKey RemoveCertification(IPgpPublicKey key, PgpUserAttributeSubpacketVector userAttributes, PgpSignature certification)
+        public static PgpPublicKey RemoveCertification(IPgpPublicKey key, IPgpUserAttributeSubpacketVector userAttributes, PgpSignature certification)
         {
             return RemoveCert(key, userAttributes, certification);
         }
@@ -817,7 +814,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
                 if (!found)
                 {
-                    foreach (PgpUserAttributeSubpacketVector id in key.GetUserAttributes())
+                    foreach (IPgpUserAttributeSubpacketVector id in key.GetUserAttributes())
                     {
                         foreach (var sig in key.GetSignaturesForUserAttribute(id))
                         {

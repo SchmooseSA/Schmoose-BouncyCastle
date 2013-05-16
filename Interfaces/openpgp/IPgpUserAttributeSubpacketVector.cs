@@ -4,14 +4,14 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 {
     public interface IPgpUserAttributeSubpacketVector
     {
-        IUserAttributeSubpacket GetSubpacket(
-            UserAttributeSubpacketTag type);
+        IUserAttributeSubpacket GetSubpacket(UserAttributeSubpacketTag type);
 
-        IImageAttrib GetImageAttribute();
+        IImageAttribute GetImageAttribute();
 
-        bool Equals(
-            object obj);
+        bool Equals(object obj);
 
         int GetHashCode();
+
+        IUserAttributeSubpacket[] ToSubpacketArray();
     }
 }
