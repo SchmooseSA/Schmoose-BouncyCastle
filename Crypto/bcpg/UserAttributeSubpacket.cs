@@ -13,7 +13,7 @@ namespace Org.BouncyCastle.Bcpg
         private readonly UserAttributeSubpacketTag _type;
         private readonly byte[] _data;
 
-        internal UserAttributeSubpacket(UserAttributeSubpacketTag type, byte[] data)
+        public UserAttributeSubpacket(UserAttributeSubpacketTag type, byte[] data)
         {
             _type = type;
             _data = data;
