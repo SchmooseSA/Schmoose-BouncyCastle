@@ -37,7 +37,21 @@
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="**\*.cs" />
+    <Compile Include="asn1\**\*.cs" />
+    <Compile Include="bcpg\**\*.cs" />
+    <Compile Include="bzip2\**\*.cs" />
+    <Compile Include="cms\**\*.cs" />
+    <Compile Include="crypto\**\*.cs" />
+    <Compile Include="math\**\*.cs" />
+    <Compile Include="ocsp\**\*.cs" />
+    <Compile Include="openpgp\**\*.cs" />
+    <Compile Include="openssl\**\*.cs" />
+    <Compile Include="pkcs\**\*.cs" />
+    <Compile Include="pkix\**\*.cs" />
+    <Compile Include="security\**\*.cs" />
+    <Compile Include="tsp\**\*.cs" />
+    <Compile Include="util\**\*.cs" />
+    <Compile Include="x509\**\*.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Interfaces\BouncyCastle.Interfaces.iOS.csproj">
