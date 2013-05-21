@@ -644,7 +644,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             {
                 if (id.Equals(returnKey._ids[i]))
                 {
-                    sigList = (IList)returnKey._idSigs[i];
+                    sigList = (IList)returnKey.IdSigs[i];
                 }
             }
 
@@ -656,9 +656,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             {
                 sigList = Platform.CreateArrayList();
                 sigList.Add(certification);
-                returnKey._ids.Add(id);
-                returnKey._idTrusts.Add(null);
-                returnKey._idSigs.Add(sigList);
+                returnKey.Ids.Add(id);
+                returnKey.IdTrusts.Add(null);
+                returnKey.IdSigs.Add(sigList);
             }
 
             return returnKey;
@@ -697,9 +697,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                     continue;
 
                 found = true;
-                returnKey._ids.RemoveAt(i);
-                returnKey._idTrusts.RemoveAt(i);
-                returnKey._idSigs.RemoveAt(i);
+                returnKey.Ids.RemoveAt(i);
+                returnKey.IdTrusts.RemoveAt(i);
+                returnKey.IdSigs.RemoveAt(i);
             }
 
             return found ? returnKey : null;
@@ -735,7 +735,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 if (!id.Equals(returnKey._ids[i]))
                     continue;
 
-                var certs = (IList)returnKey._idSigs[i];
+                var certs = (IList)returnKey.IdSigs[i];
                 found = certs.Contains(certification);
                 if (found)
                 {
