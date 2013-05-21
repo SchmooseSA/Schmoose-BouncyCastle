@@ -55,10 +55,13 @@
     <Compile Include="bcpg\IRandom.cs" />
     <Compile Include="bcpg\IS2k.cs" />
     <Compile Include="bcpg\ISecretKeyPacket.cs" />
+    <Compile Include="bcpg\ISignatureSubpacket.cs" />
     <Compile Include="bcpg\ITrustPacket.cs" />
     <Compile Include="bcpg\IUserAttributeSubpacket.cs" />
     <Compile Include="bcpg\PacketTags.cs" />
     <Compile Include="bcpg\PublicKeyAlgorithmTags.cs" />
+    <Compile Include="bcpg\SignatureSubpacketTags.cs" />
+    <Compile Include="bcpg\sig\INotationData.cs" />
     <Compile Include="bcpg\SymmetricKeyAlgorithmTags.cs" />
     <Compile Include="bcpg\UserAttributeSubpacketTags.cs" />
     <Compile Include="crypto\IAsymmetricBlockCipher.cs" />
@@ -85,6 +88,8 @@
     <Compile Include="openpgp\IPgpPublicKeyRing.cs" />
     <Compile Include="openpgp\IPgpSecretKey.cs" />
     <Compile Include="openpgp\IPgpSecretKeyRing.cs" />
+    <Compile Include="openpgp\IPgpSignature.cs" />
+    <Compile Include="openpgp\IPgpSignatureSubpacketVector.cs" />
     <Compile Include="openpgp\IPgpUserAttributeSubpacketVector.cs" />
     <Compile Include="openpgp\IStreamGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

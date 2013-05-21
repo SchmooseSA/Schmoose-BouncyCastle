@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 
 using Org.BouncyCastle.Utilities;
@@ -9,18 +10,18 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
     {
         internal PgpKeyRing() { }
 
-        internal static TrustPacket ReadOptionalTrustPacket(BcpgInputStream bcpgInput)
+        internal static ITrustPacket ReadOptionalTrustPacket(BcpgInputStream bcpgInput)
         {
             return (bcpgInput.NextPacketTag() == PacketTag.Trust)
-                ? (TrustPacket)bcpgInput.ReadPacket()
+                ? (ITrustPacket)bcpgInput.ReadPacket()
                 : null;
         }
 
-        internal static IList ReadSignaturesAndTrust(BcpgInputStream bcpgInput)
+        internal static IList<IPgpSignature> ReadSignaturesAndTrust(BcpgInputStream bcpgInput)
         {
             try
             {
-                var sigList = Platform.CreateArrayList();
+                var sigList = Platform.CreateArrayList<IPgpSignature>();
 
                 while (bcpgInput.NextPacketTag() == PacketTag.Signature)
                 {
@@ -38,20 +39,20 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             }
         }
 
-        internal static void ReadUserIDs(BcpgInputStream bcpgInput, out IList ids, out IList idTrusts, out IList idSigs)
+        internal static void ReadUserIDs(BcpgInputStream bcpgInput, out IList ids, out IList<ITrustPacket> idTrusts, out IList<IList<IPgpSignature>> idSigs)
         {
             ids = Platform.CreateArrayList();
-            idTrusts = Platform.CreateArrayList();
-            idSigs = Platform.CreateArrayList();
+            idTrusts = Platform.CreateArrayList<ITrustPacket>();
+            idSigs = Platform.CreateArrayList<IList<IPgpSignature>>();
 
             while (bcpgInput.NextPacketTag() == PacketTag.UserId
                 || bcpgInput.NextPacketTag() == PacketTag.UserAttribute)
             {
                 var obj = bcpgInput.ReadPacket();
-                if (obj is UserIdPacket)
+                var userIdPacket = obj as UserIdPacket;
+                if (userIdPacket != null)
                 {
-                    var id = (UserIdPacket)obj;
-                    ids.Add(id.GetId());
+                    ids.Add(userIdPacket.GetId());
                 }
                 else
                 {
@@ -59,11 +60,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                     ids.Add(new PgpUserAttributeSubpacketVector(user.GetSubpackets()));
                 }
 
-                idTrusts.Add(
-                    ReadOptionalTrustPacket(bcpgInput));
+                idTrusts.Add(ReadOptionalTrustPacket(bcpgInput));
 
-                idSigs.Add(
-                    ReadSignaturesAndTrust(bcpgInput));
+                idSigs.Add(ReadSignaturesAndTrust(bcpgInput));
             }
         }
     }

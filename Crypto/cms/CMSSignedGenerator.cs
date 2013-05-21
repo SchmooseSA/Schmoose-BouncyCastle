@@ -181,14 +181,12 @@ namespace Org.BouncyCastle.Cms
 				:	new DerSet(attr.ToAsn1EncodableVector());
         }
 
-		public void AddCertificates(
-			IX509Store certStore)
+		public void AddCertificates(IX509Store certStore)
 		{
             CollectionUtilities.AddRange(_certs, CmsUtilities.GetCertificatesFromStore(certStore));
         }
 
-		public void AddCrls(
-			IX509Store crlStore)
+		public void AddCrls(IX509Store crlStore)
 		{
             CollectionUtilities.AddRange(_crls, CmsUtilities.GetCrlsFromStore(crlStore));
 		}

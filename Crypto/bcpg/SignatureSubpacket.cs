@@ -2,44 +2,40 @@ using System.IO;
 
 namespace Org.BouncyCastle.Bcpg
 {
-	/// <remarks>Basic type for a PGP Signature sub-packet.</remarks>
-    public class SignatureSubpacket
+    /// <remarks>Basic type for a PGP Signature sub-packet.</remarks>
+    public class SignatureSubpacket : ISignatureSubpacket
     {
-        private readonly SignatureSubpacketTag type;
-        private readonly bool critical;
+        private readonly SignatureSubpacketTag _type;
+        private readonly bool _critical;
 
-		internal readonly byte[] data;
+        internal readonly byte[] Data;
 
-		protected internal SignatureSubpacket(
-            SignatureSubpacketTag	type,
-            bool					critical,
-            byte[]					data)
+        protected internal SignatureSubpacket(SignatureSubpacketTag type, bool critical, byte[] data)
         {
-            this.type = type;
-            this.critical = critical;
-            this.data = data;
+            this._type = type;
+            this._critical = critical;
+            this.Data = data;
         }
 
-		public SignatureSubpacketTag SubpacketType
+        public SignatureSubpacketTag SubpacketType
         {
-			get { return type; }
+            get { return _type; }
         }
 
         public bool IsCritical()
         {
-            return critical;
+            return _critical;
         }
 
-		/// <summary>Return the generic data making up the packet.</summary>
+        /// <summary>Return the generic data making up the packet.</summary>
         public byte[] GetData()
         {
-            return (byte[]) data.Clone();
+            return (byte[])Data.Clone();
         }
 
-		public void Encode(
-            Stream os)
+        public void Encode(Stream os)
         {
-            int bodyLen = data.Length + 1;
+            var bodyLen = Data.Length + 1;
 
             if (bodyLen < 192)
             {
@@ -61,16 +57,16 @@ namespace Org.BouncyCastle.Bcpg
                 os.WriteByte((byte)bodyLen);
             }
 
-            if (critical)
+            if (_critical)
             {
-                os.WriteByte((byte)(0x80 | (int) type));
+                os.WriteByte((byte)(0x80 | (int)_type));
             }
             else
             {
-                os.WriteByte((byte) type);
+                os.WriteByte((byte)_type);
             }
 
-            os.Write(data, 0, data.Length);
+            os.Write(Data, 0, Data.Length);
         }
     }
 }

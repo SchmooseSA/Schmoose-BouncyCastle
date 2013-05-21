@@ -44,6 +44,9 @@
     <Compile Include="bcpg\IBcpgPublicKey.cs" />
     <Compile Include="bcpg\IContainedPacket.cs" />
     <Compile Include="bcpg\IPacket.cs" />
+    <Compile Include="bcpg\ISignatureSubpacket.cs" />
+    <Compile Include="bcpg\SignatureSubpacketTags.cs" />
+    <Compile Include="bcpg\sig\INotationData.cs" />
     <Compile Include="openpgp\IPgpSecretKeyRing.cs" />
     <Compile Include="bcpg\IPublicKeyPacket.cs" />
     <Compile Include="bcpg\IS2k.cs" />
@@ -77,6 +80,8 @@
     <Compile Include="openpgp\IPgpPublicKey.cs" />
     <Compile Include="openpgp\IPgpPublicKeyRing.cs" />
     <Compile Include="openpgp\IPgpSecretKey.cs" />
+    <Compile Include="openpgp\IPgpSignature.cs" />
+    <Compile Include="openpgp\IPgpSignatureSubpacketVector.cs" />
     <Compile Include="openpgp\IPgpUserAttributeSubpacketVector.cs" />
     <Compile Include="openpgp\IStreamGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

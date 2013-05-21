@@ -482,7 +482,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
 			PgpUserAttributeSubpacketVectorGenerator vGen = new PgpUserAttributeSubpacketVectorGenerator();
 
-			vGen.SetImageAttribute(ImageAttrib.Format.Jpeg, jpegImage);
+			vGen.SetImageAttribute(ImageAttribute.Format.Jpeg, jpegImage);
 
 			PgpUserAttributeSubpacketVector uVec = vGen.Generate();
 

@@ -42,7 +42,7 @@ namespace Org.BouncyCastle.Bcpg.Sig
 
         public bool IsRevocable()
         {
-            return data[0] != 0;
+            return Data[0] != 0;
         }
     }
 }

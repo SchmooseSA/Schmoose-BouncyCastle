@@ -32,12 +32,12 @@ namespace Org.BouncyCastle.Bcpg.Sig
 
         public int Depth
         {
-			get { return data[0] & 0xff; }
+			get { return Data[0] & 0xff; }
         }
 
         public int TrustAmount
         {
-			get { return data[1] & 0xff; }
+			get { return Data[1] & 0xff; }
         }
     }
 }

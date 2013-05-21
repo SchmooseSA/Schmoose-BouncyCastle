@@ -41,7 +41,7 @@ namespace Org.BouncyCastle.Bcpg.Sig
 
         public bool IsExportable()
         {
-            return data[0] != 0;
+            return Data[0] != 0;
         }
     }
 }

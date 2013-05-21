@@ -41,11 +41,11 @@ namespace Org.BouncyCastle.Bcpg.Sig
 
         public int[] GetPreferences()
         {
-            int[]    v = new int[data.Length];
+            int[]    v = new int[Data.Length];
 
             for (int i = 0; i != v.Length; i++)
             {
-                v[i] = data[i] & 0xff;
+                v[i] = Data[i] & 0xff;
             }
 
             return v;

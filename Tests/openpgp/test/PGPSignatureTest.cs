@@ -153,8 +153,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 				Fail("subkey binding verification failed.");
 			}
 
-			PgpSignatureSubpacketVector hashedPcks = sig.GetHashedSubPackets();
-			PgpSignatureSubpacketVector unhashedPcks = sig.GetUnhashedSubPackets();
+			var hashedPcks = sig.GetHashedSubPackets();
+            var unhashedPcks = sig.GetUnhashedSubPackets();
 
 			if (hashedPcks.Count != 6)
 			{
@@ -441,7 +441,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
 			if (sig.Version > 3)
 			{
-				PgpSignatureSubpacketVector v = sig.GetHashedSubPackets();
+				var v = sig.GetHashedSubPackets();
 
 				if (v.GetKeyExpirationTime() != 0)
 				{

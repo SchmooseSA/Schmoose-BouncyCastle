@@ -499,7 +499,6 @@
     <Compile Include="bcpg\SignaturePacket.cs" />
     <Compile Include="bcpg\SignatureSubpacket.cs" />
     <Compile Include="bcpg\SignatureSubpacketsReader.cs" />
-    <Compile Include="bcpg\SignatureSubpacketTags.cs" />
     <Compile Include="bcpg\sig\EmbeddedSignature.cs" />
     <Compile Include="bcpg\sig\Exportable.cs" />
     <Compile Include="bcpg\sig\IssuerKeyId.cs" />

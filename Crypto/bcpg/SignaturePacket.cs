@@ -18,8 +18,8 @@ namespace Org.BouncyCastle.Bcpg
         private readonly HashAlgorithmTag _hashAlgorithm;
         private readonly MPInteger[] _signature;
         private readonly byte[] _fingerprint;
-        private readonly SignatureSubpacket[] _hashedData;
-        private readonly SignatureSubpacket[] _unhashedData;
+        private readonly ISignatureSubpacket[] _hashedData;
+        private readonly ISignatureSubpacket[] _unhashedData;
         private readonly byte[] _signatureEncoding;
 
         internal SignaturePacket(BcpgInputStream bcpgIn)
@@ -64,7 +64,7 @@ namespace Org.BouncyCastle.Bcpg
                         using (var hashedStream = new MemoryStream(hashed, false))
                         {
                             var sIn = new SignatureSubpacketsParser(hashedStream);
-                            var v = Platform.CreateArrayList<SignatureSubpacket>();
+                            var v = Platform.CreateArrayList<ISignatureSubpacket>();
 
                             SignatureSubpacket sub;
                             while ((sub = sIn.ReadPacket()) != null)
@@ -177,8 +177,8 @@ namespace Org.BouncyCastle.Bcpg
             long keyId,
             PublicKeyAlgorithmTag keyAlgorithm,
             HashAlgorithmTag hashAlgorithm,
-            SignatureSubpacket[] hashedData,
-            SignatureSubpacket[] unhashedData,
+            ISignatureSubpacket[] hashedData,
+            ISignatureSubpacket[] unhashedData,
             byte[] fingerprint,
             MPInteger[] signature)
             : this(4, signatureType, keyId, keyAlgorithm, hashAlgorithm, hashedData, unhashedData, fingerprint, signature)
@@ -214,8 +214,8 @@ namespace Org.BouncyCastle.Bcpg
             long keyId,
             PublicKeyAlgorithmTag keyAlgorithm,
             HashAlgorithmTag hashAlgorithm,
-            SignatureSubpacket[] hashedData,
-            SignatureSubpacket[] unhashedData,
+            ISignatureSubpacket[] hashedData,
+            ISignatureSubpacket[] unhashedData,
             byte[] fingerprint,
             MPInteger[] signature)
         {
@@ -369,12 +369,12 @@ namespace Org.BouncyCastle.Bcpg
             }
         }
 
-        public SignatureSubpacket[] GetHashedSubPackets()
+        public ISignatureSubpacket[] GetHashedSubPackets()
         {
             return _hashedData;
         }
 
-        public SignatureSubpacket[] GetUnhashedSubPackets()
+        public ISignatureSubpacket[] GetUnhashedSubPackets()
         {
             return _unhashedData;
         }
@@ -438,7 +438,7 @@ namespace Org.BouncyCastle.Bcpg
             pOut.Write(data);
         }
 
-        private static byte[] GetEncodedSubpackets(IEnumerable<SignatureSubpacket> ps)
+        private static byte[] GetEncodedSubpackets(IEnumerable<ISignatureSubpacket> ps)
         {
             using (var sOut = new MemoryStream())
             {

@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using Org.BouncyCastle.Crypto;
 
@@ -56,15 +57,15 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         ITrustPacket TrustPaket { get; }
 
-        IList KeySigs { get; }
+        IList<IPgpSignature> KeySigs { get; }
 
         IList Ids { get; }
 
-        IList IdTrusts { get; }
+        IList<ITrustPacket> IdTrusts { get; }
 
-        IList IdSigs { get; }
+        IList<IList<IPgpSignature>> IdSigs { get; }
 
-        IList SubSigs { get; }
+        IList<IPgpSignature> SubSigs { get; }
 
         /// <summary>The strength of the key in bits.</summary>
         int BitStrength { get; }
@@ -90,34 +91,30 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         /// <summary>Allows enumeration of any user attribute vectors associated with the key.</summary>
         /// <returns>An <c>IEnumerable</c> of <c>PgpUserAttributeSubpacketVector</c> objects.</returns>
-        IEnumerable GetUserAttributes();
+        IEnumerable<IPgpUserAttributeSubpacketVector> GetUserAttributes();
 
         /// <summary>Allows enumeration of any signatures associated with the passed in id.</summary>
         /// <param name="id">The ID to be matched.</param>
         /// <returns>An <c>IEnumerable</c> of <c>PgpSignature</c> objects.</returns>
-        IEnumerable GetSignaturesForId(
-            string id);
+        IEnumerable<IPgpSignature> GetSignaturesForId(string id);
 
         /// <summary>Allows enumeration of signatures associated with the passed in user attributes.</summary>
         /// <param name="userAttributes">The vector of user attributes to be matched.</param>
         /// <returns>An <c>IEnumerable</c> of <c>PgpSignature</c> objects.</returns>
-        IEnumerable GetSignaturesForUserAttribute(
-            IPgpUserAttributeSubpacketVector userAttributes);
+        IEnumerable<IPgpSignature> GetSignaturesForUserAttribute(IPgpUserAttributeSubpacketVector userAttributes);
 
         /// <summary>Allows enumeration of signatures of the passed in type that are on this key.</summary>
         /// <param name="signatureType">The type of the signature to be returned.</param>
         /// <returns>An <c>IEnumerable</c> of <c>PgpSignature</c> objects.</returns>
-        IEnumerable GetSignaturesOfType(
-            int signatureType);
+        IEnumerable<IPgpSignature> GetSignaturesOfType(int signatureType);
 
         /// <summary>Allows enumeration of all signatures/certifications associated with this key.</summary>
         /// <returns>An <c>IEnumerable</c> with all signatures/certifications.</returns>
-        IEnumerable GetSignatures();
+        IEnumerable<IPgpSignature> GetSignatures();
 
         byte[] GetEncoded();
 
-        void Encode(
-            Stream outStr);
+        void Encode(Stream outStr);
 
         /// <summary>Check whether this (sub)key has a revocation signature on it.</summary>
         /// <returns>True, if this (sub)key has been revoked.</returns>

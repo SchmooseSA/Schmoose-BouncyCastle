@@ -10,7 +10,7 @@ using Org.BouncyCastle.Utilities.Date;
 namespace Org.BouncyCastle.Bcpg.OpenPgp
 {
     /// <remarks>A PGP signature object.</remarks>
-    public class PgpSignature
+    public class PgpSignature : IPgpSignature
     {
         public const int BinaryDocument = 0x00;
         public const int CanonicalTextDocument = 0x01;
@@ -31,7 +31,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         private readonly SignaturePacket _sigPck;
         private readonly int _signatureType;
-        private readonly TrustPacket _trustPck;
+        private readonly ITrustPacket _trustPck;
 
         private ISigner _sig;
         private byte _lastb; // Initial value anything but '\r'
@@ -60,7 +60,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <param name="sigPacket">The sig packet.</param>
         /// <param name="trustPacket">The trust packet.</param>
         /// <exception cref="System.ArgumentNullException">sigPacket</exception>
-        internal PgpSignature(SignaturePacket sigPacket, TrustPacket trustPacket)
+        internal PgpSignature(SignaturePacket sigPacket, ITrustPacket trustPacket)
         {
             if (sigPacket == null)
                 throw new ArgumentNullException("sigPacket");
@@ -257,7 +257,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <param name="userAttributes">User attributes the key was stored under.</param>
         /// <param name="key">The key to be verified.</param>
         /// <returns>True, if the signature matches, false otherwise.</returns>
-        public bool VerifyCertification(PgpUserAttributeSubpacketVector userAttributes, IPgpPublicKey key)
+        public bool VerifyCertification(IPgpUserAttributeSubpacketVector userAttributes, IPgpPublicKey key)
         {
             UpdateWithPublicKey(key);
 
@@ -410,7 +410,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// Gets the hashed sub packets.
         /// </summary>
         /// <returns></returns>
-        public PgpSignatureSubpacketVector GetHashedSubPackets()
+        public IPgpSignatureSubpacketVector GetHashedSubPackets()
         {
             return CreateSubpacketVector(_sigPck.GetHashedSubPackets());
         }
@@ -419,7 +419,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// Gets the unhashed sub packets.
         /// </summary>
         /// <returns></returns>
-        public PgpSignatureSubpacketVector GetUnhashedSubPackets()
+        public IPgpSignatureSubpacketVector GetUnhashedSubPackets()
         {
             return CreateSubpacketVector(_sigPck.GetUnhashedSubPackets());
         }
@@ -429,7 +429,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// </summary>
         /// <param name="pcks">The PCKS.</param>
         /// <returns></returns>
-        private static PgpSignatureSubpacketVector CreateSubpacketVector(SignatureSubpacket[] pcks)
+        private static IPgpSignatureSubpacketVector CreateSubpacketVector(ISignatureSubpacket[] pcks)
         {
             return pcks == null ? null : new PgpSignatureSubpacketVector(pcks);
         }

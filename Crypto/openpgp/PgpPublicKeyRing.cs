@@ -47,7 +47,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             // direct signatures and revocations
             var keySigs = ReadSignaturesAndTrust(bcpgInput);
 
-            IList ids, idTrusts, idSigs;
+            IList ids;
+            IList<ITrustPacket> idTrusts;
+            IList<IList<IPgpSignature>> idSigs;
             ReadUserIDs(bcpgInput, out ids, out idTrusts, out idSigs);
 
             _keys.Add(new PgpPublicKey(pubPk, trustPk, keySigs, ids, idTrusts, idSigs));

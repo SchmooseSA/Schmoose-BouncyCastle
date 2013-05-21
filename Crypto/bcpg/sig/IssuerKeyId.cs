@@ -45,14 +45,14 @@ namespace Org.BouncyCastle.Bcpg.Sig
         {
 			get
 			{
-				long keyId = ((long)(data[0] & 0xff) << 56)
-					| ((long)(data[1] & 0xff) << 48)
-					| ((long)(data[2] & 0xff) << 40)
-					| ((long)(data[3] & 0xff) << 32)
-					| ((long)(data[4] & 0xff) << 24)
-					| ((long)(data[5] & 0xff) << 16)
-					| ((long)(data[6] & 0xff) << 8)
-					| ((long)data[7] & 0xff);
+				long keyId = ((long)(Data[0] & 0xff) << 56)
+					| ((long)(Data[1] & 0xff) << 48)
+					| ((long)(Data[2] & 0xff) << 40)
+					| ((long)(Data[3] & 0xff) << 32)
+					| ((long)(Data[4] & 0xff) << 24)
+					| ((long)(Data[5] & 0xff) << 16)
+					| ((long)(Data[6] & 0xff) << 8)
+					| ((long)Data[7] & 0xff);
 
 				return keyId;
 			}

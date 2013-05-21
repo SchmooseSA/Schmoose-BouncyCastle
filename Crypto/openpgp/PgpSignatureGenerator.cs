@@ -13,7 +13,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
     // TODO Should be able to implement ISigner?
     public class PgpSignatureGenerator
     {
-        private static readonly SignatureSubpacket[] _emptySignatureSubpackets = new SignatureSubpacket[0];
+        private static readonly ISignatureSubpacket[] _emptySignatureSubpackets = new ISignatureSubpacket[0];
 
         private readonly PublicKeyAlgorithmTag _keyAlgorithm;
         private readonly HashAlgorithmTag _hashAlgorithm;
@@ -23,8 +23,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         private int _signatureType;
         private byte _lastb;
 
-        private SignatureSubpacket[] _unhashed = _emptySignatureSubpackets;
-        private SignatureSubpacket[] _hashed = _emptySignatureSubpackets;
+        private ISignatureSubpacket[] _unhashed = _emptySignatureSubpackets;
+        private ISignatureSubpacket[] _hashed = _emptySignatureSubpackets;
 
         /// <summary>Create a generator for the passed in keyAlgorithm and hashAlgorithm codes.</summary>
         public PgpSignatureGenerator(PublicKeyAlgorithmTag keyAlgorithm, HashAlgorithmTag hashAlgorithm)
@@ -137,14 +137,14 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             }
         }
 
-        public void SetHashedSubpackets(PgpSignatureSubpacketVector hashedPackets)
+        public void SetHashedSubpackets(IPgpSignatureSubpacketVector hashedPackets)
         {
             _hashed = hashedPackets == null
                 ? _emptySignatureSubpackets
                 : hashedPackets.ToSubpacketArray();
         }
 
-        public void SetUnhashedSubpackets(PgpSignatureSubpacketVector unhashedPackets)
+        public void SetUnhashedSubpackets(IPgpSignatureSubpacketVector unhashedPackets)
         {
             _unhashed = unhashedPackets == null
                 ? _emptySignatureSubpackets
@@ -161,7 +161,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <summary>Return a signature object containing the current signature state.</summary>
         public PgpSignature Generate()
         {
-            SignatureSubpacket[] hPkts = _hashed, unhPkts = _unhashed;
+            ISignatureSubpacket[] hPkts = _hashed, unhPkts = _unhashed;
             if (!PacketPresent(_hashed, SignatureSubpacketTag.CreationTime))
             {
                 hPkts = InsertSubpacket(hPkts, new SignatureCreationTime(false, DateTime.UtcNow));
@@ -350,7 +350,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <param name="packets">The packets.</param>
         /// <param name="type">The type.</param>
         /// <returns></returns>
-        private static bool PacketPresent(SignatureSubpacket[] packets, SignatureSubpacketTag type)
+        private static bool PacketPresent(ISignatureSubpacket[] packets, SignatureSubpacketTag type)
         {
             for (var i = 0; i != packets.Length; i++)
             {
@@ -369,7 +369,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <param name="packets">The packets.</param>
         /// <param name="subpacket">The subpacket.</param>
         /// <returns></returns>
-        private static SignatureSubpacket[] InsertSubpacket(SignatureSubpacket[] packets, SignatureSubpacket subpacket)
+        private static SignatureSubpacket[] InsertSubpacket(ISignatureSubpacket[] packets, SignatureSubpacket subpacket)
         {
             var tmp = new SignatureSubpacket[packets.Length + 1];
             tmp[0] = subpacket;

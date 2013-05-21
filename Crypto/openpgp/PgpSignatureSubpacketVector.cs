@@ -6,16 +6,16 @@ using Org.BouncyCastle.Bcpg.Sig;
 namespace Org.BouncyCastle.Bcpg.OpenPgp
 {
     /// <remarks>Container for a list of signature subpackets.</remarks>
-    public class PgpSignatureSubpacketVector
+    public class PgpSignatureSubpacketVector : IPgpSignatureSubpacketVector
     {
-        private readonly SignatureSubpacket[] _packets;
+        private readonly ISignatureSubpacket[] _packets;
 
-        internal PgpSignatureSubpacketVector(SignatureSubpacket[] packets)
+        internal PgpSignatureSubpacketVector(ISignatureSubpacket[] packets)
         {
             _packets = packets;
         }
 
-        public SignatureSubpacket GetSubpacket(SignatureSubpacketTag type)
+        public ISignatureSubpacket GetSubpacket(SignatureSubpacketTag type)
         {
             for (var i = 0; i != _packets.Length; i++)
             {
@@ -44,15 +44,15 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
          * @param type subpacket type code
          * @return an array of zero or more matching subpackets.
          */
-        public SignatureSubpacket[] GetSubpackets(SignatureSubpacketTag type)
+        public ISignatureSubpacket[] GetSubpackets(SignatureSubpacketTag type)
         {
             return _packets.Where(t => t.SubpacketType == type).ToArray();
         }
 
-        public NotationData[] GetNotationDataOccurences()
+        public INotationData[] GetNotationDataOccurences()
         {
             var notations = GetSubpackets(SignatureSubpacketTag.NotationData);
-            var vals = new NotationData[notations.Length];
+            var vals = new INotationData[notations.Length];
 
             for (var i = 0; i < notations.Length; i++)
             {
@@ -173,7 +173,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             get { return _packets.Length; }
         }
 
-        internal SignatureSubpacket[] ToSubpacketArray()
+        public ISignatureSubpacket[] ToSubpacketArray()
         {
             return _packets;
         }

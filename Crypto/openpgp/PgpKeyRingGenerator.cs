@@ -159,7 +159,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 sGen.SetHashedSubpackets(hashedPackets);
                 sGen.SetUnhashedSubpackets(unhashedPackets);
 
-                var subSigs = Platform.CreateArrayList();
+                var subSigs = Platform.CreateArrayList<IPgpSignature>();
                 subSigs.Add(sGen.GenerateCertification(_masterKey.PublicKey, keyPair.PublicKey));
 
                 _keys.Add(new PgpSecretKey(keyPair.PrivateKey, new PgpPublicKey(keyPair.PublicKey, null, subSigs), _encAlgorithm, _passPhrase, _useSha1, _rand));

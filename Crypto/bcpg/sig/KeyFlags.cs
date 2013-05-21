@@ -62,9 +62,9 @@ namespace Org.BouncyCastle.Bcpg.Sig
 			{
 				int flags = 0;
 
-				for (int i = 0; i != data.Length; i++)
+				for (int i = 0; i != Data.Length; i++)
 				{
-					flags |= (data[i] & 0xff) << (i * 8);
+					flags |= (Data[i] & 0xff) << (i * 8);
 				}
 
 				return flags;

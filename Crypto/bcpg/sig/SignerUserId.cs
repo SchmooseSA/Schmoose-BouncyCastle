@@ -1,52 +1,42 @@
-using System;
-
-
-
 namespace Org.BouncyCastle.Bcpg.Sig
 {
     /**
     * packet giving the User ID of the signer.
     */
-    public class SignerUserId
-        : SignatureSubpacket
+    public class SignerUserId : SignatureSubpacket
     {
-        private static byte[] UserIdToBytes(
-            string id)
+        private static byte[] UserIdToBytes(string id)
         {
-            byte[] idData = new byte[id.Length];
+            var idData = new byte[id.Length];
 
-            for (int i = 0; i != id.Length; i++)
+            for (var i = 0; i != id.Length; i++)
             {
                 idData[i] = (byte)id[i];
             }
 
-			return idData;
+            return idData;
         }
 
-        public SignerUserId(
-            bool	critical,
-            byte[]	data)
+        public SignerUserId(bool critical, byte[] data)
             : base(SignatureSubpacketTag.SignerUserId, critical, data)
-		{
-		}
-
-		public SignerUserId(
-            bool	critical,
-            string	userId)
-            : base(SignatureSubpacketTag.SignerUserId, critical, UserIdToBytes(userId))
-		{
+        {
         }
 
-		public string GetId()
+        public SignerUserId(bool critical, string userId)
+            : base(SignatureSubpacketTag.SignerUserId, critical, UserIdToBytes(userId))
         {
-            char[] chars = new char[data.Length];
+        }
 
-			for (int i = 0; i != chars.Length; i++)
+        public string GetId()
+        {
+            var chars = new char[Data.Length];
+
+            for (var i = 0; i != chars.Length; i++)
             {
-                chars[i] = (char)(data[i] & 0xff);
+                chars[i] = (char)(Data[i] & 0xff);
             }
 
-			return new string(chars);
+            return new string(chars);
         }
     }
 }

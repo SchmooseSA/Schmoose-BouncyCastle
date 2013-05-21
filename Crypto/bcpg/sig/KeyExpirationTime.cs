@@ -46,8 +46,8 @@ namespace Org.BouncyCastle.Bcpg.Sig
         {
 			get
 			{
-				long time = ((long)(data[0] & 0xff) << 24) | ((long)(data[1] & 0xff) << 16)
-					| ((long)(data[2] & 0xff) << 8) | ((long)data[3] & 0xff);
+				long time = ((long)(Data[0] & 0xff) << 24) | ((long)(Data[1] & 0xff) << 16)
+					| ((long)(Data[2] & 0xff) << 8) | ((long)Data[3] & 0xff);
 
 				return time;
 			}

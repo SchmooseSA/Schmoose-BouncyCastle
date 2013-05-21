@@ -37,7 +37,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
 					Console.WriteLine("Signature date is: "
 						+ sig.GetHashedSubPackets().GetSignatureCreationTime());
 
-					NotationData[] data = sig.GetHashedSubPackets().GetNotationDataOccurences();
+                    var data = sig.GetHashedSubPackets().GetNotationDataOccurences();
 
 					for (int i = 0; i < data.Length; i++)
 					{
