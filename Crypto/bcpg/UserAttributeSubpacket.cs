@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 
 using Org.BouncyCastle.Utilities;
@@ -31,6 +30,11 @@ namespace Org.BouncyCastle.Bcpg
         public byte[] GetData()
         {
             return _data;
+        }
+
+        public byte[] Data
+        {
+            get { return _data; }
         }
 
         public void Encode(Stream os)

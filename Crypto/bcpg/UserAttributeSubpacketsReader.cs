@@ -1,5 +1,8 @@
+using System;
+using System.Collections.Generic;
 using System.IO;
 using Org.BouncyCastle.Bcpg.Attr;
+using Org.BouncyCastle.Utilities;
 using Org.BouncyCastle.Utilities.IO;
 
 namespace Org.BouncyCastle.Bcpg
@@ -9,6 +12,18 @@ namespace Org.BouncyCastle.Bcpg
 	*/
 	public class UserAttributeSubpacketsParser
 	{
+	    private static readonly IDictionary<UserAttributeSubpacketTag, Type> _userPackets;
+
+        static UserAttributeSubpacketsParser()
+        {
+            _userPackets = Platform.CreateHashtable<UserAttributeSubpacketTag, Type>();
+        }
+
+        public static void Register<T>(UserAttributeSubpacketTag tag) where T : UserAttributeSubpacket
+        {
+            _userPackets[tag] = typeof (T);
+        }
+
 		private readonly Stream _input;
 
 		public UserAttributeSubpacketsParser(Stream input)
@@ -38,9 +53,9 @@ namespace Org.BouncyCastle.Bcpg
 			}
 			else
 			{
-				// TODO Error?
+			    throw new InvalidDataException("Invalid packet length byte detected: " + bodyLen);
 			}
-
+			
 			var tag = _input.ReadByte();
 			if (tag < 0)
 				throw new EndOfStreamException("unexpected EOF reading user attribute sub packet");
@@ -49,7 +64,13 @@ namespace Org.BouncyCastle.Bcpg
 			if (Streams.ReadFully(_input, data) < data.Length)
 				throw new EndOfStreamException();
 
-			var type = (UserAttributeSubpacketTag) tag;
+            var type = (UserAttributeSubpacketTag)tag;
+
+		    Type userAttributeSubpacketType;
+            if (_userPackets.TryGetValue(type, out userAttributeSubpacketType))
+                return (UserAttributeSubpacket)Activator.CreateInstance(userAttributeSubpacketType, new object[] { data });            
+
+			
 			switch (type)
 			{
 				case UserAttributeSubpacketTag.ImageAttribute:

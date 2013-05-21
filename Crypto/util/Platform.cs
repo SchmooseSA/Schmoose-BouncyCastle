@@ -167,14 +167,31 @@ namespace Org.BouncyCastle.Utilities
         {
             return new List<T>();
         }
+        
         internal static IList<T> CreateArrayList<T>(int capacity)
         {
             return new List<T>(capacity);
         }
+        
         internal static IList<T> CreateArrayList<T>(IEnumerable<T> collection)
         {
             return new List<T>(collection);
-        }        
+        }
+
+        internal static IDictionary<TKey, TValue> CreateHashtable<TKey, TValue>()
+        {
+            return new Dictionary<TKey, TValue>();
+        }
+        
+        internal static IDictionary<TKey, TValue> CreateHashtable<TKey, TValue>(int capacity)
+        {
+            return new Dictionary<TKey, TValue>(capacity);
+        }
+
+        internal static IDictionary<TKey, TValue> CreateHashtable<TKey, TValue>(IDictionary<TKey, TValue> dictionary)
+        {
+            return new Dictionary<TKey, TValue>(dictionary);
+        }
 
         internal static readonly string NewLine = GetNewLine();
 	}

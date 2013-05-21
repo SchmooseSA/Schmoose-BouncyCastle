@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 
 namespace Org.BouncyCastle.Bcpg
@@ -6,7 +7,10 @@ namespace Org.BouncyCastle.Bcpg
     {
         UserAttributeSubpacketTag SubpacketType { get; }
 
+        [Obsolete("Use Data property")]
         byte[] GetData();
+
+        byte[] Data { get; }
 
         void Encode(Stream os);
 
