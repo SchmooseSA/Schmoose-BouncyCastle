@@ -1,21 +1,15 @@
-using System;
-
-
-
 namespace Org.BouncyCastle.Bcpg.Sig
 {
     /**
     * packet giving signature creation time.
     */
-    public class PreferredAlgorithms
-        : SignatureSubpacket
+    public class PreferredAlgorithms : SignatureSubpacket
     {
-        private static byte[] IntToByteArray(
-            int[]    v)
+        private static byte[] IntToByteArray(int[] v)
         {
-            byte[]    data = new byte[v.Length];
+            var data = new byte[v.Length];
 
-            for (int i = 0; i != v.Length; i++)
+            for (var i = 0; i != v.Length; i++)
             {
                 data[i] = (byte)v[i];
             }
@@ -23,27 +17,21 @@ namespace Org.BouncyCastle.Bcpg.Sig
             return data;
         }
 
-        public PreferredAlgorithms(
-            SignatureSubpacketTag        type,
-            bool    critical,
-            byte[]     data)
+        public PreferredAlgorithms(SignatureSubpacketTag type,bool critical,byte[] data)
             : base(type, critical, data)
         {
         }
 
-        public PreferredAlgorithms(
-            SignatureSubpacketTag        type,
-            bool    critical,
-            int[]      preferences)
+        public PreferredAlgorithms(SignatureSubpacketTag type,bool critical,int[] preferences)
             : base(type, critical, IntToByteArray(preferences))
         {
         }
 
         public int[] GetPreferences()
         {
-            int[]    v = new int[Data.Length];
+            var v = new int[Data.Length];
 
-            for (int i = 0; i != v.Length; i++)
+            for (var i = 0; i != v.Length; i++)
             {
                 v[i] = Data[i] & 0xff;
             }

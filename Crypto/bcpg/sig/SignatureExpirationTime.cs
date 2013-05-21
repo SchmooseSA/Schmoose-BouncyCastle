@@ -1,19 +1,13 @@
-using System;
-
-
-
 namespace Org.BouncyCastle.Bcpg.Sig
 {
     /**
     * packet giving signature expiration time.
     */
-    public class SignatureExpirationTime
-        : SignatureSubpacket
+    public class SignatureExpirationTime : SignatureSubpacket
     {
-        protected static byte[] TimeToBytes(
-            long      t)
+        protected static byte[] TimeToBytes(long t)
         {
-            byte[]    data = new byte[4];
+            var data = new byte[4];
 
             data[0] = (byte)(t >> 24);
             data[1] = (byte)(t >> 16);
@@ -23,16 +17,12 @@ namespace Org.BouncyCastle.Bcpg.Sig
             return data;
         }
 
-        public SignatureExpirationTime(
-            bool    critical,
-            byte[]     data)
+        public SignatureExpirationTime(bool critical,byte[] data)
             : base(SignatureSubpacketTag.ExpireTime, critical, data)
-    {
+        {
         }
 
-        public SignatureExpirationTime(
-            bool    critical,
-            long       seconds)
+        public SignatureExpirationTime(bool critical,long seconds)
             : base(SignatureSubpacketTag.ExpireTime, critical, TimeToBytes(seconds))
         {
         }
@@ -44,10 +34,8 @@ namespace Org.BouncyCastle.Bcpg.Sig
         {
             get
             {
-                long time = ((long)(Data[0] & 0xff) << 24) | ((long)(Data[1] & 0xff) << 16)
-                    | ((long)(Data[2] & 0xff) << 8) | ((long)Data[3] & 0xff);
-
-                return time;
+                return ((long)(Data[0] & 0xff) << 24) | ((long)(Data[1] & 0xff) << 16)
+                       | ((long)(Data[2] & 0xff) << 8) | ((long)Data[3] & 0xff);
             }
         }
     }
