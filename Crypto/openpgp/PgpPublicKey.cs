@@ -611,12 +611,12 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <returns>
         /// The re-certified key.
         /// </returns>
-        public static PgpPublicKey AddCertification(IPgpPublicKey key, IPgpUserAttributeSubpacketVector userAttributes, PgpSignature certification)
+        public static PgpPublicKey AddCertification(IPgpPublicKey key, IPgpUserAttributeSubpacketVector userAttributes, IPgpSignature certification)
         {
             return AddCert(key, userAttributes, certification);
         }
 
-        private static PgpPublicKey AddCert(IPgpPublicKey key, object id, PgpSignature certification)
+        private static PgpPublicKey AddCert(IPgpPublicKey key, object id, IPgpSignature certification)
         {
             var returnKey = new PgpPublicKey(key);
             IList<IPgpSignature> sigList = null;
