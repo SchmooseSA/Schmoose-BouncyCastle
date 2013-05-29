@@ -756,7 +756,7 @@ namespace Org.BouncyCastle.Asn1.X509
         [Obsolete("Use 'GetOidList' instead")]
         public ArrayList GetOids()
         {
-            return new ArrayList(ordering);
+            return new ArrayList(_ordering);
         }
 #endif
 
@@ -776,7 +776,7 @@ namespace Org.BouncyCastle.Asn1.X509
         [Obsolete("Use 'GetValueList' instead")]
 		public ArrayList GetValues()
 		{
-            return new ArrayList(values);
+            return new ArrayList(_values);
 		}
 #endif
 

@@ -1,5 +1,7 @@
 using System;
 using System.Threading;
+using Org.BouncyCastle.Utilities;
+
 #if NETFX_CORE
 using Org.BouncyCastle.Utilities;
 using Windows.System.Threading;
@@ -49,7 +51,7 @@ namespace Org.BouncyCastle.Crypto.Prng
 		        ThreadPool.RunAsync(this.Run);
 		   
 #else
-				ThreadPool.QueueUserWorkItem(new WaitCallback(Run));
+				ThreadPool.QueueUserWorkItem(Run);
 #endif
 				for (int i = 0; i < end; i++)
 				{

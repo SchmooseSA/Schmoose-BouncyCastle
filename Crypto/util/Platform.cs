@@ -175,12 +175,12 @@ namespace Org.BouncyCastle.Utilities
 
         internal static string StringToLower(string s)
         {
-            return s.ToLower(CultureInfo.InvariantCulture)
+            return s.ToLower(CultureInfo.InvariantCulture);
         }
 
         internal static string StringToUpper(string s)
         {
-            return s.ToUpper(CultureInfo.InvariantCulture)
+            return s.ToUpper(CultureInfo.InvariantCulture);
         }
 #endif
 
@@ -225,7 +225,7 @@ namespace Org.BouncyCastle.Utilities
 #else
         internal static void ThreadSleep(int ms)
         {
-            Thread.Sleep(ms)
+            Thread.Sleep(ms);
         }
 #endif
 
