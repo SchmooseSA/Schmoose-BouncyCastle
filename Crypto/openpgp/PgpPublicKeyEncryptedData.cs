@@ -1,10 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using Org.BouncyCastle.Crypto;
-using Org.BouncyCastle.Crypto.Agreement;
-using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.IO;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Math;
@@ -18,6 +15,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
     public class PgpPublicKeyEncryptedData : PgpEncryptedData
     {
         private readonly PublicKeyEncSessionPacket _keyData;
+        
 
         internal PgpPublicKeyEncryptedData(PublicKeyEncSessionPacket keyData, InputStreamPacket encData)
             : base(encData)

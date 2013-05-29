@@ -81,8 +81,6 @@ namespace Org.BouncyCastle.crypto.engines
 
         private byte[] Encrypt(byte[] input, int offset, int size)
         {
-            
-
             var buffer = input;
             var tmp = 8 + size - 1;
             var newSize = tmp - (tmp % 8);
