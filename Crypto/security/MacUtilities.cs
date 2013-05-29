@@ -102,7 +102,7 @@ namespace Org.BouncyCastle.Security
 		public static IMac GetMac(
 			string algorithm)
 		{
-			string upper = algorithm.ToUpper(CultureInfo.InvariantCulture);
+            string upper = Platform.StringToUpper(algorithm);
 
 			string mechanism = (string) algorithms[upper];
 

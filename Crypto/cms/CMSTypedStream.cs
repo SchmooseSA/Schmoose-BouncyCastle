@@ -33,8 +33,8 @@ namespace Org.BouncyCastle.Cms
 			int		bufSize)
 		{
 			_oid = oid;
-#if NETCF_1_0 || NETCF_2_0 || SILVERLIGHT
-			_in = new FullReaderStream(inStream);
+#if NETCF_1_0 || NETCF_2_0 || SILVERLIGHT || NETFX_CORE
+            _in = new FullReaderStream(inStream);
 #else
             _in = new FullReaderStream(new BufferedStream(inStream, bufSize));
 #endif
@@ -53,7 +53,7 @@ namespace Org.BouncyCastle.Cms
 		public void Drain()
 		{
 			Streams.Drain(_in);
-			_in.Close();
+			_in.Dispose();
 		}
 
         private class FullReaderStream : FilterStream

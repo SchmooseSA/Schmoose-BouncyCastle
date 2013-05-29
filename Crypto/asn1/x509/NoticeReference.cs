@@ -24,7 +24,7 @@ namespace Org.BouncyCastle.Asn1.X509
 		internal readonly DisplayText organization;
 		internal readonly Asn1Sequence noticeNumbers;
 
-#if !SILVERLIGHT
+#if !(SILVERLIGHT || NETFX_CORE)
         [Obsolete]
         public NoticeReference(
             string orgName,

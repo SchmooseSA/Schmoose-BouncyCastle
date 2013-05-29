@@ -120,7 +120,7 @@ namespace Org.BouncyCastle.X509
 		internal static DerObjectIdentifier GetAlgorithmOid(
 			string algorithmName)
 		{
-			algorithmName = algorithmName.ToUpper(CultureInfo.InvariantCulture);
+			algorithmName = Platform.StringToUpper(algorithmName);
 
 			if (algorithms.Contains(algorithmName))
 			{
@@ -139,7 +139,7 @@ namespace Org.BouncyCastle.X509
 				return new AlgorithmIdentifier(sigOid);
 			}
 
-			algorithmName = algorithmName.ToUpper(CultureInfo.InvariantCulture);
+		    algorithmName = Platform.StringToUpper(algorithmName);
 
 			if (exParams.Contains(algorithmName))
 			{

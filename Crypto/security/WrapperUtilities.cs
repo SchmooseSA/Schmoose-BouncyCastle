@@ -57,7 +57,7 @@ namespace Org.BouncyCastle.Security
 		public static IWrapper GetWrapper(
 			string algorithm)
 		{
-			string upper = algorithm.ToUpper(CultureInfo.InvariantCulture);
+			string upper = Platform.StringToUpper(algorithm);
 			string mechanism = (string) algorithms[upper];
 
 			if (mechanism == null)

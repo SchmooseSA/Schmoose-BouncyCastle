@@ -134,7 +134,7 @@ namespace Org.BouncyCastle.Crypto.Engines
 
 		private static void AddSBox(string sBoxName, byte[] sBox)
 		{
-			sBoxes.Add(sBoxName.ToUpper(CultureInfo.InvariantCulture), sBox);        
+			sBoxes.Add(Platform.StringToUpper(sBoxName), sBox);        
 		}
 
 		/**
@@ -363,7 +363,7 @@ namespace Org.BouncyCastle.Crypto.Engines
 		public static byte[] GetSBox(
 			string sBoxName)
 		{
-			byte[] sBox = (byte[])sBoxes[sBoxName.ToUpper(CultureInfo.InvariantCulture)];
+			byte[] sBox = (byte[])sBoxes[Platform.StringToUpper(sBoxName)];
 
 			if (sBox == null)
 			{

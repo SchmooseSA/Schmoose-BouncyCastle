@@ -8,8 +8,8 @@
     <ProjectGuid>{8B0D73D8-C467-4B06-8957-DB82856CF285}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Interfaces.Portable</RootNamespace>
-    <AssemblyName>Interfaces.Portable</AssemblyName>
+    <RootNamespace>Org.BouncyCastle</RootNamespace>
+    <AssemblyName>BouncyCastle.Crypto.WinRT</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Profile2</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>

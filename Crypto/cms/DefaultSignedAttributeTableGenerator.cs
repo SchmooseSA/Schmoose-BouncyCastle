@@ -41,8 +41,8 @@ namespace Org.BouncyCastle.Cms
 			}
 		}
 
-#if SILVERLIGHT
-		/**
+#if SILVERLIGHT || NETFX_CORE
+        /**
 		 * Create a standard attribute table from the passed in parameters - this will
 		 * normally include contentType, signingTime, and messageDigest. If the constructor
 		 * using an AttributeTable was used, entries in it for contentType, signingTime, and

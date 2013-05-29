@@ -1,7 +1,11 @@
 #if !NETCF_1_0
 
 using System;
+#if NETFX_CORE
+using Windows.Security.Cryptography;
+#else
 using System.Security.Cryptography;
+#endif
 
 namespace Org.BouncyCastle.Crypto.Prng
 {
@@ -10,12 +14,18 @@ namespace Org.BouncyCastle.Crypto.Prng
 	/// </summary>
 	public class CryptoApiRandomGenerator : IRandomGenerator
 	{
+#if !NETFX_CORE
 		private readonly RNGCryptoServiceProvider _rndProv;
 
 		public CryptoApiRandomGenerator()
 		{
 			_rndProv = new RNGCryptoServiceProvider();
 		}
+#else
+
+
+
+#endif
 
 		#region IRandomGenerator Members
 
@@ -55,10 +65,13 @@ namespace Org.BouncyCastle.Crypto.Prng
 
         private void GetRandomBytes(byte[] bytes)
         {
-#if SILVERLIGHT
-            _rndProv.GetBytes(bytes);
+#if NETFX_CORE
+            var buffer = CryptographicBuffer.GenerateRandom(Convert.ToUInt32(bytes.Length));
+
+            byte[] randomBytes;
+            CryptographicBuffer.CopyToByteArray(buffer, out randomBytes);
+            Buffer.BlockCopy(randomBytes, 0, bytes, 0, bytes.Length);
 #else
-            //_rndProv.GetNonZeroBytes(bytes);
             _rndProv.GetBytes(bytes);
 #endif
         }

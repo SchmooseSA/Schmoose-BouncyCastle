@@ -24,7 +24,7 @@ namespace Org.BouncyCastle.OpenSsl
 {
 	/// <remarks>General purpose writer for OpenSSL PEM objects.</remarks>
 	public class PemWriter
-		: Org.BouncyCastle.Utilities.IO.Pem.PemWriter
+		: Utilities.IO.Pem.PemWriter
 	{
 		/// <param name="writer">The TextWriter object to write the output to.</param>
 		public PemWriter(

@@ -10,6 +10,7 @@ using Org.BouncyCastle.Bcpg;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Security;
+using Org.BouncyCastle.Utilities;
 
 namespace Org.BouncyCastle.Crypto.Generators
 {
@@ -117,7 +118,7 @@ namespace Org.BouncyCastle.Crypto.Generators
 
 		private static string VerifyAlgorithmName(string algorithm)
 		{
-			var upper = algorithm.ToUpper(CultureInfo.InvariantCulture);
+		    var upper = Platform.StringToUpper(algorithm);
 			switch (upper)
 			{
 				case "EC":

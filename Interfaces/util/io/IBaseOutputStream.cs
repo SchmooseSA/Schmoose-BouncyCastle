@@ -22,10 +22,6 @@ namespace Org.BouncyCastle.Utilities.IO
         void Write(params byte[] buffer);
         void CopyTo(Stream destination);
         void CopyTo(Stream destination, int bufferSize);        
-        IAsyncResult BeginRead(byte[] buffer, int offset, int count, AsyncCallback callback, object state);
-        int EndRead(IAsyncResult asyncResult);
-        IAsyncResult BeginWrite(byte[] buffer, int offset, int count, AsyncCallback callback, object state);
-        void EndWrite(IAsyncResult asyncResult);
         int ReadByte();
         void WriteByte(byte value);
     }

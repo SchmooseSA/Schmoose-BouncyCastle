@@ -114,10 +114,18 @@ namespace Org.BouncyCastle.Utilities.Zlib {
         public override void WriteByte(byte b) {
         }
 
+#if !NETFX_CORE
         public override void Close() {
             inp.Close();
         }
-    
+#else
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+            if(disposing)
+                inp.Dispose();
+        }
+#endif
         public override int ReadByte() {
             if(Read(buf1, 0, 1)<=0)
                 return -1;

@@ -92,16 +92,24 @@ namespace Org.BouncyCastle.Utilities.Zlib
 		public sealed override bool CanRead { get { return !closed; } }
 		public sealed override bool CanSeek { get { return false; } }
 		public sealed override bool CanWrite { get { return false; } }
-
+        
+#if !NETFX_CORE
 		public override void Close()
 		{
 			if (!closed)
 			{
 				closed = true;
-				input.Close();
+			    input.Close();
 			}
 		}
-
+#else
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+            if (disposing)
+                input.Dispose();
+        }
+#endif
 		public sealed override void Flush() {}
 
 		public virtual int FlushMode

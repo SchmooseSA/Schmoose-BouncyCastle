@@ -253,7 +253,7 @@ namespace Org.BouncyCastle.Cms
 
 			public override void Close()
 			{
-				macStream.Close();
+				macStream.Dispose();
 
 				// TODO Parent context(s) should really be be closed explicitly
 

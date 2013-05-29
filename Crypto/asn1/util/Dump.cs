@@ -13,6 +13,7 @@ namespace Org.BouncyCastle.Asn1.Utilities
 
         public static void Main(string[] args)
         {
+            #if !NETFX_CORE
             FileStream fIn = File.OpenRead(args[0]);
             Asn1InputStream bIn = new Asn1InputStream(fIn);
 
@@ -22,7 +23,8 @@ namespace Org.BouncyCastle.Asn1.Utilities
                 Console.WriteLine(Asn1Dump.DumpAsString(obj));
             }
 
-			bIn.Close();
+			bIn.Dispose();
+#endif
         }
     }
 }

@@ -97,7 +97,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             var rings = Platform.CreateArrayList();
             if (ignoreCase)
             {
-                userId = userId.ToLower(CultureInfo.InvariantCulture);
+                userId = Platform.StringToLower(userId);
             }
 
             foreach (PgpSecretKeyRing secRing in GetKeyRings())
@@ -107,7 +107,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                     var next = nextUserId;
                     if (ignoreCase)
                     {
-                        next = next.ToLower(CultureInfo.InvariantCulture);
+                        next = Platform.StringToLower(next);
                     }
 
                     if (matchPartial)

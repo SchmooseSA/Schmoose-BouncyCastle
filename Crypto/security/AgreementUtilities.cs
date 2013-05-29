@@ -39,7 +39,7 @@ namespace Org.BouncyCastle.Security
 		public static IBasicAgreement GetBasicAgreement(
 			string algorithm)
 		{
-			string upper = algorithm.ToUpper(CultureInfo.InvariantCulture);
+            string upper = Platform.StringToUpper(algorithm);
 			string mechanism = (string) algorithms[upper];
 
 			if (mechanism == null)
@@ -73,7 +73,7 @@ namespace Org.BouncyCastle.Security
 			string agreeAlgorithm,
 			string wrapAlgorithm)
 		{
-			string upper = agreeAlgorithm.ToUpper(CultureInfo.InvariantCulture);
+            string upper = Platform.StringToUpper(agreeAlgorithm);
 			string mechanism = (string) algorithms[upper];
 
 			if (mechanism == null)

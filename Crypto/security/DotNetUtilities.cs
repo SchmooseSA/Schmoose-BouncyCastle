@@ -1,8 +1,11 @@
 #if !(NETCF_1_0)
 
 using System;
+#if NETFX_CORE
+#else
 using System.Security.Cryptography;
 using SystemX509 = System.Security.Cryptography.X509Certificates;
+#endif
 
 using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Crypto;
@@ -15,13 +18,10 @@ namespace Org.BouncyCastle.Security
 	/// <summary>
 	/// A class containing methods to interface the BouncyCastle world to the .NET Crypto world.
 	/// </summary>
-	public sealed class DotNetUtilities
+	public static class DotNetUtilities
 	{
-		private DotNetUtilities()
-		{
-		}
-
-		/// <summary>
+#if !NETFX_CORE
+	    /// <summary>
 		/// Create an System.Security.Cryptography.X509Certificate from an X509Certificate Structure.
 		/// </summary>
 		/// <param name="x509Struct"></param>
@@ -43,8 +43,8 @@ namespace Org.BouncyCastle.Security
 		{
 			return new X509CertificateParser().ReadCertificate(x509Cert.GetRawCertData());
 		}
-
-        #if !SILVERLIGHT
+#endif
+        #if !(SILVERLIGHT || NETFX_CORE)
 		public static AsymmetricCipherKeyPair GetDsaKeyPair(
 			DSA dsa)
 		{
@@ -100,7 +100,7 @@ namespace Org.BouncyCastle.Security
 		}
         #endif
 
-        #if !SILVERLIGHT4
+        #if !(SILVERLIGHT4 || NETFX_CORE)
 
 		public static AsymmetricCipherKeyPair GetRsaKeyPair(
 			RSA rsa)

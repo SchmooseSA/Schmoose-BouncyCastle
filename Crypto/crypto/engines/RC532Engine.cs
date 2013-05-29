@@ -1,6 +1,7 @@
 using System;
 
 using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.Utilities;
 
 namespace Org.BouncyCastle.Crypto.Engines
 {
@@ -75,7 +76,7 @@ namespace Org.BouncyCastle.Crypto.Engines
             bool				forEncryption,
             ICipherParameters	parameters)
         {
-            if (typeof(RC5Parameters).IsInstanceOfType(parameters))
+            if (parameters is RC5Parameters)
             {
                 RC5Parameters p = (RC5Parameters)parameters;
 

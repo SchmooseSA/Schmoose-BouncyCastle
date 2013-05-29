@@ -83,6 +83,7 @@ namespace Org.BouncyCastle.Utilities.Zlib
         public sealed override bool CanSeek { get { return false; } }
         public sealed override bool CanWrite { get { return !closed; } }
 
+#if !NETFX_CORE
 		public override void Close()
 		{
 			if (this.closed)
@@ -107,6 +108,32 @@ namespace Org.BouncyCastle.Utilities.Zlib
 				output = null;
 			}
 		}
+#else
+        protected override void Dispose(bool disposing)
+        {
+            if (this.closed)
+                return;
+            base.Dispose(disposing);
+            try
+            {
+                try
+                {
+                    Finish();
+                }
+                catch (IOException)
+                {
+                    // Ignore
+                }
+            }
+            finally
+            {
+                this.closed = true;
+                End();
+                output.Dispose();
+                output = null;
+            }
+        }
+#endif
 
 		public virtual void End()
 		{

@@ -8,6 +8,7 @@ namespace Org.BouncyCastle.Cms
 	/**
 	* a holding class for a file of data to be processed.
 	*/
+#if !NETFX_CORE
 	public class CmsProcessableFile
 		: CmsProcessable, CmsReadable
 	{
@@ -50,4 +51,5 @@ namespace Org.BouncyCastle.Cms
 			return _file;
 		}
 	}
+#endif
 }

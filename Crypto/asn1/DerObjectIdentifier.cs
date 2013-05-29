@@ -130,11 +130,8 @@ namespace Org.BouncyCastle.Asn1
                             WriteField(bOut, new BigInteger(token));
                         }
                     }
-
-                    dOut.Close();
-
-                    derOut.WriteEncoded(Asn1Tags.ObjectIdentifier, bOut.ToArray());
                 }
+                derOut.WriteEncoded(Asn1Tags.ObjectIdentifier, bOut.ToArray());
             }
         }
 

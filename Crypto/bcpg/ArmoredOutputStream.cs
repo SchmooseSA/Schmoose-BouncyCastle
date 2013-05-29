@@ -101,8 +101,12 @@ namespace Org.BouncyCastle.Bcpg
 
         static ArmoredOutputStream()
         {
+#if !NETFX_CORE
             var assemblyName = new AssemblyName(Assembly.GetExecutingAssembly().FullName);
             version = "BCPG C# v" + assemblyName.Version + " (with EC support)";
+#else
+            version = "BCPG C# WinRT (with EC support)";
+#endif
         }
 
         private readonly IDictionary headers;

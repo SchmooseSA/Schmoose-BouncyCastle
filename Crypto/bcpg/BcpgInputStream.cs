@@ -231,12 +231,19 @@ namespace Org.BouncyCastle.Bcpg
                     throw new IOException("unknown packet type encountered: " + tag);
             }
         }
-
+        #if !NETFX_CORE
         public override void Close()
         {
             _mIn.Close();
             base.Close();
         }
+#else
+        protected override void Dispose(bool disposing)
+        {
+            _mIn.Dispose();
+            base.Dispose(disposing);
+        }
+#endif
 
         /// <summary>
         /// A stream that overlays our input stream, allowing the user to only read a segment of it.

@@ -10,21 +10,18 @@ using Org.BouncyCastle.Utilities.Date;
 
 namespace Org.BouncyCastle.Utilities
 {
-    internal sealed class Enums
+    internal static class Enums
     {
-        private Enums()
+        internal static Enum GetEnumValue(System.Type enumType, string s)
         {
-        }
-
-		internal static Enum GetEnumValue(System.Type enumType, string s)
-		{
+#if !NETFX_CORE
 			if (!enumType.IsEnum)
 				throw new ArgumentException("Not an enumeration type", "enumType");
-
-			// We only want to parse single named constants
-			if (s.Length > 0 && char.IsLetter(s[0]) && s.IndexOf(',') < 0)
-			{
-				s = s.Replace('-', '_');
+#endif
+            // We only want to parse single named constants
+            if (s.Length > 0 && char.IsLetter(s[0]) && s.IndexOf(',') < 0)
+            {
+                s = s.Replace('-', '_');
 
 #if NETCF_1_0
 				FieldInfo field = enumType.GetField(s, BindingFlags.Static | BindingFlags.Public);
@@ -33,18 +30,19 @@ namespace Org.BouncyCastle.Utilities
 					return (Enum)field.GetValue(null);
 				}
 #else
-				return (Enum)Enum.Parse(enumType, s, false);
-#endif		
-			}
+                return (Enum)Enum.Parse(enumType, s, false);
+#endif
+            }
 
-			throw new ArgumentException();
-		}
+            throw new ArgumentException();
+        }
 
-		internal static Array GetEnumValues(System.Type enumType)
-		{
-			if (!enumType.IsEnum)
-				throw new ArgumentException("Not an enumeration type", "enumType");
-
+        internal static Array GetEnumValues(System.Type enumType)
+        {
+#if !NETFX_CORE
+            if (!enumType.IsEnum)
+                throw new ArgumentException("Not an enumeration type", "enumType");
+#endif
 #if NETCF_1_0 || NETCF_2_0 || SILVERLIGHT
             IList result = Platform.CreateArrayList();
 			FieldInfo[] fields = enumType.GetFields(BindingFlags.Static | BindingFlags.Public);
@@ -56,15 +54,15 @@ namespace Org.BouncyCastle.Utilities
             result.CopyTo(arr, 0);
             return arr;
 #else
-			return Enum.GetValues(enumType);
+            return Enum.GetValues(enumType);
 #endif
-		}
+        }
 
-		internal static Enum GetArbitraryValue(System.Type enumType)
-		{
-			Array values = GetEnumValues(enumType);
-			int pos = (int)(DateTimeUtilities.CurrentUnixMs() & int.MaxValue) % values.Length;
-			return (Enum)values.GetValue(pos);
-		}
-	}
+        internal static Enum GetArbitraryValue(System.Type enumType)
+        {
+            Array values = GetEnumValues(enumType);
+            int pos = (int)(DateTimeUtilities.CurrentUnixMs() & int.MaxValue) % values.Length;
+            return (Enum)values.GetValue(pos);
+        }
+    }
 }

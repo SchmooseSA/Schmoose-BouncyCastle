@@ -1,5 +1,9 @@
 using System;
 using System.Threading;
+#if NETFX_CORE
+using Org.BouncyCastle.Utilities;
+using Windows.System.Threading;
+#endif
 
 namespace Org.BouncyCastle.Crypto.Prng
 {
@@ -30,26 +34,30 @@ namespace Org.BouncyCastle.Crypto.Prng
 				}
 			}
 
-			public byte[] GenerateSeed(
-				int		numBytes,
-				bool	fast)
-			{
-				this.counter = 0;
-				this.stop = false;
+		    public byte[] GenerateSeed(
+		        int numBytes,
+		        bool fast)
+		    {
+		        this.counter = 0;
+		        this.stop = false;
 
-				byte[] result = new byte[numBytes];
-				int last = 0;
-				int end = fast ? numBytes : numBytes * 8;
+		        byte[] result = new byte[numBytes];
+		        int last = 0;
+		        int end = fast ? numBytes : numBytes*8;
 
+#if NETFX_CORE
+		        ThreadPool.RunAsync(this.Run);
+		   
+#else
 				ThreadPool.QueueUserWorkItem(new WaitCallback(Run));
-
+#endif
 				for (int i = 0; i < end; i++)
 				{
 					while (this.counter == last)
 					{
 						try
 						{
-							Thread.Sleep(1);
+                            Platform.ThreadSleep(1);
 						}
 						catch (Exception)
 						{

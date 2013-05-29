@@ -351,7 +351,7 @@ namespace Org.BouncyCastle.Bcpg
         {
             this.Finish();
             _outStr.Flush();
-            _outStr.Close();
+            _outStr.Dispose();
             base.Close();
         }
     }

@@ -1140,7 +1140,7 @@ namespace Org.BouncyCastle.Asn1.Sec
 			string name)
 		{
 			DerObjectIdentifier oid = (DerObjectIdentifier)
-				objIds[name.ToLower(CultureInfo.InvariantCulture)];
+				objIds[Platform.StringToLower(name)];
 
 			return oid == null ? null : GetByOid(oid);
 		}
@@ -1168,7 +1168,7 @@ namespace Org.BouncyCastle.Asn1.Sec
 		public static DerObjectIdentifier GetOid(
 			string name)
 		{
-			return (DerObjectIdentifier) objIds[name.ToLower(CultureInfo.InvariantCulture)];
+			return (DerObjectIdentifier) objIds[Platform.StringToLower(name)];
 		}
 
 		/**

@@ -275,6 +275,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             return MakeKey(algorithm, keyBytes);
         }
 
+#if !NETFX_CORE
+
         /// <summary>Write out the passed in file as a literal data packet.</summary>
         public static void WriteFileToLiteralData(Stream output, char fileType, FileInfo file)
         {
@@ -310,6 +312,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 pOut.Close();
             }
         }
+#endif
 
         private const int ReadAhead = 60;
 

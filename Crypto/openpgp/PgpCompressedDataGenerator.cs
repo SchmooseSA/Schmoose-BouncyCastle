@@ -149,8 +149,12 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
             if (_dOut != _pkOut)
             {
-                _dOut.Close();
                 _dOut.Flush();
+#if !NETFX_CORE
+                _dOut.Close();
+#else
+                _dOut.Dispose();
+#endif
             }
 
             _dOut = null;
@@ -167,10 +171,20 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             {
             }
 
+#if !NETFX_CORE
+
+
             public override void Close()
             {
                 this.Finish();
             }
+#else
+            protected override void Dispose(bool disposing)
+            {
+                this.Finish();
+                base.Dispose(disposing);
+            }
+#endif
         }
 
         private class SafeZOutputStream : ZOutputStream
@@ -180,11 +194,21 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             {
             }
 
+#if !NETFX_CORE
+
             public override void Close()
             {
                 this.Finish();
                 this.End();
             }
+#else
+            protected override void Dispose(bool disposing)
+            {
+                base.Dispose(disposing);
+                this.Finish();
+                this.End();
+            }
+#endif
         }
     }
 }

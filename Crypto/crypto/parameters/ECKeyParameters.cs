@@ -6,6 +6,7 @@ using Org.BouncyCastle.Asn1.CryptoPro;
 using Org.BouncyCastle.Bcpg;
 using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Security;
+using Org.BouncyCastle.Utilities;
 
 namespace Org.BouncyCastle.Crypto.Parameters
 {
@@ -90,7 +91,7 @@ namespace Org.BouncyCastle.Crypto.Parameters
 
         private static string VerifyAlgorithmName(string algorithm)
         {
-            var upper = algorithm.ToUpper(CultureInfo.InvariantCulture);
+            var upper = Platform.StringToUpper(algorithm);
 
             switch (upper)
             {

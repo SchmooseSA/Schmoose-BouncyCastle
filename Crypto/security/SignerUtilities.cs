@@ -268,7 +268,7 @@ namespace Org.BouncyCastle.Security
             if (mechanism == null)
                 throw new ArgumentNullException("mechanism");
 
-            mechanism = mechanism.ToUpper(CultureInfo.InvariantCulture);
+            mechanism = Platform.StringToUpper(mechanism);
             var aliased = (string)algorithms[mechanism];
 
             if (aliased != null)
@@ -292,7 +292,7 @@ namespace Org.BouncyCastle.Security
             if (algorithm == null)
                 throw new ArgumentNullException("algorithm");
 
-            algorithm = algorithm.ToUpper(CultureInfo.InvariantCulture);
+            algorithm = Platform.StringToUpper(algorithm);
 
             var mechanism = (string)algorithms[algorithm] ?? algorithm;
 
@@ -334,7 +334,7 @@ namespace Org.BouncyCastle.Security
             if (algorithm == null)
                 throw new ArgumentNullException("algorithm");
 
-            algorithm = algorithm.ToUpper(CultureInfo.InvariantCulture);
+            algorithm = Platform.StringToUpper(algorithm);
 
             var mechanism = (string)algorithms[algorithm] ?? algorithm;
 

@@ -222,7 +222,7 @@ namespace Org.BouncyCastle.Pkcs
 				throw new ArgumentException("key for signing must be private", "signingKey");
 
 //			DerObjectIdentifier sigOid = SignerUtilities.GetObjectIdentifier(signatureAlgorithm);
-			string algorithmName = signatureAlgorithm.ToUpper(CultureInfo.InvariantCulture);
+            string algorithmName = Platform.StringToUpper(signatureAlgorithm);
 			DerObjectIdentifier sigOid = (DerObjectIdentifier) algorithms[algorithmName];
 
 			if (sigOid == null)

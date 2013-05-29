@@ -86,23 +86,23 @@ namespace Org.BouncyCastle.Asn1
 		 * ASN.1 descriptions given. Rather than just outputing Set,
 		 * we also have to specify Constructed, and the objects length.
 		 */
-		internal override void Encode(
-			DerOutputStream derOut)
+		internal override void Encode(DerOutputStream derOut)
 		{
-			// TODO Intermediate buffer could be avoided if we could calculate expected length
-			MemoryStream bOut = new MemoryStream();
-			DerOutputStream dOut = new DerOutputStream(bOut);
+            // TODO Intermediate buffer could be avoided if we could calculate expected length
+            using (var bOut = new MemoryStream())
+            {
+                using (var dOut = new DerOutputStream(bOut))
+                {
+                    foreach (Asn1Encodable obj in this)
+                    {
+                        dOut.WriteObject(obj);
+                    }
+                }
 
-			foreach (Asn1Encodable obj in this)
-			{
-				dOut.WriteObject(obj);
-			}
+                var bytes = bOut.ToArray();
 
-			dOut.Close();
-
-			byte[] bytes = bOut.ToArray();
-
-			derOut.WriteEncoded(Asn1Tags.Set | Asn1Tags.Constructed, bytes);
+                derOut.WriteEncoded(Asn1Tags.Set | Asn1Tags.Constructed, bytes);
+            }
 		}
 	}
 }

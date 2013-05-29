@@ -223,13 +223,13 @@ namespace Org.BouncyCastle.Security
         // TODO Consider making this public
         internal static string GetCanonicalKeyGeneratorAlgorithm(string algorithm)
         {
-            return (string)_kgAlgorithms[algorithm.ToUpper(CultureInfo.InvariantCulture)];
+            return (string)_kgAlgorithms[Platform.StringToUpper(algorithm)];
         }
 
         // TODO Consider making this public
         internal static string GetCanonicalKeyPairGeneratorAlgorithm(string algorithm)
         {
-            return (string)_kpgAlgorithms[algorithm.ToUpper(CultureInfo.InvariantCulture)];
+            return (string)_kpgAlgorithms[Platform.StringToUpper(algorithm)];
         }
 
         public static CipherKeyGenerator GetKeyGenerator(DerObjectIdentifier oid)

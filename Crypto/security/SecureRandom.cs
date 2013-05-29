@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using Org.BouncyCastle.Crypto.Digests;
 using Org.BouncyCastle.Crypto.Prng;
+using Org.BouncyCastle.Utilities;
 using Random = Org.BouncyCastle.Bcpg.Random;
 
 namespace Org.BouncyCastle.Security
@@ -38,7 +39,7 @@ namespace Org.BouncyCastle.Security
             // TODO Compared to JDK, we don't auto-seed if the client forgets - problem?
 
             // TODO Support all digests more generally, by stripping PRNG and calling DigestUtilities?
-            var drgName = algorithm.ToUpper(CultureInfo.InvariantCulture);
+            var drgName = Platform.StringToUpper(algorithm);
 
             IRandomGenerator drg = null;
             if (drgName == "SHA1PRNG")

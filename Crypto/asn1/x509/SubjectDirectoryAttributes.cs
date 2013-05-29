@@ -77,7 +77,7 @@ namespace Org.BouncyCastle.Asn1.X509
 			}
 		}
 
-#if !SILVERLIGHT
+#if !(SILVERLIGHT || NETFX_CORE)
         [Obsolete]
         public SubjectDirectoryAttributes(
             ArrayList attributes)

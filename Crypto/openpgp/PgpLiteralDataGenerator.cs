@@ -116,6 +116,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             return new WrappedGeneratorStream(this, _pkOut);
         }
 
+#if !NETFX_CORE
+
         /// <summary>
         /// <p>
         /// Open a literal data packet for the passed in <c>FileInfo</c> object, returning
@@ -134,6 +136,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         {
             return this.Open(outStr, format, file.Name, file.Length, file.LastWriteTime);
         }
+#endif
 
         /// <summary>
         /// Close the literal data packet - this is equivalent to calling Close()

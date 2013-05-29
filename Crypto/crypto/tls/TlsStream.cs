@@ -28,11 +28,18 @@ namespace Org.BouncyCastle.Crypto.Tls
 		{
 			get { return !handler.IsClosed; }
 		}
-
+#if !NETFX_CORE
 		public override void Close()
 		{
 			handler.Close();
 		}
+#else
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+            handler.Close();
+        }
+#endif
 
 		public override void Flush()
 		{

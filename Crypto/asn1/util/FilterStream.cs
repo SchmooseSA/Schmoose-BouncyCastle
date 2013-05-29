@@ -30,10 +30,18 @@ namespace Org.BouncyCastle.Asn1.Utilities
             get { return s.Position; }
             set { s.Position = value; }
         }
+        #if !NETFX_CORE
         public override void Close()
         {
             s.Close();
         }
+#else
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+            s.Dispose();
+        }
+#endif
         public override void Flush()
         {
             s.Flush();
