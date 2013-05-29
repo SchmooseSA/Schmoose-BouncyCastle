@@ -2,6 +2,11 @@
 
 using System;
 #if NETFX_CORE
+using Org.BouncyCastle.Asn1;
+using Org.BouncyCastle.Asn1.Pkcs;
+using Org.BouncyCastle.OpenSsl;
+using Windows.Security.Cryptography;
+using Windows.Security.Cryptography.Core;
 #else
 using System.Security.Cryptography;
 using SystemX509 = System.Security.Cryptography.X509Certificates;
@@ -15,11 +20,11 @@ using Org.BouncyCastle.X509;
 
 namespace Org.BouncyCastle.Security
 {
-	/// <summary>
-	/// A class containing methods to interface the BouncyCastle world to the .NET Crypto world.
-	/// </summary>
-	public static class DotNetUtilities
-	{
+    /// <summary>
+    /// A class containing methods to interface the BouncyCastle world to the .NET Crypto world.
+    /// </summary>
+    public static class DotNetUtilities
+    {
 #if !NETFX_CORE
 	    /// <summary>
 		/// Create an System.Security.Cryptography.X509Certificate from an X509Certificate Structure.
@@ -44,7 +49,7 @@ namespace Org.BouncyCastle.Security
 			return new X509CertificateParser().ReadCertificate(x509Cert.GetRawCertData());
 		}
 #endif
-        #if !(SILVERLIGHT || NETFX_CORE)
+#if !(SILVERLIGHT || NETFX_CORE)
 		public static AsymmetricCipherKeyPair GetDsaKeyPair(
 			DSA dsa)
 		{
@@ -98,9 +103,28 @@ namespace Org.BouncyCastle.Security
 				new BigInteger(1, dp.Y),
 				parameters);
 		}
-        #endif
+#endif
 
-        #if !(SILVERLIGHT4 || NETFX_CORE)
+#if NETFX_CORE
+        public static AsymmetricCipherKeyPair GetRsaKeyPair(CryptographicKey key)
+        {
+            var privateKeyBuffer = key.Export(CryptographicPrivateKeyBlobType.Capi1PrivateKey);
+            
+            byte[] privateKeyBytes;
+            CryptographicBuffer.CopyToByteArray(privateKeyBuffer, out privateKeyBytes);
+            
+            var asn1 = (Asn1Sequence) Asn1Object.FromByteArray(privateKeyBytes);
+            var rsa = new RsaPrivateKeyStructure(asn1);
+
+            var pubKey = new RsaKeyParameters(false, rsa.Modulus, rsa.PublicExponent);
+            var privKey = new RsaPrivateCrtKeyParameters(
+                rsa.Modulus, rsa.PublicExponent, rsa.PrivateExponent,
+                rsa.Prime1, rsa.Prime2, rsa.Exponent1, rsa.Exponent2,
+                rsa.Coefficient);
+
+            return new AsymmetricCipherKeyPair(pubKey, privKey);
+        }
+#elif !SILVERLIGHT4
 
 		public static AsymmetricCipherKeyPair GetRsaKeyPair(
 			RSA rsa)
@@ -149,12 +173,12 @@ namespace Org.BouncyCastle.Security
 
 		public static AsymmetricCipherKeyPair GetKeyPair(AsymmetricAlgorithm privateKey)
 		{
-            #if !SILVERLIGHT
+#if !SILVERLIGHT
 			if (privateKey is DSA)
 			{
 				return GetDsaKeyPair((DSA)privateKey);
 			}
-            #endif
+#endif
 
 			if (privateKey is RSA)
 			{
@@ -204,7 +228,7 @@ namespace Org.BouncyCastle.Security
 			rp.InverseQ = privKey.QInv.ToByteArrayUnsigned();
 			return rp;
 		}
-        #endif
+#endif
     }
 
 }
