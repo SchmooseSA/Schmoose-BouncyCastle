@@ -3,7 +3,6 @@ using System.Threading;
 using Org.BouncyCastle.Utilities;
 
 #if NETFX_CORE
-using Org.BouncyCastle.Utilities;
 using Windows.System.Threading;
 #endif
 
@@ -48,7 +47,7 @@ namespace Org.BouncyCastle.Crypto.Prng
 		        int end = fast ? numBytes : numBytes*8;
 
 #if NETFX_CORE
-		        ThreadPool.RunAsync(this.Run);
+		        var task = ThreadPool.RunAsync(this.Run);
 		   
 #else
 				ThreadPool.QueueUserWorkItem(Run);
@@ -81,7 +80,9 @@ namespace Org.BouncyCastle.Crypto.Prng
 				}
 
 				this.stop = true;
-
+#if NETFX_CORE
+		        task.GetResults();
+#endif
 				return result;
 			}
 		}

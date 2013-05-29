@@ -9,8 +9,8 @@
     <ProjectGuid>{FC18643B-99FF-4AA9-A36C-93F90215CA4B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Crypto.WinRT</RootNamespace>
-    <AssemblyName>Crypto.WinRT</AssemblyName>
+    <RootNamespace>Org.BouncyCastle</RootNamespace>
+    <AssemblyName>BouncyCastle.Crypto.WinRT</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{BC8A1FFA-BEE3-4634-8014-F334798102B3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>

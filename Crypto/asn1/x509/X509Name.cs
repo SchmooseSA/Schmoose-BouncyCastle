@@ -232,18 +232,18 @@ namespace Org.BouncyCastle.Asn1.X509
 		* default look up table translating OID values into their common symbols following
 		* the convention in RFC 2253 with a few extras
 		*/
-		public static readonly Hashtable DefaultSymbols = new Hashtable();
+        public static readonly Hashtable DefaultSymbols = new Hashtable();
 
-		/**
-		 * look up table translating OID values into their common symbols following the convention in RFC 2253
-		 */
-		public static readonly Hashtable RFC2253Symbols = new Hashtable();
+        /**
+         * look up table translating OID values into their common symbols following the convention in RFC 2253
+         */
+        public static readonly Hashtable RFC2253Symbols = new Hashtable();
 
-		/**
-		 * look up table translating OID values into their common symbols following the convention in RFC 1779
-		 *
-		 */
-		public static readonly Hashtable RFC1779Symbols = new Hashtable();
+        /**
+         * look up table translating OID values into their common symbols following the convention in RFC 1779
+         *
+         */
+        public static readonly Hashtable RFC1779Symbols = new Hashtable();
 
         /**
         * look up table translating common symbols into their OIDS.
@@ -382,7 +382,7 @@ namespace Org.BouncyCastle.Asn1.X509
         protected X509Name(
             Asn1Sequence seq)
         {
-            this._seq = seq;
+            _seq = seq;
 
             foreach (Asn1Encodable asn1Obj in seq)
             {
@@ -446,9 +446,9 @@ namespace Org.BouncyCastle.Asn1.X509
 #if !(SILVERLIGHT || NETFX_CORE)
         [Obsolete]
         public X509Name(
-            ArrayList				ordering,
-            Hashtable				attributes,
-            X509NameEntryConverter	converter)
+            ArrayList ordering,
+            Hashtable attributes,
+            X509NameEntryConverter converter)
             : this((IList)ordering, (IDictionary)attributes, converter)
         {
         }
@@ -470,7 +470,7 @@ namespace Org.BouncyCastle.Asn1.X509
             IDictionary attributes,
             X509NameEntryConverter converter)
         {
-            this._converter = converter;
+            _converter = converter;
 
             foreach (DerObjectIdentifier oid in ordering)
             {
@@ -480,9 +480,9 @@ namespace Org.BouncyCastle.Asn1.X509
                     throw new ArgumentException("No attribute for object id - " + oid + " - passed to distinguished name");
                 }
 
-                this._ordering.Add(oid);
-                this._added.Add(false);
-                this._values.Add(attribute); // copy the hash table
+                _ordering.Add(oid);
+                _added.Add(false);
+                _values.Add(attribute); // copy the hash table
             }
         }
 
@@ -509,9 +509,9 @@ namespace Org.BouncyCastle.Asn1.X509
 #if !(SILVERLIGHT || NETFX_CORE)
         [Obsolete]
         public X509Name(
-            ArrayList				oids,
-            ArrayList				values,
-            X509NameEntryConverter	converter)
+            ArrayList oids,
+            ArrayList values,
+            X509NameEntryConverter converter)
             : this((IList)oids, (IList)values, converter)
         {
         }
@@ -528,7 +528,7 @@ namespace Org.BouncyCastle.Asn1.X509
             IList values,
             X509NameEntryConverter converter)
         {
-            this._converter = converter;
+            _converter = converter;
 
             if (oids.Count != values.Count)
             {
@@ -537,9 +537,9 @@ namespace Org.BouncyCastle.Asn1.X509
 
             for (int i = 0; i < oids.Count; i++)
             {
-                this._ordering.Add(oids[i]);
-                this._values.Add(values[i]);
-                this._added.Add(false);
+                _ordering.Add(oids[i]);
+                _values.Add(values[i]);
+                _added.Add(false);
             }
         }
 
@@ -673,8 +673,8 @@ namespace Org.BouncyCastle.Asn1.X509
             string dirName,
             X509NameEntryConverter converter)
         {
-            this._converter = converter;
-            X509NameTokenizer nTok = new X509NameTokenizer(dirName);
+            _converter = converter;
+            var nTok = new X509NameTokenizer(dirName);
 
             while (nTok.HasMoreTokens())
             {
@@ -686,36 +686,36 @@ namespace Org.BouncyCastle.Asn1.X509
                     throw new ArgumentException("badly formated directory string");
                 }
 
-                string name = token.Substring(0, index);
-                string value = token.Substring(index + 1);
-                DerObjectIdentifier oid = DecodeOid(name, lookUp);
+                var name = token.Substring(0, index);
+                var value = token.Substring(index + 1);
+                var oid = DecodeOid(name, lookUp);
 
                 if (value.IndexOf('+') > 0)
                 {
-                    X509NameTokenizer vTok = new X509NameTokenizer(value, '+');
-                    string v = vTok.NextToken();
+                    var vTok = new X509NameTokenizer(value, '+');
+                    var v = vTok.NextToken();
 
-                    this._ordering.Add(oid);
-                    this._values.Add(v);
-                    this._added.Add(false);
+                    _ordering.Add(oid);
+                    _values.Add(v);
+                    _added.Add(false);
 
                     while (vTok.HasMoreTokens())
                     {
-                        string sv = vTok.NextToken();
-                        int ndx = sv.IndexOf('=');
+                        var sv = vTok.NextToken();
+                        var ndx = sv.IndexOf('=');
 
-                        string nm = sv.Substring(0, ndx);
-                        string vl = sv.Substring(ndx + 1);
-                        this._ordering.Add(DecodeOid(nm, lookUp));
-                        this._values.Add(vl);
-                        this._added.Add(true);
+                        var nm = sv.Substring(0, ndx);
+                        var vl = sv.Substring(ndx + 1);
+                        _ordering.Add(DecodeOid(nm, lookUp));
+                        _values.Add(vl);
+                        _added.Add(true);
                     }
                 }
                 else
                 {
-                    this._ordering.Add(oid);
-                    this._values.Add(value);
-                    this._added.Add(false);
+                    _ordering.Add(oid);
+                    _values.Add(value);
+                    _added.Add(false);
                 }
             }
 
@@ -729,28 +729,28 @@ namespace Org.BouncyCastle.Asn1.X509
                 IList a = Platform.CreateArrayList();
                 int count = 1;
 
-                for (int i = 0; i < this._ordering.Count; i++)
+                for (int i = 0; i < _ordering.Count; i++)
                 {
-                    if (!((bool)this._added[i]))
+                    if (!((bool)_added[i]))
                     {
                         count = 0;
                     }
 
                     int index = count++;
 
-                    o.Insert(index, this._ordering[i]);
-                    v.Insert(index, this._values[i]);
-                    a.Insert(index, this._added[i]);
+                    o.Insert(index, _ordering[i]);
+                    v.Insert(index, _values[i]);
+                    a.Insert(index, _added[i]);
                 }
 
-                this._ordering = o;
-                this._values = v;
-                this._added = a;
+                _ordering = o;
+                _values = v;
+                _added = a;
             }
         }
 
 #if !(SILVERLIGHT || NETFX_CORE)
-		/**
+        /**
 		* return an ArrayList of the oids in the name, in the order they were found.
 		*/
         [Obsolete("Use 'GetOidList' instead")]
@@ -769,15 +769,15 @@ namespace Org.BouncyCastle.Asn1.X509
         }
 
 #if !(SILVERLIGHT || NETFX_CORE)
-		/**
+        /**
 		* return an ArrayList of the values found in the name, in the order they
 		* were found.
 		*/
         [Obsolete("Use 'GetValueList' instead")]
-		public ArrayList GetValues()
-		{
+        public ArrayList GetValues()
+        {
             return new ArrayList(_values);
-		}
+        }
 #endif
 
         /**
@@ -790,17 +790,17 @@ namespace Org.BouncyCastle.Asn1.X509
         }
 
 #if !(SILVERLIGHT || NETFX_CORE)
-		/**
+        /**
 		 * return an ArrayList of the values found in the name, in the order they
 		 * were found, with the DN label corresponding to passed in oid.
 		 */
-		public ArrayList GetValues(
-			DerObjectIdentifier oid)
-		{
-			ArrayList v = new ArrayList();
+        public ArrayList GetValues(
+            DerObjectIdentifier oid)
+        {
+            var v = new ArrayList();
             DoGetValueList(oid, v);
-			return v;
-		}
+            return v;
+        }
 #endif
 
         /**
@@ -809,7 +809,7 @@ namespace Org.BouncyCastle.Asn1.X509
 		 */
         public IList GetValueList(DerObjectIdentifier oid)
         {
-            IList v = Platform.CreateArrayList();
+            var v = Platform.CreateArrayList();
             DoGetValueList(oid, v);
             return v;
         }
@@ -836,29 +836,22 @@ namespace Org.BouncyCastle.Asn1.X509
         {
             if (_seq == null)
             {
-                Asn1EncodableVector vec = new Asn1EncodableVector();
-                Asn1EncodableVector sVec = new Asn1EncodableVector();
+                var vec = new Asn1EncodableVector();
+                var sVec = new Asn1EncodableVector();
                 DerObjectIdentifier lstOid = null;
 
-                for (int i = 0; i != _ordering.Count; i++)
+                for (var i = 0; i != _ordering.Count; i++)
                 {
-                    DerObjectIdentifier oid = (DerObjectIdentifier)_ordering[i];
-                    string str = (string)_values[i];
+                    var oid = (DerObjectIdentifier)_ordering[i];
+                    var str = (string)_values[i];
 
-                    if (lstOid == null
-                        || ((bool)this._added[i]))
-                    {
-                    }
-                    else
+                    if (lstOid != null && (!((bool) _added[i])))
                     {
                         vec.Add(new DerSet(sVec));
                         sVec = new Asn1EncodableVector();
                     }
 
-                    sVec.Add(
-                        new DerSequence(
-                            oid,
-                            _converter.GetConvertedValue(oid, str)));
+                    sVec.Add(new DerSequence(oid, _converter.GetConvertedValue(oid, str)));
 
                     lstOid = oid;
                 }
@@ -894,14 +887,14 @@ namespace Org.BouncyCastle.Asn1.X509
 
             for (var i = 0; i < orderingSize; i++)
             {
-                DerObjectIdentifier oid = (DerObjectIdentifier)_ordering[i];
-                DerObjectIdentifier oOid = (DerObjectIdentifier)other._ordering[i];
+                var oid = (DerObjectIdentifier)_ordering[i];
+                var oOid = (DerObjectIdentifier)other._ordering[i];
 
                 if (!oid.Equals(oOid))
                     return false;
 
-                string val = (string)_values[i];
-                string oVal = (string)other._values[i];
+                var val = (string)_values[i];
+                var oVal = (string)other._values[i];
 
                 if (!EquivalentStrings(val, oVal))
                     return false;
@@ -913,23 +906,22 @@ namespace Org.BouncyCastle.Asn1.X509
         /**
 		 * test for equivalence - note: case is ignored.
 		 */
-        public bool Equivalent(
-            X509Name other)
+        public bool Equivalent(X509Name other)
         {
             if (other == null)
                 return false;
 
-            if (other == this)
+            if (Equals(other, this))
                 return true;
 
-            int orderingSize = _ordering.Count;
+            var orderingSize = _ordering.Count;
 
             if (orderingSize != other._ordering.Count)
             {
                 return false;
             }
 
-            bool[] indexes = new bool[orderingSize];
+            var indexes = new bool[orderingSize];
             int start, end, delta;
 
             if (_ordering[0].Equals(other._ordering[0]))   // guess forward
@@ -945,32 +937,29 @@ namespace Org.BouncyCastle.Asn1.X509
                 delta = -1;
             }
 
-            for (int i = start; i != end; i += delta)
+            for (var i = start; i != end; i += delta)
             {
-                bool found = false;
-                DerObjectIdentifier oid = (DerObjectIdentifier)_ordering[i];
-                string value = (string)_values[i];
+                var found = false;
+                var oid = (DerObjectIdentifier)_ordering[i];
+                var value = (string)_values[i];
 
-                for (int j = 0; j < orderingSize; j++)
+                for (var j = 0; j < orderingSize; j++)
                 {
                     if (indexes[j])
                     {
                         continue;
                     }
 
-                    DerObjectIdentifier oOid = (DerObjectIdentifier)other._ordering[j];
+                    var oOid = (DerObjectIdentifier)other._ordering[j];
 
-                    if (oid.Equals(oOid))
-                    {
-                        string oValue = (string)other._values[j];
-
-                        if (EquivalentStrings(value, oValue))
-                        {
-                            indexes[j] = true;
-                            found = true;
-                            break;
-                        }
-                    }
+                    if (!oid.Equals(oOid)) 
+                        continue;
+                    var oValue = (string)other._values[j];
+                    if (!EquivalentStrings(value, oValue)) 
+                        continue;
+                    indexes[j] = true;
+                    found = true;
+                    break;
                 }
 
                 if (!found)
@@ -991,8 +980,8 @@ namespace Org.BouncyCastle.Asn1.X509
 
             if (!v1.Equals(v2))
             {
-                v1 = stripInternalSpaces(v1);
-                v2 = stripInternalSpaces(v2);
+                v1 = StripInternalSpaces(v1);
+                v2 = StripInternalSpaces(v2);
 
                 if (!v1.Equals(v2))
                 {
@@ -1005,23 +994,22 @@ namespace Org.BouncyCastle.Asn1.X509
 
         private static string Canonicalize(string s)
         {
-            string v = Platform.StringToLower(s);
+            var v = Platform.StringToLower(s).Trim();
 
             if (v.StartsWith("#"))
             {
-                Asn1Object obj = decodeObject(v);
-
-                if (obj is IAsn1String)
+                var obj = DecodeObject(v);
+                var str = obj as IAsn1String;
+                if (str != null)
                 {
-                    v = Platform.StringToLower(((IAsn1String)obj).GetString()).Trim();
+                    v = Platform.StringToLower(str.GetString()).Trim();
                 }
             }
 
             return v;
         }
 
-        private static Asn1Object decodeObject(
-            string v)
+        private static Asn1Object DecodeObject(string v)
         {
             try
             {
@@ -1033,20 +1021,19 @@ namespace Org.BouncyCastle.Asn1.X509
             }
         }
 
-        private static string stripInternalSpaces(
-            string str)
+        private static string StripInternalSpaces(string str)
         {
-            StringBuilder res = new StringBuilder();
+            var res = new StringBuilder();
 
             if (str.Length != 0)
             {
-                char c1 = str[0];
+                var c1 = str[0];
 
                 res.Append(c1);
 
-                for (int k = 1; k < str.Length; k++)
+                for (var k = 1; k < str.Length; k++)
                 {
-                    char c2 = str[k];
+                    var c2 = str[k];
                     if (!(c1 == ' ' && c2 == ' '))
                     {
                         res.Append(c2);
@@ -1064,24 +1051,17 @@ namespace Org.BouncyCastle.Asn1.X509
             DerObjectIdentifier oid,
             string val)
         {
-            string sym = (string)oidSymbols[oid];
+            var sym = (string)oidSymbols[oid];
 
-            if (sym != null)
-            {
-                buf.Append(sym);
-            }
-            else
-            {
-                buf.Append(oid.Id);
-            }
+            buf.Append(sym ?? oid.Id);
 
             buf.Append('=');
 
-            int index = buf.Length;
+            var index = buf.Length;
 
             buf.Append(val);
 
-            int end = buf.Length;
+            var end = buf.Length;
 
             if (val.StartsWith("\\#"))
             {
@@ -1110,8 +1090,8 @@ namespace Org.BouncyCastle.Asn1.X509
 #if !(SILVERLIGHT || NETFX_CORE)
         [Obsolete]
         public string ToString(
-            bool        reverse,
-            Hashtable   oidSymbols)
+            bool reverse,
+            Hashtable oidSymbols)
         {
             return ToString(reverse, (IDictionary)oidSymbols);
         }
@@ -1134,16 +1114,16 @@ namespace Org.BouncyCastle.Asn1.X509
             IDictionary oidSymbols)
         {
 #if SILVERLIGHT || NETFX_CORE
-            List<object> components = new List<object>();
+            var components = new List<object>();
 #else
-			ArrayList components = new ArrayList();
+            var components = new ArrayList();
 #endif
 
             StringBuilder ava = null;
 
-            for (int i = 0; i < _ordering.Count; i++)
+            for (var i = 0; i < _ordering.Count; i++)
             {
-                if ((bool)_added[i])
+                if (ava != null && (bool)_added[i])
                 {
                     ava.Append('+');
                     AppendValue(ava, oidSymbols,
@@ -1165,16 +1145,16 @@ namespace Org.BouncyCastle.Asn1.X509
                 components.Reverse();
             }
 
-            StringBuilder buf = new StringBuilder();
+            var buf = new StringBuilder();
 
             if (components.Count > 0)
             {
-                buf.Append(components[0].ToString());
+                buf.Append(components[0]);
 
-                for (int i = 1; i < components.Count; ++i)
+                for (var i = 1; i < components.Count; ++i)
                 {
                     buf.Append(',');
-                    buf.Append(components[i].ToString());
+                    buf.Append(components[i]);
                 }
             }
 
