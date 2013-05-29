@@ -53,7 +53,7 @@ namespace Org.BouncyCastle.Bcpg
 			}
 			else
 			{
-			    throw new InvalidDataException("Invalid packet length byte detected: " + bodyLen);
+			    throw new Exception("Invalid packet length byte detected: " + bodyLen + " - " + l);
 			}
 			
 			var tag = _input.ReadByte();
