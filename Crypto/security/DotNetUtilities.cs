@@ -108,7 +108,7 @@ namespace Org.BouncyCastle.Security
 #if NETFX_CORE
         public static AsymmetricCipherKeyPair GetRsaKeyPair(CryptographicKey key)
         {
-            var privateKeyBuffer = key.Export(CryptographicPrivateKeyBlobType.Capi1PrivateKey);
+            var privateKeyBuffer = key.Export(CryptographicPrivateKeyBlobType.Pkcs1RsaPrivateKey);
             
             byte[] privateKeyBytes;
             CryptographicBuffer.CopyToByteArray(privateKeyBuffer, out privateKeyBytes);
