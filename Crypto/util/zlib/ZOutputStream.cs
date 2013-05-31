@@ -113,7 +113,6 @@ namespace Org.BouncyCastle.Utilities.Zlib
         {
             if (this.closed)
                 return;
-            base.Dispose(disposing);
             try
             {
                 try
@@ -132,6 +131,7 @@ namespace Org.BouncyCastle.Utilities.Zlib
                 output.Dispose();
                 output = null;
             }
+            base.Dispose(disposing);
         }
 #endif
 
@@ -177,7 +177,8 @@ namespace Org.BouncyCastle.Utilities.Zlib
 
 		public override void Flush()
 		{
-			output.Flush();
+            if(output != null)
+			    output.Flush();
 		}
 
 		public virtual int FlushMode

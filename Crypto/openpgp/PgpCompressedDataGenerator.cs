@@ -152,8 +152,6 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 _dOut.Flush();
 #if !NETFX_CORE
                 _dOut.Close();
-#else
-                _dOut.Dispose();
 #endif
             }
 
@@ -198,13 +196,6 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
             public override void Close()
             {
-                this.Finish();
-                this.End();
-            }
-#else
-            protected override void Dispose(bool disposing)
-            {
-                base.Dispose(disposing);
                 this.Finish();
                 this.End();
             }
