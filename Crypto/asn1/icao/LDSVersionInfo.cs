@@ -17,7 +17,7 @@ namespace Org.BouncyCastle.Asn1.Icao
 		private LdsVersionInfo(Asn1Sequence seq)
 		{
 			if (seq.Count != 2)
-				throw new ArgumentException("sequence wrong size for LDSVersionInfo", "seq");
+				throw new ArgumentException(@"sequence wrong size for LDSVersionInfo", "seq");
 
 			this.ldsVersion = DerPrintableString.GetInstance(seq[0]);
 			this.unicodeVersion = DerPrintableString.GetInstance(seq[1]);

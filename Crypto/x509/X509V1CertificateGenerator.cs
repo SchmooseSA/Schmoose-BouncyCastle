@@ -48,7 +48,7 @@ namespace Org.BouncyCastle.X509
 		{
 			if (serialNumber.SignValue <= 0)
 			{
-				throw new ArgumentException("serial number must be a positive integer", "serialNumber");
+				throw new ArgumentException(@"serial number must be a positive integer", "serialNumber");
 			}
 
 			tbsGen.SetSerialNumber(new DerInteger(serialNumber));
@@ -130,7 +130,7 @@ namespace Org.BouncyCastle.X509
 			}
 			catch (Exception)
 			{
-				throw new ArgumentException("Unknown signature type requested", "signatureAlgorithm");
+				throw new ArgumentException(@"Unknown signature type requested", "signatureAlgorithm");
 			}
 
 			sigAlgId = X509Utilities.GetSigAlgID(sigOID, signatureAlgorithm);

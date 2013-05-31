@@ -23,7 +23,7 @@ namespace Org.BouncyCastle.Crypto
             if (random == null)
                 throw new ArgumentNullException("random");
             if (strength < 1)
-                throw new ArgumentException("strength must be a positive value", "strength");
+                throw new ArgumentException(@"strength must be a positive value", "strength");
 
             _random = random;
             _strength = strength;

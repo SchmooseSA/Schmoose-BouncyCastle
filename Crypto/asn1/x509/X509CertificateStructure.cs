@@ -37,7 +37,7 @@ namespace Org.BouncyCastle.Asn1.X509
 			if (obj != null)
 				return new X509CertificateStructure(Asn1Sequence.GetInstance(obj));
 
-			throw new ArgumentException("null object in factory", "obj");
+			throw new ArgumentException(@"null object in factory", "obj");
         }
 
 		public X509CertificateStructure(
@@ -61,7 +61,7 @@ namespace Org.BouncyCastle.Asn1.X509
             Asn1Sequence seq)
         {
 			if (seq.Count != 3)
-				throw new ArgumentException("sequence wrong size for a certificate", "seq");
+				throw new ArgumentException(@"sequence wrong size for a certificate", "seq");
 
 			//
             // correct x509 certficate

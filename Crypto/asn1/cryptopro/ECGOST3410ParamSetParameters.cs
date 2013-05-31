@@ -53,7 +53,7 @@ namespace Org.BouncyCastle.Asn1.CryptoPro
             Asn1Sequence seq)
         {
 			if (seq.Count != 6)
-				throw new ArgumentException("Wrong number of elements in sequence", "seq");
+				throw new ArgumentException(@"Wrong number of elements in sequence", "seq");
 
 			this.a = DerInteger.GetInstance(seq[0]);
 			this.b = DerInteger.GetInstance(seq[1]);

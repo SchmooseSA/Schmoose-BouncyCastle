@@ -119,7 +119,7 @@ namespace Org.BouncyCastle.Crypto.Encodings
         private byte[] EncodeBlock(byte[] input, int inOff, int inLen)
         {
             if (inLen > GetInputBlockSize())
-                throw new ArgumentException("input data too large", "inLen");
+                throw new ArgumentException(@"input data too large", "inLen");
 
             var block = new byte[_engine.GetInputBlockSize()];
 

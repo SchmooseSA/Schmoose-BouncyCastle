@@ -45,11 +45,11 @@ namespace Org.BouncyCastle.Crypto.Engines
 
             var parametersWithIV = parameters as ParametersWithIV;
             if (parametersWithIV == null)
-                throw new ArgumentException("Bad parameters.", "parameters");
+                throw new ArgumentException(@"Bad parameters.", "parameters");
 
             var iv = parametersWithIV.GetIV();
             if (iv.Length != 8)
-                throw new ArgumentException("IV length not equal to 8", "parameters");
+                throw new ArgumentException(@"IV length not equal to 8", "parameters");
 
             _iv = iv;
             _param = (KeyParameter)parametersWithIV.Parameters;

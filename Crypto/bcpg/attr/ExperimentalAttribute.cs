@@ -8,7 +8,7 @@ namespace Org.BouncyCastle.Bcpg.Attr
             : base(tag, data)
         {
             if(tag < UserAttributeSubpacketTag.Experimental_1 || tag > UserAttributeSubpacketTag.Experimental_11)
-                throw new ArgumentException("tag must be one of the experimental tags.", "tag");
+                throw new ArgumentException(@"tag must be one of the experimental tags.", "tag");
         }
     }
 }

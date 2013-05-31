@@ -47,7 +47,7 @@ namespace Org.BouncyCastle.Crypto.Prng
 		public virtual void NextBytes(byte[] bytes, int start, int len)
 		{
 			if (start < 0)
-				throw new ArgumentException("Start offset cannot be negative", "start");
+				throw new ArgumentException(@"Start offset cannot be negative", "start");
 			if (bytes.Length < (start + len))
 				throw new ArgumentException("Byte array too small for requested offset and length");
 

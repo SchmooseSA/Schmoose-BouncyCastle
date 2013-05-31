@@ -141,7 +141,7 @@ namespace Org.BouncyCastle.Crypto.Signers
 			else if (parameters is ParametersWithSalt)
 			{
 				if (!forSigning)
-					throw new ArgumentException("ParametersWithSalt only valid for signing", "parameters");
+					throw new ArgumentException(@"ParametersWithSalt only valid for signing", "parameters");
 
 				ParametersWithSalt p = (ParametersWithSalt) parameters;
 

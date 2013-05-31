@@ -71,7 +71,7 @@ namespace Org.BouncyCastle.X509.Store
 			set
 			{
 				if (value < -2)
-					throw new ArgumentException("value can't be less than -2", "value");
+					throw new ArgumentException(@"value can't be less than -2", "value");
 
 				basicConstraints = value;
 			}

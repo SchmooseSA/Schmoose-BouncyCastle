@@ -50,7 +50,7 @@ namespace Org.BouncyCastle.Asn1.Ocsp
             Asn1Sequence seq)
         {
 			if (seq.Count != 2)
-				throw new ArgumentException("Wrong number of elements in sequence", "seq");
+				throw new ArgumentException(@"Wrong number of elements in sequence", "seq");
 
 			this.responseType = DerObjectIdentifier.GetInstance(seq[0]);
             this.response = Asn1OctetString.GetInstance(seq[1]);

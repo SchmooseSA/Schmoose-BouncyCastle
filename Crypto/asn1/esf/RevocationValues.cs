@@ -75,12 +75,12 @@ namespace Org.BouncyCastle.Asn1.Esf
 						otherRevValsFound = true;
 						break;
 					default:
-						throw new ArgumentException("Illegal tag in RevocationValues", "seq");
+						throw new ArgumentException(@"Illegal tag in RevocationValues", "seq");
 				}
 			}
 
 			if (!otherRevValsFound)
-				throw new ArgumentException("No otherRevVals found", "seq");
+				throw new ArgumentException(@"No otherRevVals found", "seq");
 		}
 
 		public RevocationValues(
@@ -115,7 +115,7 @@ namespace Org.BouncyCastle.Asn1.Esf
 			if (crlVals != null)
 			{
 				if (!CollectionUtilities.CheckElementsAreOfType(crlVals, typeof(CertificateList)))
-					throw new ArgumentException("Must contain only 'CertificateList' objects", "crlVals");
+					throw new ArgumentException(@"Must contain only 'CertificateList' objects", "crlVals");
 
 				this.crlVals = new DerSequence(
 					Asn1EncodableVector.FromEnumerable(crlVals));
@@ -124,7 +124,7 @@ namespace Org.BouncyCastle.Asn1.Esf
 			if (ocspVals != null)
 			{
 				if (!CollectionUtilities.CheckElementsAreOfType(ocspVals, typeof(BasicOcspResponse)))
-					throw new ArgumentException("Must contain only 'BasicOcspResponse' objects", "ocspVals");
+					throw new ArgumentException(@"Must contain only 'BasicOcspResponse' objects", "ocspVals");
 
 				this.ocspVals = new DerSequence(
 					Asn1EncodableVector.FromEnumerable(ocspVals));

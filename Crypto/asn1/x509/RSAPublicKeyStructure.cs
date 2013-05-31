@@ -44,9 +44,9 @@ namespace Org.BouncyCastle.Asn1.X509
 			if (publicExponent == null)
 				throw new ArgumentNullException("publicExponent");
 			if (modulus.SignValue <= 0)
-				throw new ArgumentException("Not a valid RSA modulus", "modulus");
+				throw new ArgumentException(@"Not a valid RSA modulus", "modulus");
 			if (publicExponent.SignValue <= 0)
-				throw new ArgumentException("Not a valid RSA public exponent", "publicExponent");
+				throw new ArgumentException(@"Not a valid RSA public exponent", "publicExponent");
 
             this.modulus = modulus;
             this.publicExponent = publicExponent;

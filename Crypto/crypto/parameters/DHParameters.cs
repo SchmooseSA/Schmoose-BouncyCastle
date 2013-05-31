@@ -81,23 +81,23 @@ namespace Org.BouncyCastle.Crypto.Parameters
 			if (g == null)
 				throw new ArgumentNullException("g");
 			if (!p.TestBit(0))
-				throw new ArgumentException("field must be an odd prime", "p");
+				throw new ArgumentException(@"field must be an odd prime", "p");
 			if (g.CompareTo(BigInteger.Two) < 0
 				|| g.CompareTo(p.Subtract(BigInteger.Two)) > 0)
-				throw new ArgumentException("generator must in the range [2, p - 2]", "g");
+				throw new ArgumentException(@"generator must in the range [2, p - 2]", "g");
 			if (q != null && q.BitLength >= p.BitLength)
-				throw new ArgumentException("q too big to be a factor of (p-1)", "q");
+				throw new ArgumentException(@"q too big to be a factor of (p-1)", "q");
 			if (m >= p.BitLength)
-				throw new ArgumentException("m value must be < bitlength of p", "m");
+				throw new ArgumentException(@"m value must be < bitlength of p", "m");
 			if (l != 0)
 			{ 
 	            if (l >= p.BitLength)
-                	throw new ArgumentException("when l value specified, it must be less than bitlength(p)", "l");
+                	throw new ArgumentException(@"when l value specified, it must be less than bitlength(p)", "l");
 				if (l < m)
-					throw new ArgumentException("when l value specified, it may not be less than m value", "l");
+					throw new ArgumentException(@"when l value specified, it may not be less than m value", "l");
 			}
 			if (j != null && j.CompareTo(BigInteger.Two) < 0)
-				throw new ArgumentException("subgroup factor must be >= 2", "j");
+				throw new ArgumentException(@"subgroup factor must be >= 2", "j");
 
 			// TODO If q, j both provided, validate p = jq + 1 ?
 

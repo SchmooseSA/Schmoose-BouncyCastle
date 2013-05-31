@@ -23,7 +23,7 @@ namespace Org.BouncyCastle.Asn1.Oiw
             Asn1Sequence seq)
         {
 			if (seq.Count != 2)
-				throw new ArgumentException("Wrong number of elements in sequence", "seq");
+				throw new ArgumentException(@"Wrong number of elements in sequence", "seq");
 
 			p = DerInteger.GetInstance(seq[0]);
 			g = DerInteger.GetInstance(seq[1]);

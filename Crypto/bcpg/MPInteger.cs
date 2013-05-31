@@ -26,7 +26,7 @@ namespace Org.BouncyCastle.Bcpg
             if (val == null)
                 throw new ArgumentNullException("val");
             if (val.SignValue < 0)
-                throw new ArgumentException("Values must be positive", "val");
+                throw new ArgumentException(@"Values must be positive", "val");
 
             _val = val;
         }

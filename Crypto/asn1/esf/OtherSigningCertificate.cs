@@ -85,7 +85,7 @@ namespace Org.BouncyCastle.Asn1.Esf
 			if (certs == null)
 				throw new ArgumentNullException("certs");
 			if (!CollectionUtilities.CheckElementsAreOfType(certs, typeof(OtherCertID)))
-				throw new ArgumentException("Must contain only 'OtherCertID' objects", "certs");
+				throw new ArgumentException(@"Must contain only 'OtherCertID' objects", "certs");
 
 			this.certs = new DerSequence(
 				Asn1EncodableVector.FromEnumerable(certs));
@@ -93,7 +93,7 @@ namespace Org.BouncyCastle.Asn1.Esf
 			if (policies != null)
 			{
 				if (!CollectionUtilities.CheckElementsAreOfType(policies, typeof(PolicyInformation)))
-					throw new ArgumentException("Must contain only 'PolicyInformation' objects", "policies");
+					throw new ArgumentException(@"Must contain only 'PolicyInformation' objects", "policies");
 
 				this.policies = new DerSequence(
 					Asn1EncodableVector.FromEnumerable(policies));

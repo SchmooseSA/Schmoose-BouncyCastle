@@ -85,7 +85,7 @@ namespace Org.BouncyCastle.Asn1
 			if (str == null)
 				throw new ArgumentNullException("str");
 			if (validate && !IsIA5String(str))
-				throw new ArgumentException("string contains illegal characters", "str");
+				throw new ArgumentException(@"string contains illegal characters", "str");
 
 			this.str = str;
 		}

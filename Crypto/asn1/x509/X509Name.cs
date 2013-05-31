@@ -5,10 +5,6 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 
-#if SILVERLIGHT
-using System.Collections.Generic;
-#endif
-
 using Org.BouncyCastle.Asn1.Pkcs;
 using Org.BouncyCastle.Utilities;
 using Org.BouncyCastle.Utilities.Encoders;
@@ -367,7 +363,7 @@ namespace Org.BouncyCastle.Asn1.X509
             if (obj != null)
                 return new X509Name(Asn1Sequence.GetInstance(obj));
 
-            throw new ArgumentException("null object in factory", "obj");
+            throw new ArgumentException(@"null object in factory", "obj");
         }
 
         protected X509Name()

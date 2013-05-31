@@ -185,7 +185,7 @@ namespace Org.BouncyCastle.Security
 				return GetRsaKeyPair((RSA)privateKey);
 			}
 
-			throw new ArgumentException("Unsupported algorithm specified", "privateKey");
+			throw new ArgumentException(@"Unsupported algorithm specified", "privateKey");
 		}
 
 		public static RSA ToRSA(RsaKeyParameters rsaKey)

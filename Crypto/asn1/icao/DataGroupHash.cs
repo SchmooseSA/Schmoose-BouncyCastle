@@ -54,7 +54,7 @@ namespace Org.BouncyCastle.Asn1.Icao
 			Asn1Sequence seq)
         {
 			if (seq.Count != 2)
-				throw new ArgumentException("Wrong number of elements in sequence", "seq");
+				throw new ArgumentException(@"Wrong number of elements in sequence", "seq");
 
 			this.dataGroupNumber = DerInteger.GetInstance(seq[0]);
             this.dataGroupHashValue = Asn1OctetString.GetInstance(seq[1]);

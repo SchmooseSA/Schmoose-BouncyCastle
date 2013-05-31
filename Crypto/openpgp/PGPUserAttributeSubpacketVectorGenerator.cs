@@ -13,7 +13,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         public virtual void SetImageAttribute(ImageAttribute.Format imageType, byte[] imageData)
         {
             if (imageData == null)
-                throw new ArgumentException("attempt to set null image", "imageData");
+                throw new ArgumentException(@"attempt to set null image", "imageData");
 
             _list.Add(new ImageAttribute(imageType, imageData));
         }

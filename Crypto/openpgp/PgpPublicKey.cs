@@ -75,7 +75,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         public PgpPublicKey(PublicKeyAlgorithmTag algorithm, IAsymmetricKeyParameter pubKey, DateTime time)
         {
             if (pubKey.IsPrivate)
-                throw new ArgumentException("Expected a public key", "pubKey");
+                throw new ArgumentException(@"Expected a public key", "pubKey");
 
             IBcpgPublicKey bcpgKey;
 

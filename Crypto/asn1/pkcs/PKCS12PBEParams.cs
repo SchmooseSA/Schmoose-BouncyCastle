@@ -23,7 +23,7 @@ namespace Org.BouncyCastle.Asn1.Pkcs
             Asn1Sequence seq)
         {
 			if (seq.Count != 2)
-				throw new ArgumentException("Wrong number of elements in sequence", "seq");
+				throw new ArgumentException(@"Wrong number of elements in sequence", "seq");
 
 			iv = Asn1OctetString.GetInstance(seq[0]);
             iterations = DerInteger.GetInstance(seq[1]);

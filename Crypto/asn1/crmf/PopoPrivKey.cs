@@ -38,7 +38,7 @@ namespace Org.BouncyCastle.Asn1.Crmf
                 this.obj = EnvelopedData.GetInstance(obj, false);
                 break;
             default:
-                throw new ArgumentException("unknown tag in PopoPrivKey", "obj");
+                throw new ArgumentException(@"unknown tag in PopoPrivKey", "obj");
             }
         }
 

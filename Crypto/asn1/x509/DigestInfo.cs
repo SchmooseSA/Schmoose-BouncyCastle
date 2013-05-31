@@ -52,7 +52,7 @@ namespace Org.BouncyCastle.Asn1.X509
             Asn1Sequence seq)
         {
 			if (seq.Count != 2)
-				throw new ArgumentException("Wrong number of elements in sequence", "seq");
+				throw new ArgumentException(@"Wrong number of elements in sequence", "seq");
 
             algID = AlgorithmIdentifier.GetInstance(seq[0]);
 			digest = Asn1OctetString.GetInstance(seq[1]).GetOctets();

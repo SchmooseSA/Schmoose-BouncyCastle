@@ -94,7 +94,7 @@ namespace Org.BouncyCastle.Crypto.Engines
                 this.param = (KeyParameter) this.paramPlusIV.Parameters;
 
 				if (this.iv.Length != 8)
-					throw new ArgumentException("IV is not 8 octets", "parameters");
+					throw new ArgumentException(@"IV is not 8 octets", "parameters");
             }
         }
 

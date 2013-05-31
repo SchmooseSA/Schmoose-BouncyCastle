@@ -535,9 +535,9 @@ namespace Org.BouncyCastle.Cms
             if (outStream == null)
                 throw new ArgumentNullException("outStream");
             if (!outStream.CanWrite)
-                throw new ArgumentException("Expected writeable stream", "outStream");
+                throw new ArgumentException(@"Expected writeable stream", "outStream");
             if (dataOutputStream != null && !dataOutputStream.CanWrite)
-                throw new ArgumentException("Expected writeable stream", "dataOutputStream");
+                throw new ArgumentException(@"Expected writeable stream", "dataOutputStream");
 
             _messageDigestsLocked = true;
 

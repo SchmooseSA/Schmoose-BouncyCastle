@@ -15,7 +15,7 @@ namespace Org.BouncyCastle.Asn1.Pkcs
             Asn1Sequence seq)
         {
 			if (seq.Count != 2)
-				throw new ArgumentException("Wrong number of elements in sequence", "seq");
+				throw new ArgumentException(@"Wrong number of elements in sequence", "seq");
 
             algId = AlgorithmIdentifier.GetInstance(seq[0]);
             data = Asn1OctetString.GetInstance(seq[1]);

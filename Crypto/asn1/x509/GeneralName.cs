@@ -143,7 +143,7 @@ namespace Org.BouncyCastle.Asn1.X509
 			{
 				byte[] enc = toGeneralNameEncoding(name);
 				if (enc == null)
-					throw new ArgumentException("IP Address is invalid", "name");
+					throw new ArgumentException(@"IP Address is invalid", "name");
 
 				this.obj = new DerOctetString(enc);
 			}

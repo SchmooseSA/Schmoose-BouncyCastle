@@ -27,7 +27,7 @@ namespace Org.BouncyCastle.Asn1.Pkcs
 			Asn1Sequence seq)
 		{
 			if (seq.Count < 2 || seq.Count > 3)
-				throw new ArgumentException("Wrong number of elements in sequence", "seq");
+				throw new ArgumentException(@"Wrong number of elements in sequence", "seq");
 
 			octStr = (Asn1OctetString)seq[0];
 			iterationCount = (DerInteger)seq[1];

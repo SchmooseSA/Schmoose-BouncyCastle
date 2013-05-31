@@ -52,7 +52,7 @@ namespace Org.BouncyCastle.Asn1.Ocsp
             Asn1Sequence seq)
         {
 			if (seq.Count != 4)
-				throw new ArgumentException("Wrong number of elements in sequence", "seq");
+				throw new ArgumentException(@"Wrong number of elements in sequence", "seq");
 
 			this.hashAlgorithm = AlgorithmIdentifier.GetInstance(seq[0]);
             this.issuerNameHash = Asn1OctetString.GetInstance(seq[1]);

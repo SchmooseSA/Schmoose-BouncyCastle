@@ -19,7 +19,7 @@ namespace Org.BouncyCastle.Asn1
 			int		limit)
 		{
 			if (!inStream.CanRead)
-				throw new ArgumentException("Expected stream to be readable", "inStream");
+				throw new ArgumentException(@"Expected stream to be readable", "inStream");
 
 			this._in = inStream;
 			this._limit = limit;

@@ -99,7 +99,7 @@ namespace Org.BouncyCastle.Asn1.Esf
 			if (sigPolicyQualifiers != null)
 			{
 				if (!CollectionUtilities.CheckElementsAreOfType(sigPolicyQualifiers, typeof(SigPolicyQualifierInfo)))
-					throw new ArgumentException("Must contain only 'SigPolicyQualifierInfo' objects", "sigPolicyQualifiers");
+					throw new ArgumentException(@"Must contain only 'SigPolicyQualifierInfo' objects", "sigPolicyQualifiers");
 
 				this.sigPolicyQualifiers = new DerSequence(
 					Asn1EncodableVector.FromEnumerable(sigPolicyQualifiers));

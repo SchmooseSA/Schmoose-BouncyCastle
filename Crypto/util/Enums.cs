@@ -16,7 +16,7 @@ namespace Org.BouncyCastle.Utilities
         {
 #if !NETFX_CORE
 			if (!enumType.IsEnum)
-				throw new ArgumentException("Not an enumeration type", "enumType");
+				throw new ArgumentException(@"Not an enumeration type", "enumType");
 #endif
             // We only want to parse single named constants
             if (s.Length > 0 && char.IsLetter(s[0]) && s.IndexOf(',') < 0)
@@ -41,7 +41,7 @@ namespace Org.BouncyCastle.Utilities
         {
 #if !NETFX_CORE
             if (!enumType.IsEnum)
-                throw new ArgumentException("Not an enumeration type", "enumType");
+                throw new ArgumentException(@"Not an enumeration type", "enumType");
 #endif
 #if NETCF_1_0 || NETCF_2_0 || SILVERLIGHT
             IList result = Platform.CreateArrayList();

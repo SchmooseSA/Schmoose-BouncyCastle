@@ -102,7 +102,7 @@ namespace Org.BouncyCastle.X509
 			if (inStream == null)
 				throw new ArgumentNullException("inStream");
 			if (!inStream.CanRead)
-				throw new ArgumentException("inStream must be read-able", "inStream");
+				throw new ArgumentException(@"inStream must be read-able", "inStream");
 
 			if (currentStream == null)
 			{

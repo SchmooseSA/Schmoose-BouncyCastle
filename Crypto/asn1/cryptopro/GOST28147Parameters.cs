@@ -38,7 +38,7 @@ namespace Org.BouncyCastle.Asn1.CryptoPro
             Asn1Sequence seq)
         {
 			if (seq.Count != 2)
-				throw new ArgumentException("Wrong number of elements in sequence", "seq");
+				throw new ArgumentException(@"Wrong number of elements in sequence", "seq");
 
 			this.iv = Asn1OctetString.GetInstance(seq[0]);
 			this.paramSet = DerObjectIdentifier.GetInstance(seq[1]);

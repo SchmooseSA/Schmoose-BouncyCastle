@@ -331,7 +331,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         {
             // TODO Remove this restriction?
             if (!inputStream.CanSeek)
-                throw new ArgumentException("inputStream must be seek-able", "inputStream");
+                throw new ArgumentException(@"inputStream must be seek-able", "inputStream");
 
             var markedPos = inputStream.Position;
 

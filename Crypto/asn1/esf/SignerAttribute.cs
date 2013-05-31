@@ -40,7 +40,7 @@ namespace Org.BouncyCastle.Asn1.Esf
 			}
 			else
 			{
-				throw new ArgumentException("illegal tag.", "obj");
+				throw new ArgumentException(@"illegal tag.", "obj");
 			}
 		}
 

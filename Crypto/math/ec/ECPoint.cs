@@ -167,7 +167,7 @@ namespace Org.BouncyCastle.Math.EC
         public override ECPoint Multiply(IBigInteger k)
         {
             if (k.SignValue < 0)
-                throw new ArgumentException("The multiplicator cannot be negative", "k");
+                throw new ArgumentException(@"The multiplicator cannot be negative", "k");
 
             if (this.IsInfinity)
                 return this;

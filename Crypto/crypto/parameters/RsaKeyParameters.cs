@@ -22,9 +22,9 @@ namespace Org.BouncyCastle.Crypto.Parameters
 			if (exponent == null)
 				throw new ArgumentNullException("exponent");
 			if (modulus.SignValue <= 0)
-				throw new ArgumentException("Not a valid RSA modulus", "modulus");
+				throw new ArgumentException(@"Not a valid RSA modulus", "modulus");
 			if (exponent.SignValue <= 0)
-				throw new ArgumentException("Not a valid RSA exponent", "exponent");
+				throw new ArgumentException(@"Not a valid RSA exponent", "exponent");
 
 			this.modulus = modulus;
 			this.exponent = exponent;

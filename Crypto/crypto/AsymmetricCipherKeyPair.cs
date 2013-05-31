@@ -19,9 +19,9 @@ namespace Org.BouncyCastle.Crypto
         public AsymmetricCipherKeyPair(IAsymmetricKeyParameter publicParameter, IAsymmetricKeyParameter privateParameter)
         {
             if (publicParameter.IsPrivate)
-                throw new ArgumentException("Expected a public key", "publicParameter");
+                throw new ArgumentException(@"Expected a public key", "publicParameter");
             if (!privateParameter.IsPrivate)
-                throw new ArgumentException("Expected a private key", "privateParameter");
+                throw new ArgumentException(@"Expected a private key", "privateParameter");
 
             _publicParameter = publicParameter;
             _privateParameter = privateParameter;

@@ -120,7 +120,7 @@ namespace Org.BouncyCastle.Crypto.Parameters
                 var x9 = ECKeyPairGenerator.FindECCurveByOid(publicKeyParamSet);
                 if (x9 == null)
                 {
-                    throw new ArgumentException("OID is not a valid public key parameter set", "publicKeyParamSet");
+                    throw new ArgumentException(@"OID is not a valid public key parameter set", "publicKeyParamSet");
                 }
 
                 p = new ECDomainParameters(x9.Curve, x9.G, x9.N, x9.H, x9.GetSeed());

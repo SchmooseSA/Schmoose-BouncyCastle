@@ -19,7 +19,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         public PgpPrivateKey(IAsymmetricKeyParameter privateKey, long keyId)
         {
             if (!privateKey.IsPrivate)
-                throw new ArgumentException("Expected a private key", "privateKey");
+                throw new ArgumentException(@"Expected a private key", "privateKey");
 
             _privateKey = privateKey;
             _keyId = keyId;

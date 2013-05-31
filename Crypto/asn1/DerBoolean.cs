@@ -62,7 +62,7 @@ namespace Org.BouncyCastle.Asn1
             byte[] val)
         {
 			if (val.Length != 1)
-				throw new ArgumentException("byte value should have 1 byte in it", "val");
+				throw new ArgumentException(@"byte value should have 1 byte in it", "val");
 
 			// TODO Are there any constraints on the possible byte values?
             this.value = val[0];

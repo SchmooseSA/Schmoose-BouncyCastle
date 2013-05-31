@@ -30,7 +30,7 @@ namespace Org.BouncyCastle.Asn1.Pkcs
 			if (obj != null)
 				return new CertificationRequest((Asn1Sequence)obj);
 
-			throw new ArgumentException("Null object in GetInstance()", "obj");
+			throw new ArgumentException(@"Null object in GetInstance()", "obj");
 		}
 
 		protected CertificationRequest()
@@ -51,7 +51,7 @@ namespace Org.BouncyCastle.Asn1.Pkcs
             Asn1Sequence seq)
         {
 			if (seq.Count != 3)
-				throw new ArgumentException("Wrong number of elements in sequence", "seq");
+				throw new ArgumentException(@"Wrong number of elements in sequence", "seq");
 
 			reqInfo = CertificationRequestInfo.GetInstance(seq[0]);
             sigAlgId = AlgorithmIdentifier.GetInstance(seq[1]);

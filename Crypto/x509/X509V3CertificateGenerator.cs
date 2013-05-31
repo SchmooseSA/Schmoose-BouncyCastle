@@ -49,7 +49,7 @@ namespace Org.BouncyCastle.X509
         {
 			if (serialNumber.SignValue <= 0)
 			{
-				throw new ArgumentException("serial number must be a positive integer", "serialNumber");
+				throw new ArgumentException(@"serial number must be a positive integer", "serialNumber");
 			}
 
 			tbsGen.SetSerialNumber(new DerInteger(serialNumber));

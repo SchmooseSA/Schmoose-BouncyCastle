@@ -580,7 +580,7 @@ namespace Org.BouncyCastle.Cms
 			IAsymmetricKeyParameter pubKey)
 		{
 			if (pubKey.IsPrivate)
-				throw new ArgumentException("Expected public key", "pubKey");
+				throw new ArgumentException(@"Expected public key", "pubKey");
 
 			// Optional, but still need to validate if present
 			GetSigningTime();

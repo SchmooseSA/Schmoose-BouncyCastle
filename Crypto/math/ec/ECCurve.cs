@@ -62,7 +62,7 @@ namespace Org.BouncyCastle.Math.EC
                 case 0x00: // infinity
                     {
                         if (encoded.Length != 1)
-                            throw new ArgumentException("Incorrect length for infinity encoding", "encoded");
+                            throw new ArgumentException(@"Incorrect length for infinity encoding", "encoded");
 
                         p = Infinity;
                         break;
@@ -72,7 +72,7 @@ namespace Org.BouncyCastle.Math.EC
                 case 0x03: // compressed
                     {
                         if (encoded.Length != (expectedLength + 1))
-                            throw new ArgumentException("Incorrect length for compressed encoding", "encoded");
+                            throw new ArgumentException(@"Incorrect length for compressed encoding", "encoded");
 
                         var yTilde = encoded[0] & 1;
                         IBigInteger x1 = new BigInteger(1, encoded, 1, encoded.Length - 1);
@@ -86,7 +86,7 @@ namespace Org.BouncyCastle.Math.EC
                 case 0x07: // hybrid
                     {
                         if (encoded.Length != (2 * expectedLength + 1))
-                            throw new ArgumentException("Incorrect length for uncompressed/hybrid encoding", "encoded");
+                            throw new ArgumentException(@"Incorrect length for uncompressed/hybrid encoding", "encoded");
 
                         IBigInteger x1 = new BigInteger(1, encoded, 1, expectedLength);
                         IBigInteger y1 = new BigInteger(1, encoded, 1 + expectedLength, expectedLength);

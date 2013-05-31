@@ -42,7 +42,7 @@ namespace Org.BouncyCastle.Crypto.Tls
 					this.tlsSigner = null;
 					break;
 				default:
-                    throw new ArgumentException("unsupported key exchange algorithm", "keyExchange");
+                    throw new ArgumentException(@"unsupported key exchange algorithm", "keyExchange");
 			}
 
 			this.context = context;

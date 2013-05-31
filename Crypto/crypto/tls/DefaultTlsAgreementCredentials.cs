@@ -23,7 +23,7 @@ namespace Org.BouncyCastle.Crypto.Tls
 			}
 			if (clientCertificate.certs.Length == 0)
 			{
-				throw new ArgumentException("cannot be empty", "clientCertificate");
+				throw new ArgumentException(@"cannot be empty", "clientCertificate");
 			}
 			if (clientPrivateKey == null)
 			{
@@ -31,7 +31,7 @@ namespace Org.BouncyCastle.Crypto.Tls
 			}
 			if (!clientPrivateKey.IsPrivate)
 			{
-				throw new ArgumentException("must be private", "clientPrivateKey");
+				throw new ArgumentException(@"must be private", "clientPrivateKey");
 			}
 
 			if (clientPrivateKey is DHPrivateKeyParameters)

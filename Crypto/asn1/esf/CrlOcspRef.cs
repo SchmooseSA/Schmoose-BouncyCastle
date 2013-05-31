@@ -56,7 +56,7 @@ namespace Org.BouncyCastle.Asn1.Esf
 						this.otherRev = OtherRevRefs.GetInstance(asn1Obj);
 						break;
 					default:
-						throw new ArgumentException("Illegal tag in CrlOcspRef", "seq");
+						throw new ArgumentException(@"Illegal tag in CrlOcspRef", "seq");
 				}
 			}
 		}

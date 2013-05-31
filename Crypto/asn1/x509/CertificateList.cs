@@ -41,14 +41,14 @@ namespace Org.BouncyCastle.Asn1.X509
 			if (obj != null)
 				return new CertificateList(Asn1Sequence.GetInstance(obj));
 
-			throw new ArgumentException("null object in factory", "obj");
+			throw new ArgumentException(@"null object in factory", "obj");
 		}
 
 		private CertificateList(
             Asn1Sequence seq)
         {
 			if (seq.Count != 3)
-				throw new ArgumentException("sequence wrong size for CertificateList", "seq");
+				throw new ArgumentException(@"sequence wrong size for CertificateList", "seq");
 
 			tbsCertList = TbsCertificateList.GetInstance(seq[0]);
 			sigAlgID = AlgorithmIdentifier.GetInstance(seq[1]);

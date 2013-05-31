@@ -56,7 +56,7 @@ namespace Org.BouncyCastle.Asn1.X509
 				if (seq.Count > 1)
 				{
 					if (this.cA == null)
-						throw new ArgumentException("wrong sequence in constructor", "seq");
+						throw new ArgumentException(@"wrong sequence in constructor", "seq");
 
 					this.pathLenConstraint = DerInteger.GetInstance(seq[1]);
 				}

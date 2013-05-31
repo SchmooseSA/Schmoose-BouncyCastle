@@ -21,7 +21,7 @@ namespace Org.BouncyCastle.Asn1.Cmp
         public CmpCertificate(X509CertificateStructure x509v3PKCert)
         {
             if (x509v3PKCert.Version != 3)
-                throw new ArgumentException("only version 3 certificates allowed", "x509v3PKCert");
+                throw new ArgumentException(@"only version 3 certificates allowed", "x509v3PKCert");
 
             this.x509v3PKCert = x509v3PKCert;
         }

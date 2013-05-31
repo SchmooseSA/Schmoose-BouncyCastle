@@ -20,7 +20,7 @@ namespace Org.BouncyCastle.Utilities.Date
 			DateTime dateTime)
 		{
 			if (dateTime.CompareTo(UnixEpoch) < 0)
-				throw new ArgumentException("DateTime value may not be before the epoch", "dateTime");
+				throw new ArgumentException(@"DateTime value may not be before the epoch", "dateTime");
 
 			return (dateTime.Ticks - UnixEpoch.Ticks) / TimeSpan.TicksPerMillisecond;
 		}

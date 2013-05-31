@@ -192,7 +192,7 @@ namespace Org.BouncyCastle.Pkix
 			if (tas == null)
 				throw new ArgumentNullException("value");
 			if (tas.IsEmpty)
-				throw new ArgumentException("non-empty set required", "value");
+				throw new ArgumentException(@"non-empty set required", "value");
 
 			// Explicit copy to enforce type-safety
 			this.trustAnchors = new HashSet();

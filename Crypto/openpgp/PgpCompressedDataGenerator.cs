@@ -30,7 +30,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 case CompressionAlgorithmTag.BZip2:
                     break;
                 default:
-                    throw new ArgumentException("unknown compression algorithm", "algorithm");
+                    throw new ArgumentException(@"unknown compression algorithm", "algorithm");
             }
 
             if (compression != JZlib.Z_DEFAULT_COMPRESSION)

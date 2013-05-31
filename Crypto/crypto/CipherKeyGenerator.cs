@@ -22,7 +22,7 @@ namespace Org.BouncyCastle.Crypto
 			int defaultStrength)
 		{
 			if (defaultStrength < 1)
-				throw new ArgumentException("strength must be a positive value", "defaultStrength");
+				throw new ArgumentException(@"strength must be a positive value", "defaultStrength");
 
 			this.defaultStrength = defaultStrength;
 		}

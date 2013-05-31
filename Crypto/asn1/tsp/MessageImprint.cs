@@ -35,7 +35,7 @@ namespace Org.BouncyCastle.Asn1.Tsp
 			Asn1Sequence seq)
 		{
 			if (seq.Count != 2)
-				throw new ArgumentException("Wrong number of elements in sequence", "seq");
+				throw new ArgumentException(@"Wrong number of elements in sequence", "seq");
 
 			this.hashAlgorithm = AlgorithmIdentifier.GetInstance(seq[0]);
 			this.hashedMessage = Asn1OctetString.GetInstance(seq[1]).GetOctets();

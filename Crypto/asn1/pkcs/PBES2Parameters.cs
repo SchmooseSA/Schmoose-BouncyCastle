@@ -25,7 +25,7 @@ namespace Org.BouncyCastle.Asn1.Pkcs
             Asn1Sequence seq)
         {
 			if (seq.Count != 2)
-				throw new ArgumentException("Wrong number of elements in sequence", "seq");
+				throw new ArgumentException(@"Wrong number of elements in sequence", "seq");
 
 			Asn1Sequence funcSeq = (Asn1Sequence)seq[0].ToAsn1Object();
 

@@ -32,7 +32,7 @@ namespace Org.BouncyCastle.Crypto.Generators
             SecureRandom    random)
         {
 			if (!IsValidDsaStrength(size))
-				throw new ArgumentException("size must be from 512 - 1024 and a multiple of 64", "size");
+				throw new ArgumentException(@"size must be from 512 - 1024 and a multiple of 64", "size");
 
 			Init(size, GetDefaultN(size), certainty, random);
 		}

@@ -47,7 +47,7 @@ namespace Org.BouncyCastle.Crypto.Parameters
 			Gost3410ParamSetParameters p = Gost3410NamedParameters.GetByOid(publicKeyParamSet);
 
 			if (p == null)
-				throw new ArgumentException("OID is not a valid CryptoPro public key parameter set", "publicKeyParamSet");
+				throw new ArgumentException(@"OID is not a valid CryptoPro public key parameter set", "publicKeyParamSet");
 
 			return new Gost3410Parameters(p.P, p.Q, p.A);
 		}

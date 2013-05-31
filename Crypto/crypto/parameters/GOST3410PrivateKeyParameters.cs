@@ -16,7 +16,7 @@ namespace Org.BouncyCastle.Crypto.Parameters
 			: base(true, parameters)
 		{
 			if (x.SignValue < 1 || x.BitLength > 256 || x.CompareTo(Parameters.Q) >= 0)
-				throw new ArgumentException("Invalid x for GOST3410 private key", "x");
+				throw new ArgumentException(@"Invalid x for GOST3410 private key", "x");
 
 			this.x = x;
 		}
@@ -27,7 +27,7 @@ namespace Org.BouncyCastle.Crypto.Parameters
 			: base(true, publicKeyParamSet)
 		{
 			if (x.SignValue < 1 || x.BitLength > 256 || x.CompareTo(Parameters.Q) >= 0)
-				throw new ArgumentException("Invalid x for GOST3410 private key", "x");
+				throw new ArgumentException(@"Invalid x for GOST3410 private key", "x");
 
 			this.x = x;
 		}

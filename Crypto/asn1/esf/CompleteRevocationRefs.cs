@@ -60,7 +60,7 @@ namespace Org.BouncyCastle.Asn1.Esf
 			if (crlOcspRefs == null)
 				throw new ArgumentNullException("crlOcspRefs");
 			if (!CollectionUtilities.CheckElementsAreOfType(crlOcspRefs, typeof(CrlOcspRef)))
-				throw new ArgumentException("Must contain only 'CrlOcspRef' objects", "crlOcspRefs");
+				throw new ArgumentException(@"Must contain only 'CrlOcspRef' objects", "crlOcspRefs");
 
 			this.crlOcspRefs = new DerSequence(
 				Asn1EncodableVector.FromEnumerable(crlOcspRefs));

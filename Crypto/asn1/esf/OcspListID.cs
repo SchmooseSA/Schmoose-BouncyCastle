@@ -64,7 +64,7 @@ namespace Org.BouncyCastle.Asn1.Esf
 			if (ocspResponses == null)
 				throw new ArgumentNullException("ocspResponses");
 			if (!CollectionUtilities.CheckElementsAreOfType(ocspResponses, typeof(OcspResponsesID)))
-				throw new ArgumentException("Must contain only 'OcspResponsesID' objects", "ocspResponses");
+				throw new ArgumentException(@"Must contain only 'OcspResponsesID' objects", "ocspResponses");
 
 			this.ocspResponses = new DerSequence(
 				Asn1EncodableVector.FromEnumerable(ocspResponses));

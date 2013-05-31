@@ -35,7 +35,7 @@ namespace Org.BouncyCastle.Asn1.Cms
 			{
 				Asn1TaggedObject tagged = (Asn1TaggedObject) seq[1];
 				if (!tagged.IsExplicit() || tagged.TagNo != 0)
-					throw new ArgumentException("Bad tag for 'content'", "seq");
+					throw new ArgumentException(@"Bad tag for 'content'", "seq");
 
 				content = tagged.GetObject();
 			}

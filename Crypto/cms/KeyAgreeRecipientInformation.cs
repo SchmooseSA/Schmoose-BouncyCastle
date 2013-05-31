@@ -211,12 +211,12 @@ namespace Org.BouncyCastle.Cms
 			ICipherParameters key)
 		{
 			if (!(key is AsymmetricKeyParameter))
-				throw new ArgumentException("KeyAgreement requires asymmetric key", "key");
+				throw new ArgumentException(@"KeyAgreement requires asymmetric key", "key");
 
 			IAsymmetricKeyParameter receiverPrivateKey = (AsymmetricKeyParameter) key;
 
 			if (!receiverPrivateKey.IsPrivate)
-				throw new ArgumentException("Expected private key", "key");
+				throw new ArgumentException(@"Expected private key", "key");
 
 			KeyParameter sKey = GetSessionKey(receiverPrivateKey);
 

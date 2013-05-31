@@ -83,18 +83,18 @@ namespace Org.BouncyCastle.Crypto.Macs
 		public virtual void Init(ICipherParameters parameters)
 		{
 			if (!(parameters is ParametersWithIV))
-				throw new ArgumentException("VMPC-MAC Init parameters must include an IV", "parameters");
+				throw new ArgumentException(@"VMPC-MAC Init parameters must include an IV", "parameters");
 
 			ParametersWithIV ivParams = (ParametersWithIV) parameters;
 			KeyParameter key = (KeyParameter) ivParams.Parameters;
 
 			if (!(ivParams.Parameters is KeyParameter))
-				throw new ArgumentException("VMPC-MAC Init parameters must include a key", "parameters");
+				throw new ArgumentException(@"VMPC-MAC Init parameters must include a key", "parameters");
 
 			this.workingIV = ivParams.GetIV();
 
 			if (workingIV == null || workingIV.Length < 1 || workingIV.Length > 768)
-				throw new ArgumentException("VMPC-MAC requires 1 to 768 bytes of IV", "parameters");
+				throw new ArgumentException(@"VMPC-MAC requires 1 to 768 bytes of IV", "parameters");
 
 			this.workingKey = key.GetKey();
 

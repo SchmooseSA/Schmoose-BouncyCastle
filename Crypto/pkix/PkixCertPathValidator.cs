@@ -45,7 +45,7 @@ namespace Org.BouncyCastle.Pkix
 			if (paramsPkix.GetTrustAnchors() == null)
             {
                 throw new ArgumentException(
-					"trustAnchors is null, this is not allowed for certification path validation.",
+					@"trustAnchors is null, this is not allowed for certification path validation.",
 					"parameters");
             }
 

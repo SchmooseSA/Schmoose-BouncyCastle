@@ -47,10 +47,10 @@ namespace Org.BouncyCastle.Asn1
 			}
 
 			if (vector.Count != offset + 1)
-				throw new ArgumentException("input vector too large", "vector");
+				throw new ArgumentException(@"input vector too large", "vector");
 
 			if (!(enc is DerTaggedObject))
-				throw new ArgumentException("No tagged object found in vector. Structure doesn't seem to be of type External", "vector");
+				throw new ArgumentException(@"No tagged object found in vector. Structure doesn't seem to be of type External", "vector");
 
 			DerTaggedObject obj = (DerTaggedObject)enc;
 
@@ -190,7 +190,7 @@ namespace Org.BouncyCastle.Asn1
 		private static Asn1Object GetObjFromVector(Asn1EncodableVector v, int index)
 		{
 			if (v.Count <= index)
-				throw new ArgumentException("too few objects in input vector", "v");
+				throw new ArgumentException(@"too few objects in input vector", "v");
 
 			return v[index].ToAsn1Object();
 		}

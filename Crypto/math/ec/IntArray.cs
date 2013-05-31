@@ -28,7 +28,7 @@ namespace Org.BouncyCastle.Math.EC
         public IntArray(IBigInteger bigInt, int minIntLen)
 		{
 			if (bigInt.SignValue == -1)
-                throw new ArgumentException("Only positive Integers allowed", "bigInt");
+                throw new ArgumentException(@"Only positive Integers allowed", "bigInt");
 
 			if (bigInt.SignValue == 0)
 			{

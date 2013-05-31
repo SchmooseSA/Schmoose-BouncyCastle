@@ -27,7 +27,7 @@ namespace Org.BouncyCastle.Crypto
 			if (cipher == null)
 				throw new ArgumentNullException("cipher");
 			if (cipher.GetBlockSize() != 1)
-				throw new ArgumentException("block cipher block size != 1.", "cipher");
+				throw new ArgumentException(@"block cipher block size != 1.", "cipher");
 
 			this.cipher = cipher;
 		}

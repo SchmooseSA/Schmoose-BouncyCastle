@@ -21,7 +21,7 @@ namespace Org.BouncyCastle.Crypto.Prng
             if (generator == null)
                 throw new ArgumentNullException("generator");
             if (windowSize < 2)
-                throw new ArgumentException("Window size must be at least 2", "windowSize");
+                throw new ArgumentException(@"Window size must be at least 2", "windowSize");
 
             _generator = generator;
             _window = new byte[windowSize];

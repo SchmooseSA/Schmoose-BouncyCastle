@@ -30,7 +30,7 @@ namespace Org.BouncyCastle.Asn1.Pkcs
 		private PbeParameter(Asn1Sequence seq)
 		{
 			if (seq.Count != 2)
-				throw new ArgumentException("Wrong number of elements in sequence", "seq");
+				throw new ArgumentException(@"Wrong number of elements in sequence", "seq");
 
 			salt = Asn1OctetString.GetInstance(seq[0]);
 			iterationCount = DerInteger.GetInstance(seq[1]);

@@ -57,7 +57,7 @@ namespace Org.BouncyCastle.Crypto.Engines
 			ParametersWithIV ivParams = parameters as ParametersWithIV;
 
 			if (ivParams == null)
-				throw new ArgumentException("Salsa20 Init requires an IV", "parameters");
+				throw new ArgumentException(@"Salsa20 Init requires an IV", "parameters");
 
 			byte[] iv = ivParams.GetIV();
 
@@ -67,7 +67,7 @@ namespace Org.BouncyCastle.Crypto.Engines
 			KeyParameter key = ivParams.Parameters as KeyParameter;
 
 			if (key == null)
-				throw new ArgumentException("Salsa20 Init requires a key", "parameters");
+				throw new ArgumentException(@"Salsa20 Init requires a key", "parameters");
 
 			workingKey = key.GetKey();
 			workingIV = iv;

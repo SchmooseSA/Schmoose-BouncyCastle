@@ -57,7 +57,7 @@ namespace Org.BouncyCastle.Crypto.Modes
 			}
 	        else
 	        {
-	            throw new ArgumentException("SIC mode requires ParametersWithIV", "parameters");
+	            throw new ArgumentException(@"SIC mode requires ParametersWithIV", "parameters");
 	        }
 		}
 

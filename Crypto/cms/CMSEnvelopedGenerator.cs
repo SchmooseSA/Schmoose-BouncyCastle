@@ -245,9 +245,9 @@ namespace Org.BouncyCastle.Cms
 			string					cekWrapAlgorithm)
 		{
 			if (!senderPrivateKey.IsPrivate)
-				throw new ArgumentException("Expected private key", "senderPrivateKey");
+				throw new ArgumentException(@"Expected private key", "senderPrivateKey");
 			if (senderPublicKey.IsPrivate)
-				throw new ArgumentException("Expected public key", "senderPublicKey");
+				throw new ArgumentException(@"Expected public key", "senderPublicKey");
 
 			/* TODO
 			 * "a recipient X.509 version 3 certificate that contains a key usage extension MUST
