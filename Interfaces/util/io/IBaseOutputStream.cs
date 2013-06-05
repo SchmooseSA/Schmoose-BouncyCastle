@@ -13,7 +13,9 @@ namespace Org.BouncyCastle.Utilities.IO
         bool CanTimeout { get; }
         int ReadTimeout { get; set; }
         int WriteTimeout { get; set; }
+#if !NETFX_CORE
         void Close();
+#endif
         void Flush();
         int Read(byte[] buffer, int offset, int count);
         long Seek(long offset, SeekOrigin origin);

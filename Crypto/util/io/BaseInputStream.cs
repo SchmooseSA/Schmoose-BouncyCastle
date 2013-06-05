@@ -6,24 +6,24 @@ namespace Org.BouncyCastle.Utilities.IO
 {
     public abstract class BaseInputStream : Stream
     {
-        private bool closed;
+        private bool _closed;
 
-        public sealed override bool CanRead { get { return !closed; } }
+        public sealed override bool CanRead { get { return !_closed; } }
         public sealed override bool CanSeek { get { return false; } }
         public sealed override bool CanWrite { get { return false; } }
 #if !NETFX_CORE
-		public override void Close() { closed = true; }
+		public override void Close() { _closed = true; }
 #else
-        public void Close()
-        {
-            closed = true;
-        }
-
         protected override void Dispose(bool disposing)
         {
-            if (!closed)
-                this.Close();
-            base.Dispose(disposing);
+            try
+            {
+                _closed = true;
+            }
+            finally
+            {
+                base.Dispose(disposing);
+            }
         }
 #endif
         public sealed override void Flush() { }

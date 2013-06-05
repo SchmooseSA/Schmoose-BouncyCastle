@@ -12,10 +12,15 @@ namespace Org.BouncyCastle.Bcpg
         internal static BcpgOutputStream Wrap(Stream outStr)
         {
             var bcpg = outStr as BcpgOutputStream;
+#if !NETFX_CORE
             return bcpg ?? new BcpgOutputStream(outStr);
+#else
+            return bcpg ?? new BcpgOutputStream(outStr, false);
+#endif
         }
 
         private readonly Stream _outStr;
+        private readonly bool _ownsStream;
         private byte[] _partialBuffer;
         private readonly int _partialBufferLength;
         private readonly int _partialPower;
@@ -25,11 +30,21 @@ namespace Org.BouncyCastle.Bcpg
         /// <summary>Create a stream representing a general packet.</summary>
         /// <param name="outStr">Output stream to write to.</param>
         public BcpgOutputStream(Stream outStr)
+            : this(outStr, true) { }
+
+        /// <summary>
+        /// Create a stream representing a general packet.
+        /// </summary>
+        /// <param name="outStr">The out STR.</param>
+        /// <param name="ownsStream">if set to <c>true</c> [owns stream].</param>
+        /// <exception cref="System.ArgumentNullException">outStr</exception>
+        public BcpgOutputStream(Stream outStr, bool ownsStream)
         {
             if (outStr == null)
                 throw new ArgumentNullException("outStr");
 
             _outStr = outStr;
+            _ownsStream = ownsStream;
         }
 
         /// <summary>Create a stream representing an old style partial object.</summary>
@@ -340,19 +355,31 @@ namespace Org.BouncyCastle.Bcpg
             _partialBuffer = null;
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)            
-                _outStr.Dispose();            
-            base.Dispose(disposing);
-        }
-
+#if !NETFX_CORE
         public override void Close()
         {
             this.Finish();
             _outStr.Flush();
-            _outStr.Dispose();
+            if (_ownsStream)
+                _outStr.Dispose();
             base.Close();
         }
+#else
+        protected override void Dispose(bool disposing)
+        {
+            try
+            {
+                this.Finish();
+                _outStr.Flush();
+                if (_ownsStream)
+                    _outStr.Dispose();
+            }
+            finally
+            {
+                base.Dispose(disposing);
+            }
+        }
+#endif   
+        
     }
 }

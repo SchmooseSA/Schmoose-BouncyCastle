@@ -4,28 +4,31 @@ using Org.BouncyCastle.Asn1.Utilities;
 
 namespace Org.BouncyCastle.Bcpg.OpenPgp
 {
-    public class WrappedGeneratorStream
-        : FilterStream
+    public class WrappedGeneratorStream : FilterStream
     {
-        private readonly IStreamGenerator gen;
+        private IStreamGenerator _gen;
 
-        public WrappedGeneratorStream(
-            IStreamGenerator gen,
-            Stream str)
+        public WrappedGeneratorStream(IStreamGenerator gen, Stream str)
             : base(str)
         {
-            this.gen = gen;
+            _gen = gen;
         }
 #if !NETFX_CORE
 		public override void Close()
 		{
-			gen.Close();
+			_gen.Close();
 		}
 #else
         protected override void Dispose(bool disposing)
         {
-            base.Dispose(disposing);
-            gen.Close();
+            try
+            {
+                _gen.Close();
+            }
+            finally
+            {
+                base.Dispose(disposing);
+            }
         }
 #endif
     }

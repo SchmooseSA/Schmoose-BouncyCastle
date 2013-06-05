@@ -17,16 +17,16 @@ namespace Org.BouncyCastle.Utilities.IO
 #if !NETFX_CORE
         public override void Close() { _closed = true; }
 #else
-        public virtual void Close()
-        {
-            _closed = true;
-        }
-
         protected override void Dispose(bool disposing)
         {
-            base.Dispose(disposing);
-            if(_closed)
-                this.Close();
+            try
+            {
+                _closed = true;
+            }
+            finally 
+            {
+                base.Dispose(disposing);
+            }
         }
 #endif
 

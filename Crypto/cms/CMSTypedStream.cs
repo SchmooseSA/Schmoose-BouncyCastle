@@ -65,7 +65,7 @@ namespace Org.BouncyCastle.Cms
 
             public override int Read(byte[]	buf, int off, int len)
 			{
-				return Streams.ReadFully(base.s, buf, off, len);
+				return Streams.ReadFully(base.S, buf, off, len);
 			}
 		}
 	}

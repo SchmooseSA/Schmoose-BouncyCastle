@@ -215,14 +215,20 @@ namespace Org.BouncyCastle.Crypto.IO
 #else
         protected override void Dispose(bool disposing)
         {
-            base.Dispose(disposing);
-            if (outCipher != null)
+            try
             {
-                byte[] data = outCipher.DoFinal();
-                stream.Write(data, 0, data.Length);
-                stream.Flush();
+                if (outCipher != null)
+                {
+                    byte[] data = outCipher.DoFinal();
+                    stream.Write(data, 0, data.Length);
+                    stream.Flush();
+                }
+                stream.Dispose();
             }
-            stream.Dispose();
+            finally
+            {
+                base.Dispose(disposing);
+            }
         }
 #endif
 

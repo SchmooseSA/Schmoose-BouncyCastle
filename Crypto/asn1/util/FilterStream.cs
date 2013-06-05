@@ -7,28 +7,28 @@ namespace Org.BouncyCastle.Asn1.Utilities
     {
         public FilterStream(Stream s)
         {
-            this.s = s;
+            this.S = s;
         }
         public override bool CanRead
         {
-            get { return s.CanRead; }
+            get { return S.CanRead; }
         }
         public override bool CanSeek
         {
-            get { return s.CanSeek; }
+            get { return S.CanSeek; }
         }
         public override bool CanWrite
         {
-            get { return s.CanWrite; }
+            get { return S.CanWrite; }
         }
         public override long Length
         {
-            get { return s.Length; }
+            get { return S.Length; }
         }
         public override long Position
         {
-            get { return s.Position; }
-            set { s.Position = value; }
+            get { return S.Position; }
+            set { S.Position = value; }
         }
         #if !NETFX_CORE
         public override void Close()
@@ -38,38 +38,44 @@ namespace Org.BouncyCastle.Asn1.Utilities
 #else
         protected override void Dispose(bool disposing)
         {
-            base.Dispose(disposing);
-            s.Dispose();
+            try
+            {
+                S.Dispose();
+            }
+            finally
+            {
+                base.Dispose(disposing);
+            }
         }
 #endif
         public override void Flush()
         {
-            s.Flush();
+            S.Flush();
         }
         public override long Seek(long offset, SeekOrigin origin)
         {
-            return s.Seek(offset, origin);
+            return S.Seek(offset, origin);
         }
         public override void SetLength(long value)
         {
-            s.SetLength(value);
+            S.SetLength(value);
         }
         public override int Read(byte[] buffer, int offset, int count)
         {
-            return s.Read(buffer, offset, count);
+            return S.Read(buffer, offset, count);
         }
         public override int ReadByte()
         {
-            return s.ReadByte();
+            return S.ReadByte();
         }
         public override void Write(byte[] buffer, int offset, int count)
         {
-            s.Write(buffer, offset, count);
+            S.Write(buffer, offset, count);
         }
         public override void WriteByte(byte value)
         {
-            s.WriteByte(value);
+            S.WriteByte(value);
         }
-        protected readonly Stream s;
+        protected readonly Stream S;
     }
 }
