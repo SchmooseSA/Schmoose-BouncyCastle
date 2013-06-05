@@ -159,11 +159,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         }
 
         private static PgpPublicKey CertifiedPublicKey(
-            int certificationLevel, 
-            PgpKeyPair keyPair, 
-            string id, 
-            PgpSignatureSubpacketVector hashedPackets, 
-            PgpSignatureSubpacketVector unhashedPackets, 
+            int certificationLevel,
+            PgpKeyPair keyPair,
+            string id,
+            PgpSignatureSubpacketVector hashedPackets,
+            PgpSignatureSubpacketVector unhashedPackets,
             HashAlgorithmTag hashAlgorithm)
         {
             PgpSignatureGenerator sGen;
@@ -282,7 +282,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             get { return _pub; }
         }
 
-        public ISecretKeyPacket SecretPacket 
+        public ISecretKeyPacket SecretPacket
         {
             get { return _secret; }
         }
@@ -463,7 +463,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                                 var ecdhPub = (ECDHPublicBcpgKey)pubPk.Key;
                                 var ecdhPriv = new ECSecretBcpgKey(bcpgIn);
                                 privateKey = new ECDHPrivateKeyParameters(ecdhPriv.X,
-                                    new ECDHPublicKeyParameters(ecdhPub.Point, ecdhPub.Oid, ecdhPub.HashAlgorithm, ecdhPub.SymmetricKeyAlgorithm), 
+                                    new ECDHPublicKeyParameters(ecdhPub.Point, ecdhPub.Oid, ecdhPub.HashAlgorithm, ecdhPub.SymmetricKeyAlgorithm),
                                     PgpPublicKey.BuildFingerprint(pubPk));
                                 break;
                             case PublicKeyAlgorithmTag.Ecdsa:
@@ -593,12 +593,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <param name="newPassPhrase">The new password for the key.</param>
         /// <param name="newEncAlgorithm">The algorithm to be used for the encryption.</param>
         /// <param name="rand">Source of randomness.</param>
-        public static PgpSecretKey CopyWithNewPassword(
-            IPgpSecretKey key,
-            char[] oldPassPhrase,
-            char[] newPassPhrase,
-            SymmetricKeyAlgorithmTag newEncAlgorithm,
-            SecureRandom rand)
+        public static PgpSecretKey CopyWithNewPassword(IPgpSecretKey key, char[] oldPassPhrase, char[] newPassPhrase, SymmetricKeyAlgorithmTag newEncAlgorithm, SecureRandom rand)
         {
             var rawKeyData = key.ExtractKeyData(oldPassPhrase);
             var s2KUsage = key.SecretPacket.S2KUsage;
