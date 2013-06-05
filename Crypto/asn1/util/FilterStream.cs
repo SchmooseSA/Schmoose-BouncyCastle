@@ -33,7 +33,7 @@ namespace Org.BouncyCastle.Asn1.Utilities
         #if !NETFX_CORE
         public override void Close()
         {
-            s.Close();
+            S.Close();
         }
 #else
         protected override void Dispose(bool disposing)
