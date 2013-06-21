@@ -1,8 +1,3 @@
-using System;
-
-using Org.BouncyCastle.Crypto;
-using Org.BouncyCastle.Crypto.Parameters;
-
 namespace Org.BouncyCastle.Crypto.Generators
 {
 	/**
@@ -10,8 +5,7 @@ namespace Org.BouncyCastle.Crypto.Generators
 	 * <br/>
 	 * This implementation is based on IEEE P1363/ISO 18033.
 	 */
-	public class Kdf2BytesGenerator
-		: BaseKdfBytesGenerator
+	public class Kdf2BytesGenerator : BaseKdfBytesGenerator
 	{
 		/**
 		* Construct a KDF2 bytes generator. Generates key material
@@ -19,10 +13,7 @@ namespace Org.BouncyCastle.Crypto.Generators
 		*
 		* @param digest the digest to be used as the source of derived keys.
 		*/
-		public Kdf2BytesGenerator(
-			IDigest  digest)
-			: base(1, digest)
-		{
-		}
+		public Kdf2BytesGenerator(IDigest  digest) 
+            : base(1, digest) { }
 	}
 }
