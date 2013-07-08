@@ -29,11 +29,10 @@ namespace Org.BouncyCastle.Crypto.Engines
     * This file contains the fast version with 8Kbytes of static tables for round precomputation
     * </p>
     */
-    public class AesFastEngine
-		: IBlockCipher
+    public class AesFastEngine : IBlockCipher
     {
         // The S box
-        private static readonly byte[] S =
+        private static readonly byte[] _s =
 		{
             99, 124, 119, 123, 242, 107, 111, 197,
             48,   1, 103,  43, 254, 215, 171, 118,
@@ -66,11 +65,11 @@ namespace Org.BouncyCastle.Crypto.Engines
             225, 248, 152,  17, 105, 217, 142, 148,
             155,  30, 135, 233, 206,  85,  40, 223,
             140, 161, 137,  13, 191, 230,  66, 104,
-            65, 153,  45,  15, 176,  84, 187,  22,
+            65, 153,  45,  15, 176,  84, 187,  22
         };
 
         // The inverse S-box
-        private static readonly byte[] Si =
+        private static readonly byte[] _si =
 		{
 			82,   9, 106, 213,  48,  54, 165,  56,
 			191,  64, 163, 158, 129, 243, 215, 251,
@@ -103,18 +102,18 @@ namespace Org.BouncyCastle.Crypto.Engines
 			160, 224,  59,  77, 174,  42, 245, 176,
 			200, 235, 187,  60, 131,  83, 153,  97,
 			23,  43,   4, 126, 186, 119, 214,  38,
-			225, 105,  20,  99,  85,  33,  12, 125,
+			225, 105,  20,  99,  85,  33,  12, 125
 		};
 
-		// vector used in calculating key schedule (powers of x in GF(256))
-        private static readonly byte[] rcon =
+        // vector used in calculating key schedule (powers of x in GF(256))
+        private static readonly byte[] _rcon =
 		{
 			0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36, 0x6c, 0xd8, 0xab, 0x4d, 0x9a,
 			0x2f, 0x5e, 0xbc, 0x63, 0xc6, 0x97, 0x35, 0x6a, 0xd4, 0xb3, 0x7d, 0xfa, 0xef, 0xc5, 0x91
 		};
 
-		// precomputation tables of calculations for rounds
-		private static readonly uint[] T0 =
+        // precomputation tables of calculations for rounds
+        private static readonly uint[] _t0 =
 		{
 			0xa56363c6, 0x847c7cf8, 0x997777ee, 0x8d7b7bf6, 0x0df2f2ff,
 			0xbd6b6bd6, 0xb16f6fde, 0x54c5c591, 0x50303060, 0x03010102,
@@ -170,7 +169,7 @@ namespace Org.BouncyCastle.Crypto.Engines
 			0x3a16162c
 		};
 
-		private static readonly uint[] T1 =
+        private static readonly uint[] _t1 =
 		{
 			0x6363c6a5, 0x7c7cf884, 0x7777ee99, 0x7b7bf68d, 0xf2f2ff0d,
 			0x6b6bd6bd, 0x6f6fdeb1, 0xc5c59154, 0x30306050, 0x01010203,
@@ -226,7 +225,7 @@ namespace Org.BouncyCastle.Crypto.Engines
 			0x16162c3a
 		};
 
-		private static readonly uint[] T2 =
+        private static readonly uint[] _t2 =
 		{
 			0x63c6a563, 0x7cf8847c, 0x77ee9977, 0x7bf68d7b, 0xf2ff0df2,
 			0x6bd6bd6b, 0x6fdeb16f, 0xc59154c5, 0x30605030, 0x01020301,
@@ -282,7 +281,7 @@ namespace Org.BouncyCastle.Crypto.Engines
 			0x162c3a16
 		};
 
-		private static readonly uint[] T3 =
+        private static readonly uint[] _t3 =
 		{
 			0xc6a56363, 0xf8847c7c, 0xee997777, 0xf68d7b7b, 0xff0df2f2,
 			0xd6bd6b6b, 0xdeb16f6f, 0x9154c5c5, 0x60503030, 0x02030101,
@@ -338,7 +337,7 @@ namespace Org.BouncyCastle.Crypto.Engines
 			0x2c3a1616
 		};
 
-		private static readonly uint[] Tinv0 =
+        private static readonly uint[] _tinv0 =
 		{
 			0x50a7f451, 0x5365417e, 0xc3a4171a, 0x965e273a, 0xcb6bab3b,
 			0xf1459d1f, 0xab58faac, 0x9303e34b, 0x55fa3020, 0xf66d76ad,
@@ -394,7 +393,7 @@ namespace Org.BouncyCastle.Crypto.Engines
 			0x4257b8d0
 		};
 
-		private static readonly uint[] Tinv1 =
+        private static readonly uint[] _tinv1 =
 		{
 			0xa7f45150, 0x65417e53, 0xa4171ac3, 0x5e273a96, 0x6bab3bcb,
 			0x459d1ff1, 0x58faacab, 0x03e34b93, 0xfa302055, 0x6d76adf6,
@@ -450,7 +449,7 @@ namespace Org.BouncyCastle.Crypto.Engines
 			0x57b8d042
 		};
 
-		private static readonly uint[] Tinv2 =
+        private static readonly uint[] _tinv2 =
 		{
 			0xf45150a7, 0x417e5365, 0x171ac3a4, 0x273a965e, 0xab3bcb6b,
 			0x9d1ff145, 0xfaacab58, 0xe34b9303, 0x302055fa, 0x76adf66d,
@@ -506,7 +505,7 @@ namespace Org.BouncyCastle.Crypto.Engines
 			0xb8d04257
 		};
 
-		private static readonly uint[] Tinv3 =
+        private static readonly uint[] _tinv3 =
 		{
 			0x5150a7f4, 0x7e536541, 0x1ac3a417, 0x3a965e27, 0x3bcb6bab,
 			0x1ff1459d, 0xacab58fa, 0x4b9303e3, 0x2055fa30, 0xadf66d76,
@@ -562,23 +561,20 @@ namespace Org.BouncyCastle.Crypto.Engines
 			0xd04257b8
 		};
 
-        private uint Shift(
-            uint	r,
-            int		shift)
-		{
-			return (r >> shift) | (r << (32 - shift));
-		}
+        private static uint Shift(uint r, int shift)
+        {
+            return (r >> shift) | (r << (32 - shift));
+        }
 
         /* multiply four bytes in GF(2^8) by 'x' {02} in parallel */
 
-        private const uint m1 = 0x80808080;
-        private const uint m2 = 0x7f7f7f7f;
-        private const uint m3 = 0x0000001b;
+        private const uint M1 = 0x80808080;
+        private const uint M2 = 0x7f7f7f7f;
+        private const uint M3 = 0x0000001b;
 
-		private uint FFmulX(
-			uint x)
-		{
-			return ((x & m2) << 1) ^ (((x & m1) >> 7) * m3);
+        private static uint FFmulX(uint x)
+        {
+            return ((x & M2) << 1) ^ (((x & M1) >> 7) * M3);
         }
 
         /*
@@ -591,23 +587,22 @@ namespace Org.BouncyCastle.Crypto.Engines
 
         */
 
-        private uint Inv_Mcol(
-			uint x) {
-            uint f2 = FFmulX(x);
-            uint f4 = FFmulX(f2);
-            uint f8 = FFmulX(f4);
-            uint f9 = x ^ f8;
+        private static uint InvMcol(uint x)
+        {
+            var f2 = FFmulX(x);
+            var f4 = FFmulX(f2);
+            var f8 = FFmulX(f4);
+            var f9 = x ^ f8;
 
             return f2 ^ f4 ^ f8 ^ Shift(f2 ^ f9, 8) ^ Shift(f4 ^ f9, 16) ^ Shift(f9, 24);
         }
 
-		private uint SubWord(
-			uint x)
-		{
-			return (uint)S[x&255]
-				| (((uint)S[(x>>8)&255]) << 8)
-				| (((uint)S[(x>>16)&255]) << 16)
-				| (((uint)S[(x>>24)&255]) << 24);
+        private static uint SubWord(uint x)
+        {
+            return _s[x & 255]
+                | (((uint)_s[(x >> 8) & 255]) << 8)
+                | (((uint)_s[(x >> 16) & 255]) << 16)
+                | (((uint)_s[(x >> 24) & 255]) << 24);
         }
 
         /**
@@ -616,74 +611,68 @@ namespace Org.BouncyCastle.Crypto.Engines
         * AES specified a fixed block size of 128 bits and key sizes 128/192/256 bits
         * This code is written assuming those are the only possible values
         */
-        private uint[,] GenerateWorkingKey(
-            byte[]	key,
-            bool	forEncryption)
+        private uint[,] GenerateWorkingKey(byte[] key, bool forEncryption)
         {
-            int KC = key.Length / 4;  // key length in words
+            var kc = key.Length / 4;  // key length in words
 
-            if (((KC != 4) && (KC != 6) && (KC != 8)) || ((KC * 4) != key.Length))
+            if (((kc != 4) && (kc != 6) && (kc != 8)) || ((kc * 4) != key.Length))
                 throw new ArgumentException("Key length not 128/192/256 bits.");
 
-			ROUNDS = KC + 6;  // This is not always true for the generalized Rijndael that allows larger block sizes
-            uint[,] W = new uint[ROUNDS+1,4];   // 4 words in a block
+            _rounds = kc + 6;  // This is not always true for the generalized Rijndael that allows larger block sizes
+            var w = new uint[_rounds + 1, 4];   // 4 words in a block
 
             //
             // copy the key into the round key array
             //
 
-            int t = 0;
-            for (int i = 0; i < key.Length; t++)
-			{
-				W[t >> 2,t & 3] = Pack.LE_To_UInt32(key, i);
-				i+=4;
-			}
+            var t = 0;
+            for (var i = 0; i < key.Length; t++)
+            {
+                w[t >> 2, t & 3] = Pack.LE_To_UInt32(key, i);
+                i += 4;
+            }
 
             //
             // while not enough round key material calculated
             // calculate new values
             //
-            int k = (ROUNDS + 1) << 2;
-            for (int i = KC; (i < k); i++)
+            var k = (_rounds + 1) << 2;
+            for (var i = kc; (i < k); i++)
             {
-                uint temp = W[(i-1)>>2,(i-1)&3];
-                if ((i % KC) == 0) {
-                    temp = SubWord(Shift(temp, 8)) ^ rcon[(i / KC)-1];
-                } else if ((KC > 6) && ((i % KC) == 4)) {
+                var temp = w[(i - 1) >> 2, (i - 1) & 3];
+                if ((i % kc) == 0)
+                {
+                    temp = SubWord(Shift(temp, 8)) ^ _rcon[(i / kc) - 1];
+                }
+                else if ((kc > 6) && ((i % kc) == 4))
+                {
                     temp = SubWord(temp);
                 }
 
-                W[i>>2,i&3] = W[(i - KC)>>2,(i-KC)&3] ^ temp;
+                w[i >> 2, i & 3] = w[(i - kc) >> 2, (i - kc) & 3] ^ temp;
             }
 
             if (!forEncryption)
-			{
-                for (int j = 1; j < ROUNDS; j++)
-				{
-                    for (int i = 0; i < 4; i++)
-					{
-                        W[j,i] = Inv_Mcol(W[j,i]);
+            {
+                for (var j = 1; j < _rounds; j++)
+                {
+                    for (var i = 0; i < 4; i++)
+                    {
+                        w[j, i] = InvMcol(w[j, i]);
                     }
                 }
             }
 
-            return W;
+            return w;
         }
 
-        private int		ROUNDS;
-        private uint[,]	WorkingKey;
-        private uint	C0, C1, C2, C3;
-        private bool	forEncryption;
+        private int _rounds;
+        private uint[,] _workingKey;
+        private uint _c0, _c1, _c2, _c3;
+        private bool _forEncryption;
 
-        private const int BLOCK_SIZE = 16;
-
-        /**
-        * default constructor - 128 bit block size.
-        */
-        public AesFastEngine()
-        {
-        }
-
+        private const int BlockSize = 16;
+        
         /**
         * initialise an AES cipher.
         *
@@ -692,39 +681,33 @@ namespace Org.BouncyCastle.Crypto.Engines
         * @exception ArgumentException if the parameters argument is
         * inappropriate.
         */
-        public void Init(
-            bool				forEncryption,
-            ICipherParameters	parameters)
+        public void Init(bool forEncryption, ICipherParameters parameters)
         {
             if (!(parameters is KeyParameter))
-				throw new ArgumentException("invalid parameter passed to AES init - " + parameters.GetType().ToString());
+                throw new ArgumentException("invalid parameter passed to AES init - " + parameters.GetType());
 
-			WorkingKey = GenerateWorkingKey(((KeyParameter)parameters).GetKey(), forEncryption);
-			this.forEncryption = forEncryption;
+            _workingKey = GenerateWorkingKey(((KeyParameter)parameters).GetKey(), forEncryption);
+            _forEncryption = forEncryption;
         }
 
-		public string AlgorithmName
+        public string AlgorithmName
         {
             get { return "AES"; }
         }
 
-		public bool IsPartialBlockOkay
-		{
-			get { return false; }
-		}
-
-		public int GetBlockSize()
+        public bool IsPartialBlockOkay
         {
-            return BLOCK_SIZE;
+            get { return false; }
         }
 
-        public int ProcessBlock(
-            byte[] input,
-            int inOff,
-            byte[] output,
-            int outOff)
+        public int GetBlockSize()
         {
-            if (WorkingKey == null)
+            return BlockSize;
+        }
+
+        public int ProcessBlock(byte[] input, int inOff, byte[] output, int outOff)
+        {
+            if (_workingKey == null)
             {
                 throw new InvalidOperationException("AES engine not initialised");
             }
@@ -741,113 +724,108 @@ namespace Org.BouncyCastle.Crypto.Engines
 
             UnPackBlock(input, inOff);
 
-            if (forEncryption)
+            if (_forEncryption)
             {
-                EncryptBlock(WorkingKey);
+                EncryptBlock(_workingKey);
             }
             else
             {
-                DecryptBlock(WorkingKey);
+                DecryptBlock(_workingKey);
             }
 
             PackBlock(output, outOff);
 
-			return BLOCK_SIZE;
+            return BlockSize;
         }
 
         public void Reset()
         {
         }
 
-        private void UnPackBlock(
-            byte[]	bytes,
-            int		off)
+        private void UnPackBlock(byte[] bytes, int off)
         {
-			C0 = Pack.LE_To_UInt32(bytes, off);
-			C1 = Pack.LE_To_UInt32(bytes, off + 4);
-			C2 = Pack.LE_To_UInt32(bytes, off + 8);
-			C3 = Pack.LE_To_UInt32(bytes, off + 12);
+            _c0 = Pack.LE_To_UInt32(bytes, off);
+            _c1 = Pack.LE_To_UInt32(bytes, off + 4);
+            _c2 = Pack.LE_To_UInt32(bytes, off + 8);
+            _c3 = Pack.LE_To_UInt32(bytes, off + 12);
         }
 
-		private void PackBlock(
-            byte[]	bytes,
-            int		off)
+        private void PackBlock(byte[] bytes, int off)
         {
-			Pack.UInt32_To_LE(C0, bytes, off);
-			Pack.UInt32_To_LE(C1, bytes, off + 4);
-			Pack.UInt32_To_LE(C2, bytes, off + 8);
-			Pack.UInt32_To_LE(C3, bytes, off + 12);
+            Pack.UInt32_To_LE(_c0, bytes, off);
+            Pack.UInt32_To_LE(_c1, bytes, off + 4);
+            Pack.UInt32_To_LE(_c2, bytes, off + 8);
+            Pack.UInt32_To_LE(_c3, bytes, off + 12);
         }
 
-		private void EncryptBlock(
-			uint[,] KW)
+        private void EncryptBlock(uint[,] kw)
         {
             int r;
-			uint r0, r1, r2, r3;
+            uint r0, r1, r2, r3;
 
-            C0 ^= KW[0,0];
-            C1 ^= KW[0,1];
-            C2 ^= KW[0,2];
-            C3 ^= KW[0,3];
+            _c0 ^= kw[0, 0];
+            _c1 ^= kw[0, 1];
+            _c2 ^= kw[0, 2];
+            _c3 ^= kw[0, 3];
 
-            for (r = 1; r < ROUNDS - 1;)
-			{
-                r0 = T0[C0&255] ^ T1[(C1>>8)&255] ^ T2[(C2>>16)&255] ^ T3[C3>>24] ^ KW[r,0];
-                r1 = T0[C1&255] ^ T1[(C2>>8)&255] ^ T2[(C3>>16)&255] ^ T3[C0>>24] ^ KW[r,1];
-                r2 = T0[C2&255] ^ T1[(C3>>8)&255] ^ T2[(C0>>16)&255] ^ T3[C1>>24] ^ KW[r,2];
-                r3 = T0[C3&255] ^ T1[(C0>>8)&255] ^ T2[(C1>>16)&255] ^ T3[C2>>24] ^ KW[r++,3];
-                C0 = T0[r0&255] ^ T1[(r1>>8)&255] ^ T2[(r2>>16)&255] ^ T3[r3>>24] ^ KW[r,0];
-                C1 = T0[r1&255] ^ T1[(r2>>8)&255] ^ T2[(r3>>16)&255] ^ T3[r0>>24] ^ KW[r,1];
-                C2 = T0[r2&255] ^ T1[(r3>>8)&255] ^ T2[(r0>>16)&255] ^ T3[r1>>24] ^ KW[r,2];
-                C3 = T0[r3&255] ^ T1[(r0>>8)&255] ^ T2[(r1>>16)&255] ^ T3[r2>>24] ^ KW[r++,3];
+            for (r = 1; r < _rounds - 1; )
+            {
+                r0 = _t0[_c0 & 255] ^ _t1[(_c1 >> 8) & 255] ^ _t2[(_c2 >> 16) & 255] ^ _t3[_c3 >> 24] ^ kw[r, 0];
+                r1 = _t0[_c1 & 255] ^ _t1[(_c2 >> 8) & 255] ^ _t2[(_c3 >> 16) & 255] ^ _t3[_c0 >> 24] ^ kw[r, 1];
+                r2 = _t0[_c2 & 255] ^ _t1[(_c3 >> 8) & 255] ^ _t2[(_c0 >> 16) & 255] ^ _t3[_c1 >> 24] ^ kw[r, 2];
+                r3 = _t0[_c3 & 255] ^ _t1[(_c0 >> 8) & 255] ^ _t2[(_c1 >> 16) & 255] ^ _t3[_c2 >> 24] ^ kw[r++, 3];
+                _c0 = _t0[r0 & 255] ^ _t1[(r1 >> 8) & 255] ^ _t2[(r2 >> 16) & 255] ^ _t3[r3 >> 24] ^ kw[r, 0];
+                _c1 = _t0[r1 & 255] ^ _t1[(r2 >> 8) & 255] ^ _t2[(r3 >> 16) & 255] ^ _t3[r0 >> 24] ^ kw[r, 1];
+                _c2 = _t0[r2 & 255] ^ _t1[(r3 >> 8) & 255] ^ _t2[(r0 >> 16) & 255] ^ _t3[r1 >> 24] ^ kw[r, 2];
+                _c3 = _t0[r3 & 255] ^ _t1[(r0 >> 8) & 255] ^ _t2[(r1 >> 16) & 255] ^ _t3[r2 >> 24] ^ kw[r++, 3];
             }
 
-            r0 = T0[C0&255] ^ T1[(C1>>8)&255] ^ T2[(C2>>16)&255] ^ T3[C3>>24] ^ KW[r,0];
-            r1 = T0[C1&255] ^ T1[(C2>>8)&255] ^ T2[(C3>>16)&255] ^ T3[C0>>24] ^ KW[r,1];
-            r2 = T0[C2&255] ^ T1[(C3>>8)&255] ^ T2[(C0>>16)&255] ^ T3[C1>>24] ^ KW[r,2];
-            r3 = T0[C3&255] ^ T1[(C0>>8)&255] ^ T2[(C1>>16)&255] ^ T3[C2>>24] ^ KW[r++,3];
+            r0 = _t0[_c0 & 255] ^ _t1[(_c1 >> 8) & 255] ^ _t2[(_c2 >> 16) & 255] ^ _t3[_c3 >> 24] ^ kw[r, 0];
+            r1 = _t0[_c1 & 255] ^ _t1[(_c2 >> 8) & 255] ^ _t2[(_c3 >> 16) & 255] ^ _t3[_c0 >> 24] ^ kw[r, 1];
+            r2 = _t0[_c2 & 255] ^ _t1[(_c3 >> 8) & 255] ^ _t2[(_c0 >> 16) & 255] ^ _t3[_c1 >> 24] ^ kw[r, 2];
+            r3 = _t0[_c3 & 255] ^ _t1[(_c0 >> 8) & 255] ^ _t2[(_c1 >> 16) & 255] ^ _t3[_c2 >> 24] ^ kw[r++, 3];
 
             // the final round's table is a simple function of S so we don't use a whole other four tables for it
 
-			C0 = (uint)S[r0&255] ^ (((uint)S[(r1>>8)&255])<<8) ^ (((uint)S[(r2>>16)&255])<<16) ^ (((uint)S[r3>>24])<<24) ^ KW[r,0];
-			C1 = (uint)S[r1&255] ^ (((uint)S[(r2>>8)&255])<<8) ^ (((uint)S[(r3>>16)&255])<<16) ^ (((uint)S[r0>>24])<<24) ^ KW[r,1];
-			C2 = (uint)S[r2&255] ^ (((uint)S[(r3>>8)&255])<<8) ^ (((uint)S[(r0>>16)&255])<<16) ^ (((uint)S[r1>>24])<<24) ^ KW[r,2];
-			C3 = (uint)S[r3&255] ^ (((uint)S[(r0>>8)&255])<<8) ^ (((uint)S[(r1>>16)&255])<<16) ^ (((uint)S[r2>>24])<<24) ^ KW[r,3];
-		}
+            _c0 = _s[r0 & 255] ^ (((uint)_s[(r1 >> 8) & 255]) << 8) ^ (((uint)_s[(r2 >> 16) & 255]) << 16) ^ (((uint)_s[r3 >> 24]) << 24) ^ kw[r, 0];
+            _c1 = _s[r1 & 255] ^ (((uint)_s[(r2 >> 8) & 255]) << 8) ^ (((uint)_s[(r3 >> 16) & 255]) << 16) ^ (((uint)_s[r0 >> 24]) << 24) ^ kw[r, 1];
+            _c2 = _s[r2 & 255] ^ (((uint)_s[(r3 >> 8) & 255]) << 8) ^ (((uint)_s[(r0 >> 16) & 255]) << 16) ^ (((uint)_s[r1 >> 24]) << 24) ^ kw[r, 2];
+            _c3 = _s[r3 & 255] ^ (((uint)_s[(r0 >> 8) & 255]) << 8) ^ (((uint)_s[(r1 >> 16) & 255]) << 16) ^ (((uint)_s[r2 >> 24]) << 24) ^ kw[r, 3];
+        }
 
-        private  void DecryptBlock(
-			uint[,] KW)
+        private void DecryptBlock(uint[,] kw)
         {
             int r;
-			uint r0, r1, r2, r3;
+            uint r0, r1, r2, r3;
 
-            C0 ^= KW[ROUNDS,0];
-            C1 ^= KW[ROUNDS,1];
-            C2 ^= KW[ROUNDS,2];
-            C3 ^= KW[ROUNDS,3];
+            _c0 ^= kw[_rounds, 0];
+            _c1 ^= kw[_rounds, 1];
+            _c2 ^= kw[_rounds, 2];
+            _c3 ^= kw[_rounds, 3];
 
-            for (r = ROUNDS-1; r>1;) {
-                r0 = Tinv0[C0&255] ^ Tinv1[(C3>>8)&255] ^ Tinv2[(C2>>16)&255] ^ Tinv3[C1>>24] ^ KW[r,0];
-                r1 = Tinv0[C1&255] ^ Tinv1[(C0>>8)&255] ^ Tinv2[(C3>>16)&255] ^ Tinv3[C2>>24] ^ KW[r,1];
-                r2 = Tinv0[C2&255] ^ Tinv1[(C1>>8)&255] ^ Tinv2[(C0>>16)&255] ^ Tinv3[C3>>24] ^ KW[r,2];
-                r3 = Tinv0[C3&255] ^ Tinv1[(C2>>8)&255] ^ Tinv2[(C1>>16)&255] ^ Tinv3[C0>>24] ^ KW[r--,3];
-                C0 = Tinv0[r0&255] ^ Tinv1[(r3>>8)&255] ^ Tinv2[(r2>>16)&255] ^ Tinv3[r1>>24] ^ KW[r,0];
-                C1 = Tinv0[r1&255] ^ Tinv1[(r0>>8)&255] ^ Tinv2[(r3>>16)&255] ^ Tinv3[r2>>24] ^ KW[r,1];
-                C2 = Tinv0[r2&255] ^ Tinv1[(r1>>8)&255] ^ Tinv2[(r0>>16)&255] ^ Tinv3[r3>>24] ^ KW[r,2];
-                C3 = Tinv0[r3&255] ^ Tinv1[(r2>>8)&255] ^ Tinv2[(r1>>16)&255] ^ Tinv3[r0>>24] ^ KW[r--,3];
+            for (r = _rounds - 1; r > 1; )
+            {
+                r0 = _tinv0[_c0 & 255] ^ _tinv1[(_c3 >> 8) & 255] ^ _tinv2[(_c2 >> 16) & 255] ^ _tinv3[_c1 >> 24] ^ kw[r, 0];
+                r1 = _tinv0[_c1 & 255] ^ _tinv1[(_c0 >> 8) & 255] ^ _tinv2[(_c3 >> 16) & 255] ^ _tinv3[_c2 >> 24] ^ kw[r, 1];
+                r2 = _tinv0[_c2 & 255] ^ _tinv1[(_c1 >> 8) & 255] ^ _tinv2[(_c0 >> 16) & 255] ^ _tinv3[_c3 >> 24] ^ kw[r, 2];
+                r3 = _tinv0[_c3 & 255] ^ _tinv1[(_c2 >> 8) & 255] ^ _tinv2[(_c1 >> 16) & 255] ^ _tinv3[_c0 >> 24] ^ kw[r--, 3];
+                _c0 = _tinv0[r0 & 255] ^ _tinv1[(r3 >> 8) & 255] ^ _tinv2[(r2 >> 16) & 255] ^ _tinv3[r1 >> 24] ^ kw[r, 0];
+                _c1 = _tinv0[r1 & 255] ^ _tinv1[(r0 >> 8) & 255] ^ _tinv2[(r3 >> 16) & 255] ^ _tinv3[r2 >> 24] ^ kw[r, 1];
+                _c2 = _tinv0[r2 & 255] ^ _tinv1[(r1 >> 8) & 255] ^ _tinv2[(r0 >> 16) & 255] ^ _tinv3[r3 >> 24] ^ kw[r, 2];
+                _c3 = _tinv0[r3 & 255] ^ _tinv1[(r2 >> 8) & 255] ^ _tinv2[(r1 >> 16) & 255] ^ _tinv3[r0 >> 24] ^ kw[r--, 3];
             }
 
-            r0 = Tinv0[C0&255] ^ Tinv1[(C3>>8)&255] ^ Tinv2[(C2>>16)&255] ^ Tinv3[C1>>24] ^ KW[r,0];
-            r1 = Tinv0[C1&255] ^ Tinv1[(C0>>8)&255] ^ Tinv2[(C3>>16)&255] ^ Tinv3[C2>>24] ^ KW[r,1];
-            r2 = Tinv0[C2&255] ^ Tinv1[(C1>>8)&255] ^ Tinv2[(C0>>16)&255] ^ Tinv3[C3>>24] ^ KW[r,2];
-            r3 = Tinv0[C3&255] ^ Tinv1[(C2>>8)&255] ^ Tinv2[(C1>>16)&255] ^ Tinv3[C0>>24] ^ KW[r,3];
+            r0 = _tinv0[_c0 & 255] ^ _tinv1[(_c3 >> 8) & 255] ^ _tinv2[(_c2 >> 16) & 255] ^ _tinv3[_c1 >> 24] ^ kw[r, 0];
+            r1 = _tinv0[_c1 & 255] ^ _tinv1[(_c0 >> 8) & 255] ^ _tinv2[(_c3 >> 16) & 255] ^ _tinv3[_c2 >> 24] ^ kw[r, 1];
+            r2 = _tinv0[_c2 & 255] ^ _tinv1[(_c1 >> 8) & 255] ^ _tinv2[(_c0 >> 16) & 255] ^ _tinv3[_c3 >> 24] ^ kw[r, 2];
+            r3 = _tinv0[_c3 & 255] ^ _tinv1[(_c2 >> 8) & 255] ^ _tinv2[(_c1 >> 16) & 255] ^ _tinv3[_c0 >> 24] ^ kw[r, 3];
 
             // the final round's table is a simple function of Si so we don't use a whole other four tables for it
 
-			C0 = (uint)Si[r0&255] ^ (((uint)Si[(r3>>8)&255])<<8) ^ (((uint)Si[(r2>>16)&255])<<16) ^ (((uint)Si[r1>>24])<<24) ^ KW[0,0];
-			C1 = (uint)Si[r1&255] ^ (((uint)Si[(r0>>8)&255])<<8) ^ (((uint)Si[(r3>>16)&255])<<16) ^ (((uint)Si[r2>>24])<<24) ^ KW[0,1];
-			C2 = (uint)Si[r2&255] ^ (((uint)Si[(r1>>8)&255])<<8) ^ (((uint)Si[(r0>>16)&255])<<16) ^ (((uint)Si[r3>>24])<<24) ^ KW[0,2];
-			C3 = (uint)Si[r3&255] ^ (((uint)Si[(r2>>8)&255])<<8) ^ (((uint)Si[(r1>>16)&255])<<16) ^ (((uint)Si[r0>>24])<<24) ^ KW[0,3];
-		}
+            _c0 = _si[r0 & 255] ^ (((uint)_si[(r3 >> 8) & 255]) << 8) ^ (((uint)_si[(r2 >> 16) & 255]) << 16) ^ (((uint)_si[r1 >> 24]) << 24) ^ kw[0, 0];
+            _c1 = _si[r1 & 255] ^ (((uint)_si[(r0 >> 8) & 255]) << 8) ^ (((uint)_si[(r3 >> 16) & 255]) << 16) ^ (((uint)_si[r2 >> 24]) << 24) ^ kw[0, 1];
+            _c2 = _si[r2 & 255] ^ (((uint)_si[(r1 >> 8) & 255]) << 8) ^ (((uint)_si[(r0 >> 16) & 255]) << 16) ^ (((uint)_si[r3 >> 24]) << 24) ^ kw[0, 2];
+            _c3 = _si[r3 & 255] ^ (((uint)_si[(r2 >> 8) & 255]) << 8) ^ (((uint)_si[(r1 >> 16) & 255]) << 16) ^ (((uint)_si[r0 >> 24]) << 24) ^ kw[0, 3];
+        }
     }
 }
