@@ -1,5 +1,4 @@
 using System;
-using System.Globalization;
 using Org.BouncyCastle.Crypto.Digests;
 using Org.BouncyCastle.Crypto.Prng;
 using Org.BouncyCastle.Utilities;
@@ -13,22 +12,25 @@ namespace Org.BouncyCastle.Security
         // a single generator appropriate to the digest being used.
         private static readonly IRandomGenerator _sha1Generator = new DigestRandomGenerator(new Sha1Digest());
         private static readonly IRandomGenerator _sha256Generator = new DigestRandomGenerator(new Sha256Digest());
+        private static readonly IRandomGenerator _sha512Generator = new DigestRandomGenerator(new Sha512Digest());
 
         private static readonly SecureRandom[] _master = { null };
         private static SecureRandom Master
         {
             get
             {
-                if (_master[0] == null)
-                {
-                    IRandomGenerator gen = _sha256Generator;
-                    gen = new ReversedWindowGenerator(gen, 32);
-                    SecureRandom sr = _master[0] = new SecureRandom(gen);
+                if (_master[0] != null) 
+                    return _master[0];
 
-                    sr.SetSeed(DateTime.Now.Ticks);
-                    sr.SetSeed(new ThreadedSeedGenerator().GenerateSeed(24, true));
-                    sr.GenerateSeed(1 + sr.Next(32));
-                }
+                var gen = _sha256Generator;
+                gen = new ReversedWindowGenerator(gen, 32);
+                var sr = new SecureRandom(gen);
+
+                sr.SetSeed(DateTime.Now.Ticks);
+                sr.SetSeed(new ThreadedSeedGenerator().GenerateSeed(24, true));
+                sr.GenerateSeed(1 + sr.Next(32));
+
+                _master[0] = sr;
 
                 return _master[0];
             }
@@ -39,24 +41,24 @@ namespace Org.BouncyCastle.Security
             // TODO Compared to JDK, we don't auto-seed if the client forgets - problem?
 
             // TODO Support all digests more generally, by stripping PRNG and calling DigestUtilities?
-            var drgName = Platform.StringToUpper(algorithm);
 
-            IRandomGenerator drg = null;
-            if (drgName == "SHA1PRNG")
+            IRandomGenerator drg;
+            switch (Platform.StringToUpper(algorithm))
             {
-                drg = _sha1Generator;
-            }
-            else if (drgName == "SHA256PRNG")
-            {
-                drg = _sha256Generator;
+                case "SHA1PRNG":
+                    drg = _sha1Generator;
+                    break;
+                case "SHA256PRNG":
+                    drg = _sha256Generator;
+                    break;
+                case "SHA512PRNG":
+                    drg = _sha512Generator;
+                    break;
+                default:
+                    throw new ArgumentException("Unrecognised PRNG algorithm: " + algorithm, "algorithm");
             }
 
-            if (drg != null)
-            {
-                return new SecureRandom(drg);
-            }
-
-            throw new ArgumentException("Unrecognised PRNG algorithm: " + algorithm, "algorithm");
+            return new SecureRandom(drg);
         }
 
         public static byte[] GetSeed(int length)
