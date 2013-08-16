@@ -1,0 +1,50 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crypto.WinRT", "Crypto\Crypto.WinRT.csproj", "{FC18643B-99FF-4AA9-A36C-93F90215CA4B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interfaces.Portable", "Interfaces\Interfaces.Portable.csproj", "{8B0D73D8-C467-4B06-8957-DB82856CF285}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|ARM = Debug|ARM
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|ARM = Release|ARM
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FC18643B-99FF-4AA9-A36C-93F90215CA4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC18643B-99FF-4AA9-A36C-93F90215CA4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC18643B-99FF-4AA9-A36C-93F90215CA4B}.Debug|ARM.ActiveCfg = Debug|ARM
+		{FC18643B-99FF-4AA9-A36C-93F90215CA4B}.Debug|ARM.Build.0 = Debug|ARM
+		{FC18643B-99FF-4AA9-A36C-93F90215CA4B}.Debug|x64.ActiveCfg = Debug|x64
+		{FC18643B-99FF-4AA9-A36C-93F90215CA4B}.Debug|x64.Build.0 = Debug|x64
+		{FC18643B-99FF-4AA9-A36C-93F90215CA4B}.Debug|x86.ActiveCfg = Debug|x86
+		{FC18643B-99FF-4AA9-A36C-93F90215CA4B}.Debug|x86.Build.0 = Debug|x86
+		{FC18643B-99FF-4AA9-A36C-93F90215CA4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC18643B-99FF-4AA9-A36C-93F90215CA4B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC18643B-99FF-4AA9-A36C-93F90215CA4B}.Release|ARM.ActiveCfg = Release|ARM
+		{FC18643B-99FF-4AA9-A36C-93F90215CA4B}.Release|ARM.Build.0 = Release|ARM
+		{FC18643B-99FF-4AA9-A36C-93F90215CA4B}.Release|x64.ActiveCfg = Release|x64
+		{FC18643B-99FF-4AA9-A36C-93F90215CA4B}.Release|x64.Build.0 = Release|x64
+		{FC18643B-99FF-4AA9-A36C-93F90215CA4B}.Release|x86.ActiveCfg = Release|x86
+		{FC18643B-99FF-4AA9-A36C-93F90215CA4B}.Release|x86.Build.0 = Release|x86
+		{8B0D73D8-C467-4B06-8957-DB82856CF285}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B0D73D8-C467-4B06-8957-DB82856CF285}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B0D73D8-C467-4B06-8957-DB82856CF285}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{8B0D73D8-C467-4B06-8957-DB82856CF285}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8B0D73D8-C467-4B06-8957-DB82856CF285}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8B0D73D8-C467-4B06-8957-DB82856CF285}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B0D73D8-C467-4B06-8957-DB82856CF285}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B0D73D8-C467-4B06-8957-DB82856CF285}.Release|ARM.ActiveCfg = Release|Any CPU
+		{8B0D73D8-C467-4B06-8957-DB82856CF285}.Release|x64.ActiveCfg = Release|Any CPU
+		{8B0D73D8-C467-4B06-8957-DB82856CF285}.Release|x86.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <MinimumVisualStudioVersion>10.0</MinimumVisualStudioVersion>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{2FD27502-3833-4816-8FC2-5857B3E90777}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Org.BouncyCastle</RootNamespace>
+    <AssemblyName>Org.BouncyCastle.Interfaces</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Profile2</TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- A reference to the entire .NET Framework is automatically included -->
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="bcpg\attr\IImageAttribute.cs" />
+    <Compile Include="bcpg\HashAlgorithmTags.cs" />
+    <Compile Include="bcpg\IBcpgKey.cs" />
+    <Compile Include="bcpg\IBcpgObject.cs" />
+    <Compile Include="bcpg\IBcpgOutputStream.cs" />
+    <Compile Include="bcpg\IBcpgPublicKey.cs" />
+    <Compile Include="bcpg\IContainedPacket.cs" />
+    <Compile Include="bcpg\IPacket.cs" />
+    <Compile Include="bcpg\ISignatureSubpacket.cs" />
+    <Compile Include="bcpg\SignatureSubpacketTags.cs" />
+    <Compile Include="bcpg\sig\INotationData.cs" />
+    <Compile Include="openpgp\IPgpSecretKeyRing.cs" />
+    <Compile Include="bcpg\IPublicKeyPacket.cs" />
+    <Compile Include="bcpg\IS2k.cs" />
+    <Compile Include="bcpg\ISecretKeyPacket.cs" />
+    <Compile Include="bcpg\ITrustPacket.cs" />
+    <Compile Include="bcpg\IUserAttributeSubpacket.cs" />
+    <Compile Include="bcpg\PacketTags.cs" />
+    <Compile Include="bcpg\PublicKeyAlgorithmTags.cs" />
+    <Compile Include="bcpg\SymmetricKeyAlgorithmTags.cs" />
+    <Compile Include="bcpg\UserAttributeSubpacketTags.cs" />
+    <Compile Include="crypto\IAsymmetricBlockCipher.cs" />
+    <Compile Include="crypto\IAsymmetricCipherKeyPair.cs" />
+    <Compile Include="crypto\IAsymmetricCipherKeyPairGenerator.cs" />
+    <Compile Include="crypto\IAsymmetricKeyParameter.cs" />
+    <Compile Include="crypto\IBasicAgreement.cs" />
+    <Compile Include="crypto\IBlockCipher.cs" />
+    <Compile Include="crypto\IBufferedCipher.cs" />
+    <Compile Include="crypto\ICipherParameters.cs" />
+    <Compile Include="crypto\IDerivationFunction.cs" />
+    <Compile Include="crypto\IDerivationParameters.cs" />
+    <Compile Include="crypto\IDigest.cs" />
+    <Compile Include="crypto\IDSA.cs" />
+    <Compile Include="crypto\IKeyGenerationParameters.cs" />
+    <Compile Include="crypto\IMac.cs" />
+    <Compile Include="crypto\ISigner.cs" />
+    <Compile Include="crypto\ISignerWithRecovery.cs" />
+    <Compile Include="crypto\IStreamCipher.cs" />
+    <Compile Include="crypto\IWrapper.cs" />
+    <Compile Include="math\IBigInteger.cs" />
+    <Compile Include="openpgp\IPgpPrivateKey.cs" />
+    <Compile Include="openpgp\IPgpPublicKey.cs" />
+    <Compile Include="openpgp\IPgpPublicKeyRing.cs" />
+    <Compile Include="openpgp\IPgpSecretKey.cs" />
+    <Compile Include="openpgp\IPgpSignature.cs" />
+    <Compile Include="openpgp\IPgpSignatureSubpacketVector.cs" />
+    <Compile Include="openpgp\IPgpUserAttributeSubpacketVector.cs" />
+    <Compile Include="openpgp\IStreamGenerator.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="bcpg\IRandom.cs" />
+    <Compile Include="security\ISecureRandom.cs" />
+    <Compile Include="util\io\IBaseOutputStream.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
