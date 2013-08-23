@@ -12,7 +12,9 @@ namespace Org.BouncyCastle.Security
         // a single generator appropriate to the digest being used.
         private static readonly IRandomGenerator _sha1Generator = new DigestRandomGenerator(new Sha1Digest());
         private static readonly IRandomGenerator _sha256Generator = new DigestRandomGenerator(new Sha256Digest());
+#if SUPPORT_SECURERND512
         private static readonly IRandomGenerator _sha512Generator = new DigestRandomGenerator(new Sha512Digest());
+#endif
 
         private static readonly SecureRandom[] _master = { null };
         private static SecureRandom Master
@@ -22,15 +24,32 @@ namespace Org.BouncyCastle.Security
                 if (_master[0] != null) 
                     return _master[0];
 
+                var threaded = new ThreadedSeedGenerator();
+
+#if SUPPORT_SECURERND512
+
+                var gen = _sha512Generator;
+                gen = new ReversedWindowGenerator(gen, 64);
+                
+                var sr = new SecureRandom(gen);
+                sr.SetSeed(DateTime.Now.Ticks);
+                sr.SetSeed(threaded.GenerateSeed(48, true));
+                sr.GenerateSeed(1 + sr.Next(64));
+
+                _master[0] = sr;
+
+#else
+
                 var gen = _sha256Generator;
                 gen = new ReversedWindowGenerator(gen, 32);
-                var sr = new SecureRandom(gen);
-
+                
+                var sr = new SecureRandom(gen);                
                 sr.SetSeed(DateTime.Now.Ticks);
-                sr.SetSeed(new ThreadedSeedGenerator().GenerateSeed(24, true));
+                sr.SetSeed(threaded.GenerateSeed(24, true));
                 sr.GenerateSeed(1 + sr.Next(32));
 
                 _master[0] = sr;
+#endif
 
                 return _master[0];
             }
@@ -51,9 +70,11 @@ namespace Org.BouncyCastle.Security
                 case "SHA256PRNG":
                     drg = _sha256Generator;
                     break;
+#if SUPPORT_SECURERND512
                 case "SHA512PRNG":
                     drg = _sha512Generator;
                     break;
+#endif
                 default:
                     throw new ArgumentException("Unrecognised PRNG algorithm: " + algorithm, "algorithm");
             }
@@ -69,15 +90,36 @@ namespace Org.BouncyCastle.Security
         protected IRandomGenerator Generator;
 
         public SecureRandom()
+#if SUPPORT_SECURERND512
+            : this(_sha256Generator)
+#else
             : this(_sha1Generator)
+#endif
         {
-            SetSeed(GetSeed(8));
+#if SUPPORT_SECURERND512
+            this.InitializeSeed(GetSeed(16));
+#else
+            this.InitializeSeed(GetSeed(8));
+#endif
         }
 
         public SecureRandom(byte[] inSeed)
+#if SUPPORT_SECURERND512
+            : this(_sha256Generator)
+#else
             : this(_sha1Generator)
+#endif
         {
-            SetSeed(inSeed);
+            this.InitializeSeed(inSeed);
+        }
+
+        /// <summary>
+        /// Initializes the seed.
+        /// </summary>
+        /// <param name="inSeed">The information seed.</param>
+        private void InitializeSeed(byte[] inSeed)
+        {
+            this.SetSeed(inSeed);
         }
 
         /// <summary>Use the specified instance of IRandomGenerator as random source.</summary>
@@ -96,28 +138,28 @@ namespace Org.BouncyCastle.Security
 
         public virtual byte[] GenerateSeed(int length)
         {
-            SetSeed(DateTime.Now.Ticks);
+            this.SetSeed(DateTime.Now.Ticks);
 
             var rv = new byte[length];
-            NextBytes(rv);
+            this.NextBytes(rv);
             return rv;
         }
 
         public virtual void SetSeed(byte[] inSeed)
         {
-            Generator.AddSeedMaterial(inSeed);
+            this.Generator.AddSeedMaterial(inSeed);
         }
 
         public virtual void SetSeed(long seed)
         {
-            Generator.AddSeedMaterial(seed);
+            this.Generator.AddSeedMaterial(seed);
         }
 
         public override int Next()
         {
             for (; ; )
             {
-                var i = NextInt() & int.MaxValue;
+                var i = this.NextInt() & int.MaxValue;
                 if (i != int.MaxValue)
                     return i;
             }
@@ -144,7 +186,7 @@ namespace Org.BouncyCastle.Security
             int bits, result;
             do
             {
-                bits = NextInt() & int.MaxValue;
+                bits = this.NextInt() & int.MaxValue;
                 result = bits % maxValue;
             }
             while (bits - result + (maxValue - 1) < 0); // Ignore results near overflow
@@ -168,7 +210,7 @@ namespace Org.BouncyCastle.Security
 
             for (; ; )
             {
-                var i = NextInt();
+                var i = this.NextInt();
 
                 if (i >= minValue && i < maxValue)
                     return i;
@@ -180,11 +222,9 @@ namespace Org.BouncyCastle.Security
             Generator.NextBytes(buffer);
         }
 
-        public virtual void NextBytes(byte[] buffer,
-            int start,
-            int length)
+        public virtual void NextBytes(byte[] buffer, int start, int length)
         {
-            Generator.NextBytes(buffer, start, length);
+            this.Generator.NextBytes(buffer, start, length);
         }
 
         private static readonly double _doubleScale = System.Math.Pow(2.0, 64.0);
@@ -197,7 +237,7 @@ namespace Org.BouncyCastle.Security
         public virtual int NextInt()
         {
             var intBytes = new byte[4];
-            NextBytes(intBytes);
+            this.NextBytes(intBytes);
 
             var result = 0;
             for (var i = 0; i < 4; i++)
@@ -210,7 +250,7 @@ namespace Org.BouncyCastle.Security
 
         public virtual long NextLong()
         {
-            return ((long)(uint)NextInt() << 32) | (long)(uint)NextInt();
+            return ((long)(uint)this.NextInt() << 32) | (long)(uint)this.NextInt();
         }
     }
 }
