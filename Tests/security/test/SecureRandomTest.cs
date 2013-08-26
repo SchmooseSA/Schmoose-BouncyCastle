@@ -1,150 +1,155 @@
-using System;
-
 using NUnit.Framework;
-
+using Org.BouncyCastle.Bcpg;
 using Org.BouncyCastle.Crypto.Prng;
 
 namespace Org.BouncyCastle.Security.Tests
 {
-	[TestFixture]
-	public class SecureRandomTest
-	{
+    [TestFixture]
+    public class SecureRandomTest
+    {
 #if !NETCF_1_0
-		[Test]
-		public void TestCryptoApi()
-		{
-			SecureRandom random = new SecureRandom(
-				new CryptoApiRandomGenerator());
+        [Test]
+        public void TestCryptoApi()
+        {
+            var random = new SecureRandom(new CryptoApiRandomGenerator());
 
-			checkSecureRandom(random);
-		}
+            CheckSecureRandom(random);
+        }
 #endif
 
-		[Test]
-		public void TestDefault()
-		{
-			SecureRandom random = new SecureRandom();
+        [Test]
+        public void TestDefault()
+        {
+            var random = new SecureRandom();
 
-			checkSecureRandom(random);
-		}
+            CheckSecureRandom(random);
+        }
 
-		[Test]
-		public void TestSha1Prng()
-		{
-			SecureRandom random = SecureRandom.GetInstance("SHA1PRNG");
-			random.SetSeed(SecureRandom.GetSeed(20));
+        [Test]
+        public void TestSha1Prng()
+        {
+            var random = SecureRandom.GetInstance("SHA1PRNG");
+            random.SetSeed(SecureRandom.GetSeed(20));
 
-			checkSecureRandom(random);
-		}
+            CheckSecureRandom(random);
+        }
 
-		[Test]
-		public void TestSha256Prng()
-		{
-			SecureRandom random = SecureRandom.GetInstance("SHA256PRNG");
-			random.SetSeed(SecureRandom.GetSeed(32));
+        [Test]
+        public void TestSha256Prng()
+        {
+            var random = SecureRandom.GetInstance("SHA256PRNG");
+            random.SetSeed(SecureRandom.GetSeed(32));
 
-			checkSecureRandom(random);
-		}
+            CheckSecureRandom(random);
+        }
 
-		[Test]
-		public void TestThreadedSeed()
-		{
-			SecureRandom random = new SecureRandom(
-				new ThreadedSeedGenerator().GenerateSeed(20, false));
+        [Test]
+        public void TestSha512Prng()
+        {
+#if SUPPORT_SECURERND512
 
-			checkSecureRandom(random);
-		}
+            var random = SecureRandom.GetInstance("SHA512PRNG");
+            random.SetSeed(SecureRandom.GetSeed(64));
 
-		[Test]
-		public void TestVmpcPrng()
-		{
-			SecureRandom random = new SecureRandom(new VmpcRandomGenerator());
-			random.SetSeed(SecureRandom.GetSeed(32));
-
-			checkSecureRandom(random);
-		}
+            CheckSecureRandom(random);
+#endif
+        }
 
 
-		private static void checkSecureRandom(
-			SecureRandom random)
-		{
-			// Note: This will periodically (< 1e-6 probability) give a false alarm.
-			// That's randomness for you!
-			Assert.IsTrue(runChiSquaredTests(random), "Chi2 test detected possible non-randomness");
-		}
+        [Test]
+        public void TestThreadedSeed()
+        {
+            var random = new SecureRandom(new ThreadedSeedGenerator().GenerateSeed(20, false));
 
-		private static bool runChiSquaredTests(
-			SecureRandom random)
-		{
-			int passes = 0;
+            CheckSecureRandom(random);
+        }
 
-			for (int tries = 0; tries < 100; ++tries)
-			{
-				double chi2 = measureChiSquared(random, 1000);
-				if (chi2 < 285.0) // 255 degrees of freedom in test => Q ~ 10.0% for 285
-					++passes;
-			}
+        [Test]
+        public void TestVmpcPrng()
+        {
+            var random = new SecureRandom(new VmpcRandomGenerator());
+            random.SetSeed(SecureRandom.GetSeed(32));
 
-			return passes > 75;
-		}
+            CheckSecureRandom(random);
+        }
 
-		private static double measureChiSquared(
-			SecureRandom	random,
-			int				rounds)
-		{
-			int[] counts = new int[256];
 
-			byte[] bs = new byte[256];
-			for (int i = 0; i < rounds; ++i)
-			{
-				random.NextBytes(bs);
+        private static void CheckSecureRandom(SecureRandom random)
+        {
+            // Note: This will periodically (< 1e-6 probability) give a false alarm.
+            // That's randomness for you!
+            Assert.IsTrue(RunChiSquaredTests(random), "Chi2 test detected possible non-randomness");
+        }
 
-				for (int b = 0; b < 256; ++b)
-				{
-					++counts[bs[b]];
-				}
-			}
+        private static bool RunChiSquaredTests(SecureRandom random)
+        {
+            var passes = 0;
 
-			byte mask = SecureRandom.GetSeed(1)[0];
-			for (int i = 0; i < rounds; ++i)
-			{
-				random.NextBytes(bs);
+            for (var tries = 0; tries < 100; ++tries)
+            {
+                var chi2 = MeasureChiSquared(random, 1000);
+                if (chi2 < 285.0) // 255 degrees of freedom in test => Q ~ 10.0% for 285
+                    ++passes;
+            }
 
-				for (int b = 0; b < 256; ++b)
-				{
-					++counts[bs[b] ^ mask];
-				}
+            return passes > 75;
+        }
 
-				++mask;
-			}
+        private static double MeasureChiSquared(IRandom random, int rounds)
+        {
+            var counts = new int[256];
 
-			byte shift = SecureRandom.GetSeed(1)[0];
-			for (int i = 0; i < rounds; ++i)
-			{
-				random.NextBytes(bs);
+            var bs = new byte[256];
+            for (var i = 0; i < rounds; ++i)
+            {
+                random.NextBytes(bs);
 
-				for (int b = 0; b < 256; ++b)
-				{
-					++counts[(byte)(bs[b] + shift)];
-				}
+                for (var b = 0; b < 256; ++b)
+                {
+                    ++counts[bs[b]];
+                }
+            }
 
-				++shift;
-			}
+            var mask = SecureRandom.GetSeed(1)[0];
+            for (var i = 0; i < rounds; ++i)
+            {
+                random.NextBytes(bs);
 
-			int total = 3 * rounds;
+                for (var b = 0; b < 256; ++b)
+                {
+                    ++counts[bs[b] ^ mask];
+                }
 
-			double chi2 = 0;
-			for (int k = 0; k < counts.Length; ++k)
-			{
-				double diff = ((double) counts[k]) - total;
-				double diff2 = diff * diff;
+                ++mask;
+            }
 
-				chi2 += diff2;
-			}
+            var shift = SecureRandom.GetSeed(1)[0];
+            for (var i = 0; i < rounds; ++i)
+            {
+                random.NextBytes(bs);
 
-			chi2 /= total;
+                for (var b = 0; b < 256; ++b)
+                {
+                    ++counts[(byte)(bs[b] + shift)];
+                }
 
-			return chi2;
-		}
-	}
+                ++shift;
+            }
+
+            var total = 3 * rounds;
+
+            double chi2 = 0;
+            for (var k = 0; k < counts.Length; ++k)
+            {
+                var diff = ((double)counts[k]) - total;
+                var diff2 = diff * diff;
+
+                chi2 += diff2;
+            }
+
+            chi2 /= total;
+
+            return chi2;
+        }
+    }
 }
